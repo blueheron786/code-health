@@ -11,7 +11,11 @@ Made in C# with Blazor.
 
 # Supported Languages
 
-- C# (WIP)
+Everything is WIP since this project is relatively new and under heavy development. Planned languages include:
+
+- C#
+- Java
+- Javascript
 
 # Design and Architecture
 
