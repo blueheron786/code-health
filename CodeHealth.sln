@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHealth.UI", "CodeHealth.UI\CodeHealth.UI.csproj", "{0D4A7333-EDAE-4C2C-9EF2-CB8745361A76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scanners.CSharp", "Scanners.CSharp\Scanners.CSharp.csproj", "{856D5EF3-09AA-4DB5-B530-D5A52A296232}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHealth.Core", "CodeHealth.Core\CodeHealth.Core.csproj", "{1115608E-AB27-4148-ABD4-898AF2B3F622}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHealth.Scanners.CSharp", "CodeHealth.Scanners.CSharp\CodeHealth.Scanners.CSharp.csproj", "{0A482DA8-D1A0-4493-BCEB-0B2C32F56374}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D4A7333-EDAE-4C2C-9EF2-CB8745361A76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D4A7333-EDAE-4C2C-9EF2-CB8745361A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D4A7333-EDAE-4C2C-9EF2-CB8745361A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D4A7333-EDAE-4C2C-9EF2-CB8745361A76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{856D5EF3-09AA-4DB5-B530-D5A52A296232}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{856D5EF3-09AA-4DB5-B530-D5A52A296232}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{856D5EF3-09AA-4DB5-B530-D5A52A296232}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{856D5EF3-09AA-4DB5-B530-D5A52A296232}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1115608E-AB27-4148-ABD4-898AF2B3F622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1115608E-AB27-4148-ABD4-898AF2B3F622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1115608E-AB27-4148-ABD4-898AF2B3F622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1115608E-AB27-4148-ABD4-898AF2B3F622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A482DA8-D1A0-4493-BCEB-0B2C32F56374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A482DA8-D1A0-4493-BCEB-0B2C32F56374}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A482DA8-D1A0-4493-BCEB-0B2C32F56374}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A482DA8-D1A0-4493-BCEB-0B2C32F56374}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
