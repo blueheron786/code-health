@@ -5,6 +5,10 @@ using System.IO;
 using CodeHealth.Core.IO;
 using System.Reflection;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Microsoft.Extensions.DependencyInjection;
+using CodeHealth.UI;
 
 var builder = BlazorDesktopHostBuilder.CreateDefault(args);
 
@@ -34,4 +38,7 @@ void ScanYourself() {
 }
 
 ScanYourself();
-await builder.Build().RunAsync();
+
+var app = builder.Build();
+
+await app.RunAsync();
