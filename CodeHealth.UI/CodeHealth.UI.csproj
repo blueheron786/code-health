@@ -12,4 +12,9 @@
     <PackageReference Include="BlazorDesktop" Version="8.0.8" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CodeHealth.Core\CodeHealth.Core.csproj" />
+    <ProjectReference Include="..\CodeHealth.Scanners.CSharp\CodeHealth.Scanners.CSharp.csproj" />
+  </ItemGroup>
+
 </Project>
