@@ -11,6 +11,6 @@ public static class RunInfo
 
     private static string GetDirectoryName(DateTime runTime)
     {
-        return Path.Combine("runs", runTime.ToString("yyyy-MM-dd_HH-mm"));
+        return Path.Combine("runs", runTime.ToString("yyyy-MM-dd_HH-mm-ss"));
     }
 }

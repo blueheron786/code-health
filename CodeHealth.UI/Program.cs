@@ -16,7 +16,7 @@ if (builder.HostEnvironment.IsDevelopment())
     builder.UseDeveloperTools();
 }
 
-// TODO: move this elsewhere
+// TODO: move this elsewhere. For now, test against the CodeHealth code base.
 void ScanYourself() {
     var stopwatch = new Stopwatch();
     stopwatch.Start();
