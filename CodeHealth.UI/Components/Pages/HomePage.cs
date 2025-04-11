@@ -1,4 +1,4 @@
-using CodeHealth.UI.Scanner;
+using CodeHealth.UI.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Win32; // For OpenFolderDialog
 using System.Diagnostics;

@@ -1,8 +1,8 @@
 using System.IO;
 using System.Text.Json;
 using CodeHealth.Scanners.CSharp.Formatters;
+using CodeHealth.UI.Services;
 using Microsoft.AspNetCore.Components;
-using static CodeHealth.UI.Components.Pages.Project.ProjectSummaryPage;
 
 namespace CodeHealth.UI.Components.Pages.Project;
 
@@ -14,12 +14,13 @@ public class CyclomaticComplexityPage : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        complexityData = await LoadCyclomaticComplexityData(ProjectId);
+        var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
+        complexityData = await LoadCyclomaticComplexityData(runDirectoryPath);
     }
 
-    private async Task<List<CyclomaticComplexityData>> LoadCyclomaticComplexityData(string projectId)
+    private async Task<List<CyclomaticComplexityData>> LoadCyclomaticComplexityData(string runDirectoryPath)
     {
-        var filePath = Path.Combine("projects", projectId, "cyclomatic_complexity.json");
+        var filePath = Path.Combine(runDirectoryPath, "cyclomatic_complexity.json");
 
         if (!File.Exists(filePath))
         {
@@ -42,20 +43,23 @@ public class CyclomaticComplexityPage : ComponentBase
         return methods;
     }
 
-
     protected string GetComplexityClass(int cc)
     {
-        if (cc > 20)
-        {
-            return "table-danger"; // Red for CC > 20
-        }
-        else if (cc > 10)
-        {
-            return "table-warning"; // Yellow for CC > 10
-        }
-        else
-        {
-            return ""; // Default for normal CC
-        }
+        if (cc > 20) return "table-danger";
+        if (cc > 10) return "table-warning";
+        return "";
     }
+}
+
+public class ProjectInfo
+{
+    public DateTime Timestamp { get; set; }
+    public string FolderName { get; set; }
+}
+
+public class CyclomaticComplexityData
+{
+    public string File { get; set; }
+    public string Method { get; set; }
+    public int Complexity { get; set; }
 }

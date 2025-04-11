@@ -3,7 +3,7 @@ using System.Diagnostics;
 using CodeHealth.Core.IO;
 using CodeHealth.Scanners.CSharp.Scanners;
 
-namespace CodeHealth.UI.Scanner;
+namespace CodeHealth.UI.Services;
 
 public static class ProjectScanner
 {
