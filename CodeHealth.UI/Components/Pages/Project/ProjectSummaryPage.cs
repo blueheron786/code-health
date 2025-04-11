@@ -26,7 +26,7 @@ public class ProjectSummaryPage : ComponentBase
         // Load cyclomatic complexity data based on the folder name
         if (folderName != null)
         {
-            var complexityData = await LoadCyclomaticComplexityData(folderName);
+            var complexityData = await CyclomaticComplexityDataLoder.LoadCyclomaticComplexityData(folderName);
             
             if (complexityData.Any())
             {
@@ -38,43 +38,5 @@ public class ProjectSummaryPage : ComponentBase
         lastScannedTime = lastRunTime?.ToString("yyyy-MM-dd HH:mm:ss");
 
         isAllDataLoaded = true;
-    }
-
-    private async Task<List<CyclomaticComplexityData>> LoadCyclomaticComplexityData(string runDirectoryPath)
-    {
-        var filePath = Path.Combine(runDirectoryPath, FileAndFolderConstants.CyclomatiComplexityFile);
-
-        if (!File.Exists(filePath))
-        {
-            return new List<CyclomaticComplexityData>();
-        }
-
-        var jsonData = await File.ReadAllTextAsync(filePath);
-        var report = JsonSerializer.Deserialize<CyclomaticComplexityJsonFormatter.Report>(jsonData);
-
-        var methods = report.Files
-            .SelectMany(file => file.Methods.Select(method => new CyclomaticComplexityData
-            {
-                File = file.File,
-                Method = method.Method,
-                Complexity = method.Complexity
-            }))
-            .OrderByDescending(m => m.Complexity)
-            .ToList();
-
-        return methods;
-    }
-
-    public class CyclomaticComplexityData
-    {
-        public string File { get; set; }
-        public string Method { get; set; }
-        public int Complexity { get; set; }
-    }
-
-    public class ProjectInfo
-    {
-        public DateTime Timestamp { get; set; }
-        public string FolderName { get; set; }
     }
 }
