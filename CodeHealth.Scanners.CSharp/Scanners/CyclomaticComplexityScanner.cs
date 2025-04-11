@@ -8,19 +8,21 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 public class CyclomaticComplexityScanner
 {
-    public static void AnalyzeFiles(List<string> files, string rootPath, string outputDir)
+    public static void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
         var report = new CyclomaticComplexityJsonFormatter.Report();
 
-        foreach (var file in files)
+        foreach (var kvp in sourceFiles)
         {
-            var code = File.ReadAllText(file);
+            string fileName = kvp.Key;
+            var code = kvp.Value;
+
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = tree.GetRoot();
 
             var fileResult = new CyclomaticComplexityJsonFormatter.FileResult
             {
-                File = Path.GetRelativePath(rootPath, file).Replace("\\", "/")
+                File = Path.GetRelativePath(rootPath, fileName).Replace("\\", "/")
             };
 
             var methodNodes = root.DescendantNodes().OfType<MethodDeclarationSyntax>();

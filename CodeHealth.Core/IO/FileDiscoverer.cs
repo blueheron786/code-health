@@ -2,7 +2,12 @@ using CodeHealth.Core.IO;
 
 public static class FileDiscoverer
 {
-    public static List<string> GetSourceFiles(string rootPath)
+    /// <summary>
+    /// Finds all source files in the given directory and its subdirectories.
+    /// Excludes files that are ignored by gitignore and files that are in test directories.
+    /// Returns a dictionary of file name => content, so we don't slam the file system with too many reads.
+    /// </summary>
+    public static Dictionary<string, string> GetSourceFiles(string rootPath)
     {
         var ignore = new GitIgnoreParser(Path.Combine(rootPath, ".gitignore"));
 
@@ -13,6 +18,8 @@ public static class FileDiscoverer
             .Where(path => !ignore.IsIgnored(Path.GetRelativePath(rootPath, path)))
             .ToList();
 
-        return allFiles;
+        var pathToContent = allFiles.ToDictionary(path => path, File.ReadAllText);
+
+        return pathToContent;
     }
 }

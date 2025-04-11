@@ -12,12 +12,12 @@ public static class ProjectScanner
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        var mySourceFiles = FileDiscoverer.GetSourceFiles(sourcePath!);
+        var sourceFiles = FileDiscoverer.GetSourceFiles(sourcePath!);
         var resultsDirectory = RunInfo.CreateRun(sourcePath, DateTime.Now);
 
         Console.WriteLine($"Analyzing {sourcePath} ...");
 
-        CyclomaticComplexityScanner.AnalyzeFiles(mySourceFiles, sourcePath, resultsDirectory);
+        CyclomaticComplexityScanner.AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
 
         Console.WriteLine($"Analysis complete in {stopwatch.Elapsed}!");
         return stopwatch.Elapsed;
