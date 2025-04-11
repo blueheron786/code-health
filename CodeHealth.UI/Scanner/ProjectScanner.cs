@@ -12,7 +12,7 @@ public static class ProjectScanner
         stopwatch.Start();
 
         var mySourceFiles = FileDiscoverer.GetSourceFiles(sourcePath!);
-        var resultsDirectory = RunInfo.CreateRun(DateTime.Now);
+        var resultsDirectory = RunInfo.CreateRun(sourcePath, DateTime.Now);
 
         Console.WriteLine($"Analyzing {sourcePath} ...");
 
