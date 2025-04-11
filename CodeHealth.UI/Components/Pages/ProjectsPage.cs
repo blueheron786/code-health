@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.Json;
+using CodeHealth.Core.Dtos;
 using CodeHealth.Core.IO;
 using Microsoft.AspNetCore.Components;
 
@@ -27,8 +28,8 @@ public partial class ProjectsPage : ComponentBase
         // Read the JSON data
         var json = await File.ReadAllTextAsync(projectsMetadataFile);
         
-        // Deserialize into a dictionary of folder paths to ProjectMetadata objects
-        var projectData = JsonSerializer.Deserialize<Dictionary<string, ProjectMetadata>>(json);
+        // Deserialize into a dictionary of folder paths to ProjectInfo objects
+        var projectData = JsonSerializer.Deserialize<Dictionary<string, ProjectInfo>>(json);
 
         // Convert the dictionary to a list of projects
         var projectList = projectData?.Select(kvp => new Project
@@ -76,12 +77,12 @@ public partial class ProjectsPage : ComponentBase
     }
 
     public class Project
-{
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string LastRunTime { get; set; }
-    public string FolderName { get; set; }
-    public DateTime Timestamp { get; set; }
-}
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string LastRunTime { get; set; }
+        public string FolderName { get; set; }
+        public DateTime Timestamp { get; set; }
+    }
 
 }

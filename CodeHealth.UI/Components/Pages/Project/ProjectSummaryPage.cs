@@ -2,6 +2,7 @@ using System.IO;
 using System.Text.Json;
 using CodeHealth.Core.IO;
 using CodeHealth.Scanners.CSharp.Formatters;
+using CodeHealth.UI.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Components.Pages.Project;
@@ -18,7 +19,7 @@ public class ProjectSummaryPage : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        var projectMetadata = await LoadProjectMetadata(ProjectId);
+        var projectMetadata = await SharedProjectService.LoadProjectInfo(ProjectId);
         var folderName = projectMetadata?.FolderName;
         var lastRunTime = projectMetadata?.Timestamp;
 
@@ -37,20 +38,6 @@ public class ProjectSummaryPage : ComponentBase
         lastScannedTime = lastRunTime?.ToString("yyyy-MM-dd HH:mm:ss");
 
         isAllDataLoaded = true;
-    }
-
-    private async Task<ProjectMetadata> LoadProjectMetadata(string projectId)
-    {
-        var projectsMetadataFile = FileAndFolderConstants.ProjectsMetadataFile;
-        if (!File.Exists(projectsMetadataFile))
-        {
-            return null; // Return null if no metadata exists
-        }
-
-        var json = await File.ReadAllTextAsync(projectsMetadataFile);
-        var projectData = JsonSerializer.Deserialize<Dictionary<string, ProjectMetadata>>(json);
-
-        return projectData?.FirstOrDefault(kvp => kvp.Key.EndsWith(projectId)).Value;
     }
 
     private async Task<List<CyclomaticComplexityData>> LoadCyclomaticComplexityData(string runDirectoryPath)
@@ -85,7 +72,7 @@ public class ProjectSummaryPage : ComponentBase
         public int Complexity { get; set; }
     }
 
-    public class ProjectMetadata
+    public class ProjectInfo
     {
         public DateTime Timestamp { get; set; }
         public string FolderName { get; set; }

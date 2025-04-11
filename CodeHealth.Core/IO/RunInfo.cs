@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CodeHealth.Core.Dtos;
 
 namespace CodeHealth.Core.IO
 {
@@ -19,7 +20,7 @@ namespace CodeHealth.Core.IO
         private static string GetDirectoryName(DateTime runTime)
         {
             // Generate a folder name based on the run time (e.g., "runs/2025-04-10_10-30-45")
-            return Path.Combine(FileAndFolderConstants.RunsDirectory, runTime.ToString("yyyy-MM-dd_HH-mm-ss"));
+            return Path.Combine(FileAndFolderConstants.RunsDirectory, runTime.ToString("yyyyMMdd_HHmmss"));
         }
 
         private static void UpdateLatestRuns(string folderPath, DateTime runTime)
@@ -32,13 +33,10 @@ namespace CodeHealth.Core.IO
 
             // Read the existing latest-runs.json file
             var projectsMetadataJson = File.ReadAllText(FileAndFolderConstants.ProjectsMetadataFile);
-            var projectsMetadata = JsonSerializer.Deserialize<Dictionary<string, ProjectMetadata>>(projectsMetadataJson) ?? new Dictionary<string, ProjectMetadata>();
-
-            // Create the new folderName
-            var folderName = Path.GetFileName(folderPath);
+            var projectsMetadata = JsonSerializer.Deserialize<Dictionary<string, ProjectInfo>>(projectsMetadataJson) ?? new Dictionary<string, ProjectInfo>();
 
             // Update the metadata with the new folder's timestamp and folder name
-            projectsMetadata[folderPath] = new ProjectMetadata
+            projectsMetadata[folderPath] = new ProjectInfo
             {
                 Timestamp = runTime,
                 FolderName = GetDirectoryName(runTime),
@@ -48,12 +46,5 @@ namespace CodeHealth.Core.IO
             var updatedJson = JsonSerializer.Serialize(projectsMetadata, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(FileAndFolderConstants.ProjectsMetadataFile, updatedJson);
         }
-    }
-
-    // Create a class for project metadata to hold the timestamp and folder name
-    public class ProjectMetadata
-    {
-        public DateTime Timestamp { get; set; }
-        public string FolderName { get; set; }
     }
 }

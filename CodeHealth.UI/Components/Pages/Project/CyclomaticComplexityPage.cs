@@ -51,12 +51,6 @@ public class CyclomaticComplexityPage : ComponentBase
     }
 }
 
-public class ProjectInfo
-{
-    public DateTime Timestamp { get; set; }
-    public string FolderName { get; set; }
-}
-
 public class CyclomaticComplexityData
 {
     public string File { get; set; }
