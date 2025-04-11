@@ -17,15 +17,15 @@ public partial class ProjectsPage : ComponentBase
 
     private async Task<List<Project>> LoadProjectsAsync()
     {
-        var latestRunsFile = FileAndFolderConstants.LatestRunsFile;
+        var projectsMetadataFile = FileAndFolderConstants.ProjectsMetadataFile;
         
-        if (!File.Exists(latestRunsFile))
+        if (!File.Exists(projectsMetadataFile))
         {
             return new List<Project>(); // Return an empty list if no data
         }
 
         // Read the JSON data
-        var json = await File.ReadAllTextAsync(latestRunsFile);
+        var json = await File.ReadAllTextAsync(projectsMetadataFile);
         var latestRuns = JsonSerializer.Deserialize<Dictionary<string, DateTime>>(json);
 
         // Convert the dictionary to a list of projects

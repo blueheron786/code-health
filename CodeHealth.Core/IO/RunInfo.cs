@@ -25,21 +25,21 @@ namespace CodeHealth.Core.IO
         private static void UpdateLatestRuns(string folderPath, DateTime runTime)
         {
             // Ensure the latest-runs.json file exists
-            if (!File.Exists(FileAndFolderConstants.LatestRunsFile))
+            if (!File.Exists(FileAndFolderConstants.ProjectsMetadataFile))
             {
-                File.WriteAllText(FileAndFolderConstants.LatestRunsFile, "{}"); // Create an empty JSON file if it doesn't exist
+                File.WriteAllText(FileAndFolderConstants.ProjectsMetadataFile, "{}"); // Create an empty JSON file if it doesn't exist
             }
 
             // Read the existing latest-runs.json file
-            var latestRunsJson = File.ReadAllText(FileAndFolderConstants.LatestRunsFile);
-            var latestRuns = JsonSerializer.Deserialize<Dictionary<string, DateTime>>(latestRunsJson) ?? new Dictionary<string, DateTime>();
+            var projectsMetadataJson = File.ReadAllText(FileAndFolderConstants.ProjectsMetadataFile);
+            var projectsMetadata = JsonSerializer.Deserialize<Dictionary<string, DateTime>>(projectsMetadataJson) ?? new Dictionary<string, DateTime>();
 
             // Update the folder's latest run time
-            latestRuns[folderPath] = runTime;
+            projectsMetadata[folderPath] = runTime;
 
             // Save the updated latest-runs.json file
-            var updatedJson = JsonSerializer.Serialize(latestRuns, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(FileAndFolderConstants.LatestRunsFile, updatedJson);
+            var updatedJson = JsonSerializer.Serialize(projectsMetadata, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(FileAndFolderConstants.ProjectsMetadataFile, updatedJson);
         }
     }
 }
