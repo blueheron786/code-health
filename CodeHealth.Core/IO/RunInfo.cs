@@ -1,26 +1,49 @@
-namespace CodeHealth.Core.IO;
-
 using System.Text.Json;
 
-public static class RunInfo
+namespace CodeHealth.Core.IO
 {
-    public static string CreateRun(string folderPath, DateTime runTime)
+    public static class RunInfo
     {
-        var directory = GetDirectoryName(runTime);
-        Directory.CreateDirectory(directory);
+        private static readonly string DataDirectory = "data"; // Root directory for ALL data
+        private static readonly string RunsDirectory = "runs"; // Root directory for runs
+        private static readonly string LatestRunsFile = Path.Combine(DataDirectory, "latest-runs.json");
 
-        var metaData = new {
-            Folder = folderPath,
-        };
-        string metaDataJson = JsonSerializer.Serialize(metaData);
-        
-        File.WriteAllText(Path.Join(directory, "metadata.json"), metaDataJson);
+        public static string CreateRun(string folderPath, DateTime runTime)
+        {
+            // Create a directory for the current run based on the timestamp
+            var directory = GetDirectoryName(runTime);
+            Directory.CreateDirectory(directory);
 
-        return directory;
-    }
+            // Update the latest-runs.json file
+            UpdateLatestRuns(folderPath, runTime);
 
-    private static string GetDirectoryName(DateTime runTime)
-    {
-        return Path.Combine("runs", runTime.ToString("yyyy-MM-dd_HH-mm-ss"));
+            return directory;
+        }
+
+        private static string GetDirectoryName(DateTime runTime)
+        {
+            // Generate a folder name based on the run time (e.g., "runs/2025-04-10_10-30-45")
+            return Path.Combine(DataDirectory, RunsDirectory, runTime.ToString("yyyy-MM-dd_HH-mm-ss"));
+        }
+
+        private static void UpdateLatestRuns(string folderPath, DateTime runTime)
+        {
+            // Ensure the latest-runs.json file exists
+            if (!File.Exists(LatestRunsFile))
+            {
+                File.WriteAllText(LatestRunsFile, "{}"); // Create an empty JSON file if it doesn't exist
+            }
+
+            // Read the existing latest-runs.json file
+            var latestRunsJson = File.ReadAllText(LatestRunsFile);
+            var latestRuns = JsonSerializer.Deserialize<Dictionary<string, DateTime>>(latestRunsJson) ?? new Dictionary<string, DateTime>();
+
+            // Update the folder's latest run time
+            latestRuns[folderPath] = runTime;
+
+            // Save the updated latest-runs.json file
+            var updatedJson = JsonSerializer.Serialize(latestRuns, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(LatestRunsFile, updatedJson);
+        }
     }
 }
