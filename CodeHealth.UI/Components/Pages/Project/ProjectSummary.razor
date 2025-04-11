@@ -13,8 +13,8 @@ else
         <li><strong>Last scanned:</strong> @lastScannedTime</li>
         <li>
             <strong>Cyclomatic Complexity:</strong>
-            Total @totalComplexity, Average @averageComplexity
-            (<a href="@($"/project/{ProjectId}/cyclomatic-complexity")">Full Report</a>)
+            Total @totalComplexity, Average @($"{averageComplexity:F2}")
+            [<a href="@($"/project/{ProjectId}/cyclomatic-complexity")">Report</a>]
         </li>
     </ul>
 }
