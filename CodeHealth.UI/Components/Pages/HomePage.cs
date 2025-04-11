@@ -1,3 +1,4 @@
+using CodeHealth.UI.Scanner;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Win32; // For OpenFolderDialog
 using System.Diagnostics;
@@ -6,9 +7,9 @@ namespace CodeHealth.UI;
 
 public partial class HomePage : ComponentBase
 {
-    internal string folderPath = "No folder selected";
+    internal string outputMessages = "No folder selected";
 
-    internal async Task OpenFolderPicker()
+    internal void OpenFolderPicker()
     {
         // Use WPF's OpenFolderDialog
         var dialog = new OpenFolderDialog
@@ -23,9 +24,15 @@ public partial class HomePage : ComponentBase
 
         if (result == true)
         {
-            folderPath = dialog.FolderName;
+            var folderPath = dialog.FolderName;
             Debug.WriteLine($"Selected folder: {folderPath}");
             StateHasChanged(); // Update UI
+
+            var results = ProjectScanner.Scan(folderPath);
+            outputMessages = $"Scan of {folderPath} done in {results}";
+        }
+        else {
+            // User cancelled
         }
     }
 }
