@@ -1,20 +1,31 @@
-using CodeHealth.UI.Components;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+using Microsoft.Win32; // For OpenFolderDialog
+using System.Diagnostics;
 
 namespace CodeHealth.UI;
 
-public class HomePage : ComponentBase
+public partial class HomePage : ComponentBase
 {
-    internal string folderPath;
-
-    [Inject]
-    private IJSRuntime _jsRuntime { get; set;}
+    internal string folderPath = "No folder selected";
 
     internal async Task OpenFolderPicker()
     {
-        // Trigger folder picker logic here
-        folderPath = await FolderPicker.PickFolderAsync(_jsRuntime);
-        Console.WriteLine($"Picked folder: {folderPath}");
+        // Use WPF's OpenFolderDialog
+        var dialog = new OpenFolderDialog
+        {
+            Title = "Select a folder",
+            Multiselect = false,
+            InitialDirectory = "C:\\" // Optional: Default starting folder
+        };
+
+        // Show the dialog (synchronous in WPF)
+        bool? result = dialog.ShowDialog();
+
+        if (result == true)
+        {
+            folderPath = dialog.FolderName;
+            Debug.WriteLine($"Selected folder: {folderPath}");
+            StateHasChanged(); // Update UI
+        }
     }
 }
