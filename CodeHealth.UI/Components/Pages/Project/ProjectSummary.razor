@@ -9,7 +9,12 @@
 }
 else
 {
-    <div>
-        <p><strong>Cyclomatic Complexity:</strong> Total @totalComplexity, Average @averageComplexity. <a href="@($"/project/{ProjectId}/cyclomatic-complexity")">Full Report</a></p>
-    </div>
+    <ul>
+        <li><strong>Last scanned:</strong> @lastScannedTime</li>
+        <li>
+            <strong>Cyclomatic Complexity:</strong>
+            Total @totalComplexity, Average @averageComplexity
+            (<a href="@($"/project/{ProjectId}/cyclomatic-complexity")">Full Report</a>)
+        </li>
+    </ul>
 }

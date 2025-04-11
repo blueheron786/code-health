@@ -26,18 +26,23 @@ public partial class ProjectsPage : ComponentBase
 
         // Read the JSON data
         var json = await File.ReadAllTextAsync(projectsMetadataFile);
-        var projectData = JsonSerializer.Deserialize<Dictionary<string, DateTime>>(json);
+        
+        // Deserialize into a dictionary of folder paths to ProjectMetadata objects
+        var projectData = JsonSerializer.Deserialize<Dictionary<string, ProjectMetadata>>(json);
 
         // Convert the dictionary to a list of projects
         var projectList = projectData?.Select(kvp => new Project
         {
             Id = Path.GetFileName(kvp.Key), // Use the folder name as the ID
             Name = Path.GetFileName(kvp.Key), // Get the last part of the folder path
-            LastRunTime = TimeAgo(kvp.Value) // Get the time ago format
+            FolderName = kvp.Value.FolderName,
+            Timestamp = kvp.Value.Timestamp,
+            LastRunTime = TimeAgo(kvp.Value.Timestamp) // Get the time ago format
         }).ToList();
 
         return projectList ?? new List<Project>();
     }
+
 
     private string TimeAgo(DateTime runTime)
     {
@@ -71,9 +76,12 @@ public partial class ProjectsPage : ComponentBase
     }
 
     public class Project
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string LastRunTime { get; set; }
-    }
+{
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string LastRunTime { get; set; }
+    public string FolderName { get; set; }
+    public DateTime Timestamp { get; set; }
+}
+
 }

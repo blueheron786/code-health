@@ -32,14 +32,28 @@ namespace CodeHealth.Core.IO
 
             // Read the existing latest-runs.json file
             var projectsMetadataJson = File.ReadAllText(FileAndFolderConstants.ProjectsMetadataFile);
-            var projectsMetadata = JsonSerializer.Deserialize<Dictionary<string, DateTime>>(projectsMetadataJson) ?? new Dictionary<string, DateTime>();
+            var projectsMetadata = JsonSerializer.Deserialize<Dictionary<string, ProjectMetadata>>(projectsMetadataJson) ?? new Dictionary<string, ProjectMetadata>();
 
-            // Update the folder's latest run time
-            projectsMetadata[folderPath] = runTime;
+            // Create the new folderName
+            var folderName = Path.GetFileName(folderPath);
+
+            // Update the metadata with the new folder's timestamp and folder name
+            projectsMetadata[folderPath] = new ProjectMetadata
+            {
+                Timestamp = runTime,
+                FolderName = folderName
+            };
 
             // Save the updated latest-runs.json file
             var updatedJson = JsonSerializer.Serialize(projectsMetadata, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(FileAndFolderConstants.ProjectsMetadataFile, updatedJson);
         }
+    }
+
+    // Create a class for project metadata to hold the timestamp and folder name
+    public class ProjectMetadata
+    {
+        public DateTime Timestamp { get; set; }
+        public string FolderName { get; set; }
     }
 }
