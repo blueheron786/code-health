@@ -7,20 +7,24 @@ namespace CodeHealth.UI.Components.Pages.Project;
 
 public class ProjectSummaryPage : ComponentBase
 {
- [Parameter] public string ProjectId { get; set; }
-    protected List<CyclomaticComplexityData> complexityData;
+    [Parameter]
+    public string ProjectId { get; set; }
+ 
+    protected bool isAllDataLoaded = false;
     protected int totalComplexity;
     protected double averageComplexity;
 
     protected override async Task OnInitializedAsync()
     {
-        complexityData = await LoadCyclomaticComplexityData(ProjectId);
+        var complexityData = await LoadCyclomaticComplexityData(ProjectId);
 
         if (complexityData.Any())
         {
             totalComplexity = complexityData.Sum(x => x.Complexity);
             averageComplexity = complexityData.Average(x => x.Complexity);
         }
+
+        isAllDataLoaded = true;
     }
 
     private async Task<List<CyclomaticComplexityData>> LoadCyclomaticComplexityData(string projectId)
@@ -48,23 +52,6 @@ public class ProjectSummaryPage : ComponentBase
 
         return methods;
     }
-
-    protected string GetComplexityClass(int complexity)
-    {
-        if (complexity > 20)
-        {
-            return "table-danger"; // Red
-        }
-        else if (complexity > 10)
-        {
-            return "table-warning"; // Yellow
-        }
-        else
-        {
-            return string.Empty; // No class for normal complexity
-        }
-    }
-
 
     public class CyclomaticComplexityData
     {
