@@ -1,8 +1,5 @@
-using System;
-
 namespace CodeHealth.Core.IO;
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
