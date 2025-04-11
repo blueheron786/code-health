@@ -53,9 +53,9 @@ public class ProjectSummaryPage : ComponentBase
         return projectData?.FirstOrDefault(kvp => kvp.Key.EndsWith(projectId)).Value;
     }
 
-    private async Task<List<CyclomaticComplexityData>> LoadCyclomaticComplexityData(string projectId)
+    private async Task<List<CyclomaticComplexityData>> LoadCyclomaticComplexityData(string runDirectoryPath)
     {
-        var filePath = Path.Combine(FileAndFolderConstants.RunsDirectory, projectId, FileAndFolderConstants.CyclomatiComplexityFile);
+        var filePath = Path.Combine(runDirectoryPath, FileAndFolderConstants.CyclomatiComplexityFile);
 
         if (!File.Exists(filePath))
         {

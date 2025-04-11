@@ -41,7 +41,7 @@ namespace CodeHealth.Core.IO
             projectsMetadata[folderPath] = new ProjectMetadata
             {
                 Timestamp = runTime,
-                FolderName = folderName
+                FolderName = GetDirectoryName(runTime),
             };
 
             // Save the updated latest-runs.json file
