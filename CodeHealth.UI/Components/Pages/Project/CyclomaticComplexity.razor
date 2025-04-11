@@ -1,0 +1,22 @@
+@page "/project/{ProjectId}/cyclomatic-complexity"
+@inherits CyclomaticComplexityPage
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>File</th>
+            <th>Method</th>
+            <th>Cyclomatic Complexity</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in complexityData)
+        {
+            <tr class="@GetComplexityClass(item.Complexity)">
+                <td>@item.File</td>
+                <td>@item.Method</td>
+                <td>@item.Complexity</td>
+            </tr>
+        }
+    </tbody>
+</table>

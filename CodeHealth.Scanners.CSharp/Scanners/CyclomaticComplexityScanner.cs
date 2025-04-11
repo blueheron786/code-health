@@ -1,3 +1,6 @@
+namespace CodeHealth.Scanners.CSharp.Scanners;
+
+using CodeHealth.Core.IO;
 using CodeHealth.Scanners.CSharp.Formatters;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -60,7 +63,7 @@ public class CyclomaticComplexityScanner
         int methodCount = report.Files.Sum(f => f.Methods.Count);
         report.AverageComplexity = methodCount > 0 ? (double)report.TotalComplexity / methodCount : 0;
 
-        var outputFile = Path.Combine(outputDir, "cyclomatic_complexity.json");
+        var outputFile = Path.Combine(outputDir, FileAndFolderConstants.CyclomatiComplexityFile);
         CyclomaticComplexityJsonFormatter.WriteReport(outputFile, report);
     }
 }

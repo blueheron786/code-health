@@ -1,0 +1,35 @@
+﻿@page "/project/{ProjectId}"
+@inherits ProjectSummaryPage
+
+<h3>Cyclomatic Complexity Report for Project: @ProjectId</h3>
+
+@if (complexityData == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div>
+        <p><strong>Cyclomatic Complexity:</strong> Total @totalComplexity, Average @averageComplexity. <a href="@($"/project/{ProjectId}/cyclomatic-complexity")">Full Report</a></p>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Method</th>
+                <th>Cyclomatic Complexity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in complexityData)
+            {
+                <tr class="@GetComplexityClass(item.Complexity)">
+                    <td>@item.File</td>
+                    <td>@item.Method</td>
+                    <td>@item.Complexity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

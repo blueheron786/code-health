@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CodeHealth.Core\CodeHealth.Core.csproj" />
+  </ItemGroup>
+
 </Project>

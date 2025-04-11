@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using CodeHealth.Core.IO;
+using CodeHealth.Scanners.CSharp.Scanners;
 
 namespace CodeHealth.UI.Scanner;
 

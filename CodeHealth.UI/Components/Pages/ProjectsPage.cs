@@ -11,7 +11,7 @@ public partial class ProjectsPage : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        // Load projects and their last run times from the latest-runs.json file
+        // Load projects and their last run times from the projects metadata file
         projects = await LoadProjectsAsync();
     }
 
@@ -26,11 +26,12 @@ public partial class ProjectsPage : ComponentBase
 
         // Read the JSON data
         var json = await File.ReadAllTextAsync(projectsMetadataFile);
-        var latestRuns = JsonSerializer.Deserialize<Dictionary<string, DateTime>>(json);
+        var projectData = JsonSerializer.Deserialize<Dictionary<string, DateTime>>(json);
 
         // Convert the dictionary to a list of projects
-        var projectList = latestRuns?.Select(kvp => new Project
+        var projectList = projectData?.Select(kvp => new Project
         {
+            Id = Path.GetFileName(kvp.Key), // Use the folder name as the ID
             Name = Path.GetFileName(kvp.Key), // Get the last part of the folder path
             LastRunTime = TimeAgo(kvp.Value) // Get the time ago format
         }).ToList();
@@ -64,8 +65,14 @@ public partial class ProjectsPage : ComponentBase
         }
     }
 
+    protected string GetProjectLink(string projectId)
+    {
+        return $"/project/{projectId}"; // Create the link for each project
+    }
+
     public class Project
     {
+        public string Id { get; set; }
         public string Name { get; set; }
         public string LastRunTime { get; set; }
     }

@@ -13,7 +13,7 @@ else
         @foreach (var project in projects)
         {
             <li>
-                <strong>@project.Name</strong> - Last run: @project.LastRunTime
+                <a href="@GetProjectLink(project.Id)"><strong>@project.Name</strong></a> – Last run: @project.LastRunTime
             </li>
         }
     </ul>
