@@ -9,25 +9,43 @@ public static class SharedProjectService
 {
     public static async Task<string> GetRunDirectoryPath(string projectId)
     {
-        var projects = await GetProjectInfo();
+        var projects = await GetAllProjectsInfo();
         if (projects == null)
         {
             throw new InvalidOperationException("Project metadata files should exist, but doesn't.");
         }
         
-        var data = projects.SingleOrDefault(p => p.Key.EndsWith(projectId));
-        return data.Value.FolderName;
+        var data = projects.FirstOrDefault(p => Path.GetFileName(p.Key).Equals(projectId, StringComparison.OrdinalIgnoreCase));
 
-        throw new KeyNotFoundException($"Project {projectId} not found in projects.json");
+        if (data.Equals(default(KeyValuePair<string, ProjectInfo>)))
+        {
+            throw new KeyNotFoundException($"Project {projectId} not found in projects.json");
+        }
+        return data.Value.FolderName;
     }
 
-    public static async Task<ProjectInfo> LoadProjectInfo(string projectId)
+    public static async Task<ProjectInfo> GetProjectInfo(string projectId)
     {
-        var projectData = await GetProjectInfo();
+        var projectData = await GetAllProjectsInfo();
         return projectData?.FirstOrDefault(kvp => kvp.Key.EndsWith(projectId)).Value;
     }
 
-    private static async Task<Dictionary<string, ProjectInfo>> GetProjectInfo()
+    public static async Task<string> GetProjectSourcePath(string projectId)
+    {
+        var projects = await GetAllProjectsInfo();
+        var match = projects.FirstOrDefault(p => 
+            Path.GetFileName(p.Key).Equals(projectId, StringComparison.OrdinalIgnoreCase));
+
+        if (match.Equals(default(KeyValuePair<string, ProjectInfo>)))
+        {
+            throw new KeyNotFoundException($"Project {projectId} not found in projects.json");
+        }
+
+        return match.Key; // This is the full source path, like "D:\projects\code-health"
+    }
+
+
+    private static async Task<Dictionary<string, ProjectInfo>> GetAllProjectsInfo()
     {
         var projectsMetadataFile = FileAndFolderConstants.ProjectsMetadataFile;
         if (!File.Exists(projectsMetadataFile))

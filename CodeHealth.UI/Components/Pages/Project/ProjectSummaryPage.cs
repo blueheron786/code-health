@@ -1,7 +1,3 @@
-using System.IO;
-using System.Text.Json;
-using CodeHealth.Core.IO;
-using CodeHealth.Scanners.CSharp.Formatters;
 using CodeHealth.UI.Services;
 using Microsoft.AspNetCore.Components;
 
@@ -11,7 +7,7 @@ public class ProjectSummaryPage : ComponentBase
 {
     [Parameter]
     public string ProjectId { get; set; }
- 
+
     protected bool isAllDataLoaded = false;
     protected int totalComplexity;
     protected double averageComplexity;
@@ -19,7 +15,7 @@ public class ProjectSummaryPage : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        var projectMetadata = await SharedProjectService.LoadProjectInfo(ProjectId);
+        var projectMetadata = await SharedProjectService.GetProjectInfo(ProjectId);
         var folderName = projectMetadata?.FolderName;
         var lastRunTime = projectMetadata?.Timestamp;
 
@@ -35,8 +31,17 @@ public class ProjectSummaryPage : ComponentBase
             }
         }
 
-        lastScannedTime = lastRunTime?.ToString("yyyy-MM-dd HH:mm:ss");
+        lastScannedTime = lastRunTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Never Scanned";
 
         isAllDataLoaded = true;
+    }
+
+    protected async void ScanProject()
+    {
+        var folderPath = await SharedProjectService.GetProjectSourcePath(ProjectId);
+        var results = ProjectScanner.Scan(folderPath);
+        // Update UI
+        await OnInitializedAsync();
+        StateHasChanged();
     }
 }
