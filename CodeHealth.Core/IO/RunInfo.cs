@@ -20,19 +20,19 @@ namespace CodeHealth.Core.IO
         private static string GetDirectoryName(DateTime runTime)
         {
             // Generate a folder name based on the run time (e.g., "runs/2025-04-10_10-30-45")
-            return Path.Combine(FileAndFolderConstants.RunsDirectory, runTime.ToString("yyyyMMdd_HHmmss"));
+            return Path.Combine(Constants.DirectoryNames.RunsDirectory, runTime.ToString("yyyyMMdd_HHmmss"));
         }
 
         private static void UpdateLatestRuns(string folderPath, DateTime runTime)
         {
             // Ensure the latest-runs.json file exists
-            if (!File.Exists(FileAndFolderConstants.ProjectsMetadataFile))
+            if (!File.Exists(Constants.FileNames.ProjectsMetadataFile))
             {
-                File.WriteAllText(FileAndFolderConstants.ProjectsMetadataFile, "{}"); // Create an empty JSON file if it doesn't exist
+                File.WriteAllText(Constants.FileNames.ProjectsMetadataFile, "{}"); // Create an empty JSON file if it doesn't exist
             }
 
             // Read the existing latest-runs.json file
-            var projectsMetadataJson = File.ReadAllText(FileAndFolderConstants.ProjectsMetadataFile);
+            var projectsMetadataJson = File.ReadAllText(Constants.FileNames.ProjectsMetadataFile);
             var projectsMetadata = JsonSerializer.Deserialize<Dictionary<string, ProjectInfo>>(projectsMetadataJson) ?? new Dictionary<string, ProjectInfo>();
 
             // Update the metadata with the new folder's timestamp and folder name
@@ -44,7 +44,7 @@ namespace CodeHealth.Core.IO
 
             // Save the updated latest-runs.json file
             var updatedJson = JsonSerializer.Serialize(projectsMetadata, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(FileAndFolderConstants.ProjectsMetadataFile, updatedJson);
+            File.WriteAllText(Constants.FileNames.ProjectsMetadataFile, updatedJson);
         }
     }
 }

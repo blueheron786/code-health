@@ -11,7 +11,7 @@ public static class CyclomaticComplexityDataLoder
 {
     public static async Task<List<CyclomaticComplexityData>> LoadCyclomaticComplexityData(string runDirectoryPath)
     {
-        var filePath = Path.Combine(runDirectoryPath, FileAndFolderConstants.CyclomatiComplexityFile);
+        var filePath = Path.Combine(runDirectoryPath, Constants.FileNames.CyclomatiComplexityFile);
 
         if (!File.Exists(filePath))
         {

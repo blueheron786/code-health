@@ -47,7 +47,7 @@ public static class SharedProjectService
 
     private static async Task<Dictionary<string, ProjectInfo>> GetAllProjectsInfo()
     {
-        var projectsMetadataFile = FileAndFolderConstants.ProjectsMetadataFile;
+        var projectsMetadataFile = Constants.FileNames.ProjectsMetadataFile;
         if (!File.Exists(projectsMetadataFile))
         {
             return null; // Return null if no metadata exists

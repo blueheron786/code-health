@@ -6,9 +6,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-public class CyclomaticComplexityScanner
+public class CyclomaticComplexityScanner : IStaticCodeScanner
 {
-    public static void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
+    public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
         var report = new CyclomaticComplexityJsonFormatter.Report();
 
@@ -65,7 +65,7 @@ public class CyclomaticComplexityScanner
         int methodCount = report.Files.Sum(f => f.Methods.Count);
         report.AverageComplexity = methodCount > 0 ? (double)report.TotalComplexity / methodCount : 0;
 
-        var outputFile = Path.Combine(outputDir, FileAndFolderConstants.CyclomatiComplexityFile);
+        var outputFile = Path.Combine(outputDir, Constants.FileNames.CyclomatiComplexityFile);
         CyclomaticComplexityJsonFormatter.WriteReport(outputFile, report);
     }
 }

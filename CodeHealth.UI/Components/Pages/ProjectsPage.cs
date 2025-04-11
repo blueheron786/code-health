@@ -18,7 +18,7 @@ public partial class ProjectsPage : ComponentBase
 
     private async Task<List<Project>> LoadProjectsAsync()
     {
-        var projectsMetadataFile = FileAndFolderConstants.ProjectsMetadataFile;
+        var projectsMetadataFile = Constants.FileNames.ProjectsMetadataFile;
         
         if (!File.Exists(projectsMetadataFile))
         {

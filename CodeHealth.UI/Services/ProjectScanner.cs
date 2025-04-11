@@ -17,7 +17,7 @@ public static class ProjectScanner
 
         Console.WriteLine($"Analyzing {sourcePath} ...");
 
-        CyclomaticComplexityScanner.AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+        new CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
 
         Console.WriteLine($"Analysis complete in {stopwatch.Elapsed}!");
         return stopwatch.Elapsed;
