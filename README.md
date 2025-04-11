@@ -1,5 +1,7 @@
 # Code Health
 
+[![.NET](https://github.com/blueheron786/code-health/actions/workflows/dotnet.yml/badge.svg)](https://github.com/blueheron786/code-health/actions/workflows/dotnet.yml)
+
 Analyze your local code-base for code health. Fix things. Go faster. Code better.
 
 - Variety of code-quality and code-health metrics
