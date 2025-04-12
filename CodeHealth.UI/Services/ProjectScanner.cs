@@ -45,6 +45,8 @@ public static class ProjectScanner
 
     private static bool IsJavaInstalled()
     {
+        var applicationDirectory = Directory.GetCurrentDirectory();
+
         try
         {
             using (var process = new Process())
@@ -55,7 +57,8 @@ public static class ProjectScanner
                     Arguments = "-version",
                     RedirectStandardError = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    WorkingDirectory = applicationDirectory,
                 };
 
                 process.Start();
@@ -98,7 +101,8 @@ public static class ProjectScanner
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    WorkingDirectory = Path.Combine(applicationDirectory, "..", "CodeHealth.Scanners.Java", "build",  "libs"),
                 }
             };
 
