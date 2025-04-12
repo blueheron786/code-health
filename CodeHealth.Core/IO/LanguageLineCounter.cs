@@ -16,6 +16,11 @@ public static class LanguageLineCounter
     {
         [".cs"] = "C#",
         [".java"] = "Java",
+        [".kt"] = "Kotlin",
+        [".js"] = "Javascript",
+        [".jsx"] = "Javascript",
+        [".ts"] = "Typescript",
+        [".tsx"] = "Typescript",
     };
 
     public static void AnalyzeLanguageBreakdown(Dictionary<string, string> sourceFiles, string resultsDirectory)
