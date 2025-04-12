@@ -1,4 +1,5 @@
 using CodeHealth.Core.Dtos;
+using CodeHealth.Core.Dtos.CyclomaticComplexity;
 using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;

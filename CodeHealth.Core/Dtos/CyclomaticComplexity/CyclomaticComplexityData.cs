@@ -1,4 +1,4 @@
-namespace  CodeHealth.Core.Dtos;
+namespace  CodeHealth.Core.Dtos.CyclomaticComplexity;
 
 public class CyclomaticComplexityData
 {

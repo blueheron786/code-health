@@ -1,8 +1,8 @@
 using System.IO;
 using System.Text.Json;
 using CodeHealth.Core.Dtos;
+using CodeHealth.Core.Dtos.CyclomaticComplexity;
 using CodeHealth.Core.IO;
-using CodeHealth.Scanners.CSharp.Formatters;
 
 namespace CodeHealth.UI.Services.DataLoaders;
 
@@ -18,7 +18,7 @@ public static class CyclomaticComplexityDataLoder
         }
 
         var jsonData = await File.ReadAllTextAsync(filePath);
-        var report = JsonSerializer.Deserialize<CyclomaticComplexityJsonFormatter.Report>(jsonData);
+        var report = JsonSerializer.Deserialize<Report>(jsonData);
 
         var methods = report.Files
             .SelectMany(file => file.Methods.Select(method => new CyclomaticComplexityData

@@ -1,16 +1,17 @@
-namespace CodeHealth.Scanners.CSharp.Scanners;
+namespace CodeHealth.Scanners.CSharp;
 
+using CodeHealth.Core.Dtos.CyclomaticComplexity;
 using CodeHealth.Core.IO;
-using CodeHealth.Scanners.CSharp.Formatters;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Text.Json;
 
 public class CyclomaticComplexityScanner : IStaticCodeScanner
 {
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
-        var report = new CyclomaticComplexityJsonFormatter.Report();
+        var report = new Report();
 
         foreach (var kvp in sourceFiles)
         {
@@ -20,7 +21,7 @@ public class CyclomaticComplexityScanner : IStaticCodeScanner
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = tree.GetRoot();
 
-            var fileResult = new CyclomaticComplexityJsonFormatter.FileResult
+            var fileResult = new FileResult
             {
                 File = Path.GetRelativePath(rootPath, fileName).Replace("\\", "/")
             };
@@ -49,7 +50,7 @@ public class CyclomaticComplexityScanner : IStaticCodeScanner
                     );
                 }
 
-                fileResult.Methods.Add(new CyclomaticComplexityJsonFormatter.MethodResult
+                fileResult.Methods.Add(new MethodResult
                 {
                     Method = method.Identifier.Text,
                     Complexity = complexity
@@ -66,6 +67,11 @@ public class CyclomaticComplexityScanner : IStaticCodeScanner
         report.AverageComplexity = methodCount > 0 ? (double)report.TotalComplexity / methodCount : 0;
 
         var outputFile = Path.Combine(outputDir, Constants.FileNames.CyclomatiComplexityFile);
-        CyclomaticComplexityJsonFormatter.WriteReport(outputFile, report);
+
+        // Write report to JSON file using System.Text.Json
+        var jsonOptions = new JsonSerializerOptions { WriteIndented = true }; // to format the JSON nicely
+        var json = JsonSerializer.Serialize(report, jsonOptions);
+
+        File.WriteAllText(outputFile, json);
     }
 }

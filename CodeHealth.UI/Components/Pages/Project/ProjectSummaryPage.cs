@@ -49,8 +49,9 @@ public class ProjectSummaryPage : ComponentBase
     protected async void ScanProject()
     {
         var folderPath = await SharedProjectService.GetProjectSourcePath(ProjectId);
+        
         var results = ProjectScanner.Scan(folderPath);
-        // Update UI
+        // Refresh UI
         await OnInitializedAsync();
         StateHasChanged();
     }

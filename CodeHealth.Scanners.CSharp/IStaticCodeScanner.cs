@@ -1,6 +1,6 @@
 using System;
 
-namespace CodeHealth.Scanners.CSharp.Scanners;
+namespace CodeHealth.Scanners.CSharp;
 
 /// <summary>
 /// Runs a scan on (static) code.
