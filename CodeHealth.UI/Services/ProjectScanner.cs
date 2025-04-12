@@ -6,6 +6,14 @@ namespace CodeHealth.UI.Services;
 
 public static class ProjectScanner
 {
+    private static Dictionary<string, Action<string, Dictionary<string, string>, string>> _languageSpecificScanners = new()
+    {
+        { ".cs", RunCSharpScanners },
+        { ".java", RunJavaScanners },
+        { ".kt", RunKotlinScanners },
+    };
+
+
     public static TimeSpan Scan(string sourcePath)
     {
         var stopwatch = new Stopwatch();
@@ -18,7 +26,6 @@ public static class ProjectScanner
         var sourceFiles = FileDiscoverer.DiscoverSourceFiles(sourcePath);
 
         // Common and language-specific scans
-        LanguageLineCounter.AnalyzeLanguageBreakdown(sourceFiles, resultsDirectory);
         DetectLanguagesAndRunScanners(sourcePath, sourceFiles, resultsDirectory);
         
         Console.WriteLine($"Analysis complete in {stopwatch.Elapsed}!");
@@ -27,14 +34,15 @@ public static class ProjectScanner
     
     private static void DetectLanguagesAndRunScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
-        if (sourceFiles.Any(f => f.Key.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)))
+        foreach (var kvp in _languageSpecificScanners)
         {
-            // Cache files so we don't slam the disk with I/O over and over
-            RunCSharpScanners(sourcePath, sourceFiles, resultsDirectory);
-        }
-        if (sourceFiles.Any(f => f.Key.EndsWith(".java", StringComparison.OrdinalIgnoreCase)))
-        {
-            RunJavaScanners(sourcePath, sourceFiles, resultsDirectory);
+            var extension = kvp.Key;
+            var scannersMethod = kvp.Value;
+
+            if (sourceFiles.Any(f => f.Key.EndsWith(kvp.Key, StringComparison.OrdinalIgnoreCase)))
+            {
+                scannersMethod.Invoke(sourcePath, sourceFiles, resultsDirectory);
+            }
         }
 
         RunCommonScanners(sourcePath, sourceFiles, resultsDirectory);
@@ -50,8 +58,14 @@ public static class ProjectScanner
         new Scanners.Java.CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 
+    private static void RunKotlinScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
+    {
+        new Scanners.Kotlin.CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+    }
+
     private static void RunCommonScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
+        LanguageLineCounter.AnalyzeLanguageBreakdown(sourceFiles, resultsDirectory);
         new TodoCommentScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 }

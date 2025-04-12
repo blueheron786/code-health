@@ -4,7 +4,7 @@ public static class FileDiscoverer
 {
     private static readonly string[] KnownSourceCodeExtensions = { ".cs", ".java", ".kt", ".js" };
     // TODO: replace with proper .gitignore parsing
-    private static readonly string[] IgnoredFolders = { "bin", "obj", ".git", ".vs" };
+    private static readonly string[] IgnoredFolders = { "bin", "obj", "debug", "release", ".git", ".vs" };
 
     /// <summary>
     /// Finds all source files in the given directory and its subdirectories.
