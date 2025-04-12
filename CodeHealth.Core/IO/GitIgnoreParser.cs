@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-// TODO: find a library that does this instead of roll-yer-own
+// TODO: find a library that does this instead of roll-yer-own. This dosen't even work, smh
 public class GitIgnoreParser
 {
     private readonly List<Regex> _rules = new();

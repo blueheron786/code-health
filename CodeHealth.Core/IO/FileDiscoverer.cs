@@ -23,7 +23,8 @@ public static class FileDiscoverer
                 // Ignore test folders/files
                 && !path.Contains($"{Path.DirectorySeparatorChar}test{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase)
                 && !path.Contains($"{Path.DirectorySeparatorChar}tests{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase)
-                // Ignore stuff that SHOULD be in .gitignore but might not be ...
+                // Ignore stuff that SHOULD be in .gitignore but might not be, or might be incorrectly listed
+                // e.g. bin instead of bin/
                 && !IgnoredFolders.Any(folder =>
                     path.Split(Path.DirectorySeparatorChar).Contains(folder, StringComparer.OrdinalIgnoreCase))
                 // Flaky/broken .gitignore parsing/excluding
