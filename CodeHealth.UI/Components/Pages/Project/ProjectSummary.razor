@@ -1,6 +1,8 @@
 ﻿@page "/project/{ProjectId}"
 @inherits ProjectSummaryPage
 
+@using CodeHealth.UI.Components.Controls
+
 <h3>Summary for Project: @ProjectId</h3>
 
 @if (!isAllDataLoaded)
@@ -14,6 +16,9 @@ else
     </div>
 
     <div style="background: #fee; color: red;">@scanResultsMessage</div>
+
+    <!-- Language Distribution Bar -->
+    <LanguageDistributionBar LanguageBreakdown="@languageBreakdown" />
 
     <table class="table table-striped table-hover">
         <thead class="thead-dark">
@@ -44,7 +49,6 @@ else
                 </td>
                 <td><a href="@($"/project/{ProjectId}/todos")">View Report</a></td>
             </tr>
-
         </tbody>
     </table>
 }

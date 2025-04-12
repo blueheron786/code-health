@@ -1,0 +1,27 @@
+@using System.Collections.Generic
+
+<div class="language-bar">
+    @foreach (var lang in LanguageBreakdown)
+    {
+        <div class="language-item" style="width: @(lang.Value * 100)%">
+            <span>@lang.Key (@(lang.Value * 100):F2%)</span>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Dictionary<string, double> LanguageBreakdown { get; set; }
+
+    // This is a simple style you can adjust as needed.
+    private string GetColorForLanguage(string language)
+    {
+        return language switch
+        {
+            "CSharp" => "#6C37E7", // GitHub Linguist color for C#
+            "Java" => "#B07219",    // GitHub Linguist color for Java
+            "Other" => "#D3D3D3",   // Color for other languages
+            _ => "#000000"          // Default color (black)
+        };
+    }
+}

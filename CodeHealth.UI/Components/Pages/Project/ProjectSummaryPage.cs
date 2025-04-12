@@ -1,3 +1,5 @@
+using System.IO;
+using System.Text.Json;
 using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
@@ -9,10 +11,10 @@ public class ProjectSummaryPage : ComponentBase
     [Parameter]
     public string ProjectId { get; set; }
 
-    protected string scanResultsMessage;
-
     protected bool isAllDataLoaded = false;
     protected string lastScannedTime;
+    protected string scanResultsMessage;
+    protected Dictionary<string, double> languageBreakdown;
 
     // Scanner-specific totals/summaries
     protected int totalComplexity;
@@ -41,6 +43,17 @@ public class ProjectSummaryPage : ComponentBase
                 totalTodos = todoData.Count;
             }
 
+            // Load language distribution from JSON file
+            var languageDataPath = Path.Combine(folderName, "language_distribution.json");
+            if (File.Exists(languageDataPath))
+            {
+                var languageData = await File.ReadAllTextAsync(languageDataPath);
+                languageBreakdown = JsonSerializer.Deserialize<Dictionary<string, double>>(languageData);
+            }
+            else
+            {
+                languageBreakdown = new Dictionary<string, double>();
+            }
         }
 
         lastScannedTime = lastRunTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Never Scanned";
