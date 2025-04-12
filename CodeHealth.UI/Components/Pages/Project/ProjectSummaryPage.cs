@@ -1,4 +1,5 @@
 using CodeHealth.UI.Services;
+using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Components.Pages.Project;
@@ -19,10 +20,11 @@ public class ProjectSummaryPage : ComponentBase
         var folderName = projectMetadata?.FolderName;
         var lastRunTime = projectMetadata?.Timestamp;
 
-        // Load cyclomatic complexity data based on the folder name
+        // Load run data based on the folder name
         if (folderName != null)
         {
             var complexityData = await CyclomaticComplexityDataLoder.LoadCyclomaticComplexityData(folderName);
+            var todoData = await TodoCommentDataLoader.LoadTodoCommentsAsync(folderName);
             
             if (complexityData.Any())
             {

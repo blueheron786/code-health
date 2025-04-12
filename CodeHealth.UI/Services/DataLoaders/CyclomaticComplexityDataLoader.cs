@@ -1,11 +1,10 @@
-using System;
 using System.IO;
 using System.Text.Json;
 using CodeHealth.Core.Dtos;
 using CodeHealth.Core.IO;
 using CodeHealth.Scanners.CSharp.Formatters;
 
-namespace CodeHealth.UI.Services;
+namespace CodeHealth.UI.Services.DataLoaders;
 
 public static class CyclomaticComplexityDataLoder
 {

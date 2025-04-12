@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CodeHealth.Core.Dtos.TodoComments;
 using CodeHealth.Core.IO;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,7 +10,7 @@ public class TodoCommentScanner : IStaticCodeScanner
 {
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
-        var report = new Report();
+        var report = new TodoCommentsReport();
 
         foreach (var kvp in sourceFiles)
         {
@@ -50,23 +51,5 @@ public class TodoCommentScanner : IStaticCodeScanner
         var outputFile = Path.Combine(outputDir, Constants.FileNames.TodoCommentsFile);
         var options = new JsonSerializerOptions { WriteIndented = true };
         File.WriteAllText(outputFile, JsonSerializer.Serialize(report, options));
-    }
-
-    private class Report
-    {
-        public int TotalTodos { get; set; }
-        public List<FileResult> Files { get; set; } = new();
-    }
-
-    private class FileResult
-    {
-        public string File { get; set; } = string.Empty;
-        public List<CommentResult> Comments { get; set; } = new();
-    }
-
-    private class CommentResult
-    {
-        public int Line { get; set; }
-        public string Text { get; set; } = string.Empty;
     }
 }

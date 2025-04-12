@@ -1,5 +1,6 @@
 using CodeHealth.Core.Dtos;
 using CodeHealth.UI.Services;
+using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Components.Pages.Project;
