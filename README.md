@@ -44,8 +44,8 @@ Currently in active development. Support varies per analysis type.
 |-------------|-----------------|
 | C#          | ✅ Working      |
 | Java        | ✅ Working      |
-| JavaScript  | ⚠️ Planned      |
-| Kotlin, etc.| 🚧 Planned      |
+| Kotlin      | ✅ Working      |
+| JavaScript  | ✅ Working      |
 
 ---
 

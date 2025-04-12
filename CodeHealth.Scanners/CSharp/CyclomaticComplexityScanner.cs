@@ -64,15 +64,6 @@ public class CyclomaticComplexityScanner : IStaticCodeScanner
                 report.Files.Add(fileResult);
         }
 
-        int methodCount = report.Files.Sum(f => f.Methods.Count);
-        report.AverageComplexity = methodCount > 0 ? (double)report.TotalComplexity / methodCount : 0;
-
-        var outputFile = Path.Combine(outputDir, Constants.FileNames.CyclomatiComplexityFile);
-
-        // Write report to JSON file using System.Text.Json
-        var jsonOptions = new JsonSerializerOptions { WriteIndented = true }; // to format the JSON nicely
-        var json = JsonSerializer.Serialize(report, jsonOptions);
-
-        File.WriteAllText(outputFile, json);
+        CyclomaticComplexityReporter.FinalizeReport(report, outputDir, "cyclomatic_complexity.csharp.json");
     }
 }

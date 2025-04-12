@@ -2,7 +2,13 @@ using CodeHealth.Core.IO;
 
 public static class FileDiscoverer
 {
-    private static readonly string[] KnownSourceCodeExtensions = { ".cs", ".java", ".kt", ".js", ".jsx", ".ts", ".tsx" };
+    private static readonly string[] KnownSourceCodeExtensions =
+    {
+        ".cs",
+        ".java", ".kt",
+        ".js", ".jsx", ".ts", ".tsx"
+    };
+    
     // TODO: replace with proper .gitignore parsing
     private static readonly string[] IgnoredFolders = { "bin", "obj", "debug", "release", ".git", ".vs" };
 

@@ -30,7 +30,7 @@ public class ProjectSummaryPage : ComponentBase
         // Load run data based on the folder name
         if (folderName != null)
         {
-            var complexityData = await CyclomaticComplexityDataLoder.LoadCyclomaticComplexityData(folderName);            
+            var complexityData = await CyclomaticComplexityDataLoader.LoadCyclomaticComplexityData(folderName);            
             if (complexityData.Any())
             {
                 totalComplexity = complexityData.Sum(x => x.Complexity);

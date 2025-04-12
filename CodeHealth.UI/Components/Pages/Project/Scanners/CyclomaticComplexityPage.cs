@@ -15,7 +15,7 @@ public class CyclomaticComplexityPage : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
-        complexityData = await CyclomaticComplexityDataLoder.LoadCyclomaticComplexityData(runDirectoryPath);
+        complexityData = await CyclomaticComplexityDataLoader.LoadCyclomaticComplexityData(runDirectoryPath);
     }
 
     protected string GetComplexityClass(int cc)

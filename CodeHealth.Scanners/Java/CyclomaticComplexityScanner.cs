@@ -50,16 +50,12 @@ public class CyclomaticComplexityScanner : IStaticCodeScanner
             }
 
             if (fileResult.Methods.Any())
+            {
                 report.Files.Add(fileResult);
+            }
         }
 
-        int methodCount = report.Files.Sum(f => f.Methods.Count);
-        report.AverageComplexity = methodCount > 0 ? (double)report.TotalComplexity / methodCount : 0;
-
-        var outputFile = Path.Combine(outputDir, Constants.FileNames.CyclomatiComplexityFile);
-        var jsonOptions = new JsonSerializerOptions { WriteIndented = true };
-        var json = JsonSerializer.Serialize(report, jsonOptions);
-        File.WriteAllText(outputFile, json);
+        CyclomaticComplexityReporter.FinalizeReport(report, outputDir, "cyclomatic_complexity.java.json");
     }
 
     private static string StripCommentsAndStrings(string code)
