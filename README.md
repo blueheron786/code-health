@@ -2,46 +2,84 @@
 
 [![.NET](https://github.com/blueheron786/code-health/actions/workflows/dotnet.yml/badge.svg)](https://github.com/blueheron786/code-health/actions/workflows/dotnet.yml)
 
-Analyze your local code-base for code health, without heavy installations or slow runtimes. Fix things. Go faster. Code better.
+**Code Health** is a fast, local-first code analysis tool that helps you understand and improve your codebase without installing giant IDE plugins, setting up servers, or wiring up a SaaS.
 
-- Variety of code-quality and code-health metrics
-- Runs entirely locally, no need for network
-- Lightweight and fast to run
-- No expensive fees
+🚀 **Scan your code. Catch issues. Stay fast.**
 
-Made in C# with Blazor.
+---
 
-# Supported Languages
+### 💡 Why Code Health?
 
-**Note:** While basic static code analysis runs in .NET 8, runtime analysis (build warnings, unit test coverage, etc.) require you to have a working dev environment for whichever project you're analyzing.
+Most code quality tools are either:
+- Heavyweight (hello SonarQube), or
+- Language-specific (like Detekt or ESLint), or
+- Locked behind subscriptions accounts
 
-Everything is WIP since this project is relatively new and under heavy development. Planned languages include:
+**Code Health** gives you:
+- ✅ Lightweight, fast CLI scanning
+- ✅ Consistent results across languages
+- ✅ A visual, interactive UI (built in Blazor)
+- ✅ Zero external dependencies at runtime
 
-- C#
-- Java
-- Javascript
+> Analyze what matters. Skip the noise.
 
-# Developer Environment Setup
+---
 
-Make sure you have:
+### 🧠 What It Checks
 
-- C# (.NET 8 SDK)
-- JDK 17 and java.exe on the `PATH`
+- Cyclomatic complexity
+- TODOs / tech debt comments
+- Style violations
+- Build warnings (if enabled)
+- Unit test coverage (if enabled)
+- More to come...
 
-## Building Java Scanners
+---
 
-The repository for Code Health ships with a pre-built version of the code in `CodeHealth.Scanners.Java`, so you can get started quickly. If you make any changes to the Java code and need to rebuild, run `mvn clean build` from the `CodeHealth.Scanners.Java` directory.
+### ⚙️ Supported Languages
 
-# Design and Architecture
+Currently in active development. Support varies per analysis type.
 
-- UI: a Blazor desktop app that consumes analysis data and presents it in a visually interesting way
-- Scanners: single-responsibility classes that that check one thing, and spit out data for the UI. These subdivide into **static code** scanners (analyze code on disk) and **dynamic** scanners (that do things like run the build/tests and collect output).
+| Language    | Static Analysis |
+|-------------|-----------------|
+| C#          | ✅ Working      |
+| Java        | ✅ In Progress  |
+| JavaScript  | ⚠️ Planned      |
+| Kotlin, etc.| 🚧 Planned      |
 
-Note that not every language will support every type of analysis.
+---
 
-Since you need to be able to build your code for runtime analysis, we went the simpler route of using language-specific scanners:
+### 🛠️ Getting Started
 
-- C# scanners are built in Roslyn
-- Java scanners are built in JavaParser
+Make sure you have .NET 8 installed. 
 
-The implication is that `CodeHealth.Scanners.Java` has a `binaries` directory with the Java scanners
+Run the app:
+```bash
+dotnet run --project CodeHealth.App
+```
+
+---
+
+### 🔧 Developer Notes
+
+The architecture is intentionally modular:
+
+- **Scanners** do the hard work — language-specific, single-responsibility analyzers
+- **UI** renders clean summaries grouped by file, language, and issue type
+- **Data** is stored locally in JSON files so you can inspect, diff, or reprocess them
+
+---
+
+### 🚀 Roadmap Highlights
+
+- Visual dashboards of complexity and hotspots
+- Language usage graphs
+- Language-agnostic analysis (e.g. duplication)
+
+---
+
+### ❤️ Contributing
+
+PRs, feedback, and issue reports are welcome. This project is early and evolving fast — feel free to jump in and help shape it.
+
+---
