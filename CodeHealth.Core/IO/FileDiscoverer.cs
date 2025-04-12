@@ -2,8 +2,6 @@ using CodeHealth.Core.IO;
 
 public static class FileDiscoverer
 {
-    private static readonly string[] AllowedExtensions = new[] { ".cs", ".java" }; // maybe .kt, .js later?
-    // TODO: replace with proper .gitignore parsing
     private static readonly string[] IgnoredFolders = new[] { "bin", "obj", ".git", ".vs" };
 
     /// <summary>
@@ -15,13 +13,21 @@ public static class FileDiscoverer
     {
         var ignore = new GitIgnoreParser(Path.Combine(rootPath, ".gitignore"));
 
-        var allFiles = Directory.GetFiles(rootPath, "*.*", SearchOption.AllDirectories)
+        var cSharpFiles = Directory.GetFiles(rootPath, "*.cs", SearchOption.AllDirectories)
             .Where(path =>
-                AllowedExtensions.Contains(Path.GetExtension(path), StringComparer.OrdinalIgnoreCase)
                 // C# code, but not generated, e.g. .Designer.cs files from RESX files
-                && !path.EndsWith(".Designer.cs", StringComparison.OrdinalIgnoreCase)
+                !path.EndsWith(".Designer.cs", StringComparison.OrdinalIgnoreCase)
+                && !path.EndsWith("Tests", StringComparison.OrdinalIgnoreCase));
+        
+        var javaFiles = Directory.GetFiles(rootPath, "*.java", SearchOption.AllDirectories)
+            .Where(path =>
+                !path.Contains($"{Path.DirectorySeparatorChar}test{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase));
+
+        // Common/global exclusions
+        var allFiles = cSharpFiles.Concat(javaFiles)
+            .Where(path =>
                 // Ignore test folders/files
-                && !path.Contains($"{Path.DirectorySeparatorChar}test{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase)
+                !path.Contains($"{Path.DirectorySeparatorChar}test{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase)
                 && !path.Contains($"{Path.DirectorySeparatorChar}tests{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase)
                 // Ignore stuff that SHOULD be in .gitignore but might not be, or might be incorrectly listed
                 // e.g. bin instead of bin/
@@ -34,5 +40,4 @@ public static class FileDiscoverer
 
         return allFiles;
     }
-
 }
