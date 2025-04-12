@@ -12,7 +12,7 @@ using System.Text.Json;
 /// </summary>
 public static class LanguageLineCounter
 {
-    private static readonly Dictionary<string, string> ExtensionToLanguage = new(StringComparer.OrdinalIgnoreCase)
+    public static readonly Dictionary<string, string> ExtensionToLanguage = new(StringComparer.OrdinalIgnoreCase)
     {
         [".cs"] = "C#",
         [".java"] = "Java",

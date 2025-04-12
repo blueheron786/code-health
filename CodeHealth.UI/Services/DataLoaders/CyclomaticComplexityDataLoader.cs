@@ -1,8 +1,6 @@
 using System.IO;
 using System.Text.Json;
-using CodeHealth.Core.Dtos;
 using CodeHealth.Core.Dtos.CyclomaticComplexity;
-using CodeHealth.Core.IO;
 
 namespace CodeHealth.UI.Services.DataLoaders;
 
@@ -24,7 +22,7 @@ public static class CyclomaticComplexityDataLoader
 
                 if (report?.Files != null)
                 {
-                    var language = GetLanguageFromFile(filePath);
+                    var language = GetLanguageFromCyclomaticComplexityReportFile(filePath);
 
                     var methods = report.Files
                         .SelectMany(file => file.Methods.Select(method => new CyclomaticComplexityData
@@ -32,7 +30,7 @@ public static class CyclomaticComplexityDataLoader
                             File = file.File,
                             Method = method.Method,
                             Complexity = method.Complexity,
-                            Language = language
+                            Language = language,
                         }));
 
                     allMethods.AddRange(methods);
@@ -49,12 +47,12 @@ public static class CyclomaticComplexityDataLoader
             .ToList();
     }
 
-    private static string GetLanguageFromFile(string filePath)
+    private static string GetLanguageFromCyclomaticComplexityReportFile(string filePath)
     {
         // Extract the language from the file name
         var fileName = Path.GetFileName(filePath);
-        var language = fileName?.Split('.').Skip(2).FirstOrDefault()?.ToUpper();
-
+        // cyclomatic.FOOBAR.json, language is FOOBAR
+        var language = fileName?.Split('.').Skip(1).FirstOrDefault()?.ToLower();
         // Handle cases where language isn't found or is malformed
         return language ?? "Unknown";
     }
