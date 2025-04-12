@@ -25,6 +25,9 @@ public static class FileDiscoverer
                 && !path.Contains($"{Path.DirectorySeparatorChar}test{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase)
                 && !path.Contains($"{Path.DirectorySeparatorChar}tests{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase)
                 
+                // JS: ignore node_modules
+                && !path.Contains("node_modules", StringComparison.OrdinalIgnoreCase)
+
                 // Common
                 // Ignore stuff that SHOULD be in .gitignore but might not be, or might be incorrectly listed
                 // e.g. bin instead of bin/
