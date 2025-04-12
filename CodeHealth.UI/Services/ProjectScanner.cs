@@ -13,26 +13,28 @@ public static class ProjectScanner
         stopwatch.Start();
 
         Console.WriteLine($"Analyzing {sourcePath} ...");
-        DetectLanguagesAndRunScanners(sourcePath);
+
+        // Common stuff
+        var resultsDirectory = RunInfo.CreateRun(sourcePath, DateTime.Now);
+        var sourceFiles = FileDiscoverer.DiscoverSourceFiles(sourcePath);
+
+        // Common and language-specific scans
+        LanguageLineCounter.AnalyzeLanguageBreakdown(sourceFiles, resultsDirectory);
+        DetectLanguagesAndRunScanners(sourcePath, sourceFiles, resultsDirectory);
         
         Console.WriteLine($"Analysis complete in {stopwatch.Elapsed}!");
         return stopwatch.Elapsed;
     }
 
-    private static void DetectLanguagesAndRunScanners(string sourcePath)
+    private static void DetectLanguagesAndRunScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
-        var sourceFiles = FileDiscoverer.DiscoverSourceFiles(sourcePath);
-        
-        var resultsDirectory = RunInfo.CreateRun(sourcePath, DateTime.Now);
-
-        if (sourceFiles.Any(f => f.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)))
+        if (sourceFiles.Any(f => f.Key.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)))
         {
             // Cache files so we don't slam the disk with I/O over and over
-            var allCSharpFiles = sourceFiles.ToDictionary(path => path, File.ReadAllText);
-            RunCSharpScanners(sourcePath, allCSharpFiles, resultsDirectory);
+            RunCSharpScanners(sourcePath, sourceFiles, resultsDirectory);
         }
 
-        if (sourceFiles.Any(f => f.EndsWith(".java", StringComparison.OrdinalIgnoreCase)))
+        if (sourceFiles.Any(f => f.Key.EndsWith(".java", StringComparison.OrdinalIgnoreCase)))
         {
             RunJavaScanners(sourcePath, resultsDirectory);
         }

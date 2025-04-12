@@ -11,8 +11,10 @@ public static class Constants
     public static class FileNames
     {
         public static readonly string ProjectsMetadataFile = Path.Combine(DirectoryNames.DataDirectory, "projects.json");
+
         // Scanner outputs
         public const string CyclomatiComplexityFile = "cyclomatic_complexity.json";
         public const string TodoCommentsFile = "todos.json";
+        public const string LanguageDistribution = "language_distribution.json";
     }
 }
