@@ -3,9 +3,6 @@
 
 <h3>Summary for Project: @ProjectId</h3>
 
-<button @onclick="ScanProject">Scan Now</button>
-
-
 @if (!isAllDataLoaded)
 {
     <p>Loading...</p>
@@ -27,3 +24,5 @@ else
         
     </ul>
 }
+
+<button @onclick="ScanProject">Scan Now</button>

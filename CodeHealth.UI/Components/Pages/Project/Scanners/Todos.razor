@@ -1,0 +1,42 @@
+﻿@page "/project/{ProjectId}/todos"
+@inherits TodosPage
+
+<h3>TODO Comments for Project: @ProjectId</h3>
+
+@if (todoData == null)
+{
+    <p>Loading data...</p>
+}
+else if (!todoData.Any())
+{
+    <p>No TODO comments found for this project.</p>
+}
+else
+{
+    foreach (var fileGroup in todoData.GroupBy(t => t.File))
+    {
+        <h5 class="mt-4">@fileGroup.Key</h5>
+        <div class="border p-3 mb-4 bg-light rounded">
+            @foreach (var todo in fileGroup)
+            {
+                <div class="mb-3">
+                    <p><strong>Line @todo.Line:</strong></p>
+
+                    <pre class="bg-white p-2 border rounded">
+                        @foreach (var line in todo.Context ?? new List<string> { "// No context available" })
+                        {
+                            @if (line.Contains(todo.Text))
+                            {
+                                <span class="highlight-todo">@line</span><br />
+                            }
+                            else
+                            {
+                                @line<br />
+                            }
+                        }
+                    </pre>
+                </div>
+            }
+        </div>
+    }
+}
