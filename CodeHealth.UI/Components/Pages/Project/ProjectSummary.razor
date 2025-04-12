@@ -9,20 +9,43 @@
 }
 else
 {
-    <ul>
-        <li><strong>Last scanned:</strong> @lastScannedTime</li>
-        <li>
-            <strong>Cyclomatic Complexity:</strong>
-            Total @totalComplexity, Average @($"{averageComplexity:F2}")
-            [<a href="@($"/project/{ProjectId}/cyclomatic-complexity")">Report</a>]
-        </li>
-        <li>
-            <strong>TODOs:</strong>
-            @totalTodos todo items
-            [<a href="@($"/project/{ProjectId}/todos")">Report</a>]
-        </li>
-        
-    </ul>
+    <div class="mb-3">
+        <strong>Last Scanned:</strong> @lastScannedTime
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Analyzer</th>
+                <th>Details</th>
+                <th>Report</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Cyclomatic Complexity</td>
+                <td>
+                    Total @totalComplexity, Average @($"{averageComplexity:F2}")
+                    @* Example logic for status *@
+                    <span class="badge @(averageComplexity > 20 ? "bg-danger" : averageComplexity > 10 ? "bg-warning" : "bg-success")">
+                        @(averageComplexity > 20 ? "High" : averageComplexity > 10 ? "Moderate" : "Low")
+                    </span>
+                </td>
+                <td><a href="@($"/project/{ProjectId}/cyclomatic-complexity")">View Report</a></td>
+            </tr>
+            <tr>
+                <td>TODOs</td>
+                <td>
+                    @totalTodos TODO items
+                    <span class="badge @(totalTodos > 20 ? "bg-danger" : totalTodos > 5 ? "bg-warning" : "bg-success")">
+                        @(totalTodos > 20 ? "Many" : totalTodos > 5 ? "Some" : "Few")
+                    </span>
+                </td>
+                <td><a href="@($"/project/{ProjectId}/todos")">View Report</a></td>
+            </tr>
+
+        </tbody>
+    </table>
 }
 
-<button @onclick="ScanProject">Scan Now</button>
+<button class="btn btn-primary mt-3" @onclick="ScanProject">Scan Now</button>
