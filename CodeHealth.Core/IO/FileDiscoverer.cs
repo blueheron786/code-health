@@ -7,9 +7,8 @@ public static class FileDiscoverer
     /// <summary>
     /// Finds all source files in the given directory and its subdirectories.
     /// Excludes files that are ignored by gitignore and files that are in test directories.
-    /// Returns a dictionary of file name => content, so we don't slam the file system with too many reads.
     /// </summary>
-    public static Dictionary<string, string> GetSourceFiles(string rootPath)
+    public static IEnumerable<string> DiscoverSourceFiles(string rootPath)
     {
         var ignore = new GitIgnoreParser(Path.Combine(rootPath, ".gitignore"));
 
@@ -34,10 +33,8 @@ public static class FileDiscoverer
                 && !IgnoredFolders.Any(folder =>
                     path.Split(Path.DirectorySeparatorChar).Contains(folder, StringComparer.OrdinalIgnoreCase))
                 // Flaky/broken .gitignore parsing/excluding
-                && !ignore.IsIgnored(Path.GetRelativePath(rootPath, path)))
+                && !ignore.IsIgnored(Path.GetRelativePath(rootPath, path)));
         
-        .ToDictionary(path => path, File.ReadAllText);
-
         return allFiles;
     }
 }

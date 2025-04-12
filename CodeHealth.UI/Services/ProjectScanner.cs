@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using CodeHealth.Core.IO;
 using CodeHealth.Scanners.CSharp;
 
@@ -22,16 +21,18 @@ public static class ProjectScanner
 
     private static void DetectLanguagesAndRunScanners(string sourcePath)
     {
-        var sourceFiles = FileDiscoverer.GetSourceFiles(sourcePath);
+        var sourceFiles = FileDiscoverer.DiscoverSourceFiles(sourcePath);
         
         var resultsDirectory = RunInfo.CreateRun(sourcePath, DateTime.Now);
 
-        if (sourceFiles.Keys.Any(f => f.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)))
+        if (sourceFiles.Any(f => f.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)))
         {
-            RunCSharpScanners(sourcePath, sourceFiles, resultsDirectory);
+            // Cache files so we don't slam the disk with I/O over and over
+            var allCSharpFiles = sourceFiles.ToDictionary(path => path, File.ReadAllText);
+            RunCSharpScanners(sourcePath, allCSharpFiles, resultsDirectory);
         }
 
-        if (sourceFiles.Keys.Any(f => f.EndsWith(".java", StringComparison.OrdinalIgnoreCase)))
+        if (sourceFiles.Any(f => f.EndsWith(".java", StringComparison.OrdinalIgnoreCase)))
         {
             RunJavaScanners(sourcePath, resultsDirectory);
         }
