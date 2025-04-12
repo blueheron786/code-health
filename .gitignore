@@ -1,6 +1,11 @@
+# C#
 [Bb]in
 [Oo]bj
+
+# Java
 **/*.class
 .gradle
+build
 
+# Data
 data

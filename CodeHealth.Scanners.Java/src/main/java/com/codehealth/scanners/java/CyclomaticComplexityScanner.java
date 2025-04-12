@@ -6,12 +6,15 @@ import java.nio.file.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+@SuppressWarnings("unchecked")
 public class CyclomaticComplexityScanner {
     public static void scan(String sourceRoot, String outputFile) {
         JSONObject report = new JSONObject();
         JSONArray files = new JSONArray();
-        int totalComplexity = 0;
-        int totalMethods = 0;
+        
+        // Using single-element arrays to bypass the "effectively final" requirement
+        final int[] totalComplexity = {0};
+        final int[] totalMethods = {0};
 
         try {
             Files.walk(Paths.get(sourceRoot))
@@ -51,8 +54,8 @@ public class CyclomaticComplexityScanner {
                                     methodJson.put("method", methodName);
                                     methodJson.put("complexity", complexity);
                                     methodsArray.add(methodJson);
-                                    totalComplexity += complexity;
-                                    totalMethods++;
+                                    totalComplexity[0] += complexity;  // Modify array element
+                                    totalMethods[0]++;                 // Modify array element
                                     inMethod = false;
                                 }
                             }
@@ -68,8 +71,11 @@ public class CyclomaticComplexityScanner {
                 });
 
             report.put("files", files);
-            report.put("totalComplexity", totalComplexity);
-            report.put("averageComplexity", totalMethods > 0 ? (double) totalComplexity / totalMethods : 0.0);
+            report.put("totalComplexity", totalComplexity[0]);
+            report.put("averageComplexity", 
+                totalMethods[0] > 0 ? 
+                (double) totalComplexity[0] / totalMethods[0] : 
+                0.0);
 
             try (FileWriter writer = new FileWriter(outputFile)) {
                 writer.write(report.toJSONString());
