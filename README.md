@@ -2,46 +2,93 @@
 
 [![.NET](https://github.com/blueheron786/code-health/actions/workflows/dotnet.yml/badge.svg)](https://github.com/blueheron786/code-health/actions/workflows/dotnet.yml)
 
-Analyze your local code-base for code health, without heavy installations or slow runtimes. Fix things. Go faster. Code better.
+**Code Health** is a fast, local-first code analysis tool that helps you understand and improve your codebase without installing giant IDE plugins, setting up servers, or wiring up a SaaS.
 
-- Variety of code-quality and code-health metrics
-- Runs entirely locally, no need for network
-- Lightweight and fast to run
-- No expensive fees
+🚀 **Scan your code. Catch issues. Stay fast.**
 
-Made in C# with Blazor.
+---
 
-# Supported Languages
+### 💡 Why Code Health?
 
-**Note:** While basic static code analysis runs in .NET 8, runtime analysis (build warnings, unit test coverage, etc.) require you to have a working dev environment for whichever project you're analyzing.
+Most code quality tools are either:
+- Heavyweight (hello SonarQube),
+- Language-specific (like Detekt or ESLint),
+- Or locked behind subscriptions and vendor accounts.
 
-Everything is WIP since this project is relatively new and under heavy development. Planned languages include:
+**Code Health** gives you:
+- ✅ Lightweight, fast CLI scanning
+- ✅ Consistent results across languages
+- ✅ A visual, interactive UI (built in Blazor)
+- ✅ Zero external dependencies at runtime (optional tools downloaded only when needed)
 
-- C#
-- Java
-- Javascript
+> Analyze what matters. Skip the noise.
 
-# Developer Environment Setup
+---
+
+### 🧠 What It Checks
+
+- Cyclomatic complexity
+- TODOs / tech debt comments
+- Style violations
+- Build warnings
+- Unit test coverage
+- More to come...
+
+---
+
+### ⚙️ Supported Languages
+
+Currently in active development. Support varies per analysis type.
+
+| Language    | Static Analysis | Runtime (Build/Tests) |
+|-------------|-----------------|------------------------|
+| C#          | ✅ (Roslyn)     | ✅ Requires .NET SDK   |
+| Java        | ✅ (JavaParser) | ✅ Requires JDK 17     |
+| JavaScript  | ⚠️ Planned      | ⚠️ Planned             |
+| Kotlin, etc.| 🚧 Planned      | 🚧 Planned             |
+---
+
+### 🛠️ Getting Started
 
 Make sure you have:
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download)
+- [Java 17 JDK](https://adoptium.net/) on your `PATH` (if analyzing Java projects)
 
-- C# (.NET 8 SDK)
-- JDK 17 and java.exe on the `PATH`
+Run the app:
+```bash
+dotnet run --project CodeHealth.App
+```
 
-## Building Java Scanners
+---
 
-The repository for Code Health ships with a pre-built version of the code in `CodeHealth.Scanners.Java`, so you can get started quickly. If you make any changes to the Java code and need to rebuild, run `mvn clean build` from the `CodeHealth.Scanners.Java` directory.
+### 🔧 Developer Notes
 
-# Design and Architecture
+The architecture is intentionally modular:
 
-- UI: a Blazor desktop app that consumes analysis data and presents it in a visually interesting way
-- Scanners: single-responsibility classes that that check one thing, and spit out data for the UI. These subdivide into **static code** scanners (analyze code on disk) and **dynamic** scanners (that do things like run the build/tests and collect output).
+- **Scanners** do the hard work — language-specific, single-responsibility analyzers
+- **UI** renders clean summaries grouped by file, language, and issue type
+- **Data** is stored locally in JSON files so you can inspect, diff, or reprocess them
 
-Note that not every language will support every type of analysis.
+Prebuilt Java scanner binaries live in `CodeHealth.Scanners.Java/binaries` (for now).
 
-Since you need to be able to build your code for runtime analysis, we went the simpler route of using language-specific scanners:
+If you change the Java code:
+```bash
+cd CodeHealth.Scanners.Java
+gradle clean build
+```
 
-- C# scanners are built in Roslyn
-- Java scanners are built in JavaParser
+---
 
-The implication is that `CodeHealth.Scanners.Java` has a `binaries` directory with the Java scanners
+### 🚀 Roadmap Highlights
+
+- Plugin system to download tools like Detekt on-demand
+- Visual dashboards of complexity and hotspots
+
+---
+
+### ❤️ Contributing
+
+PRs, feedback, and issue reports are welcome. This project is early and evolving fast — feel free to jump in and help shape it.
+
+---
+
