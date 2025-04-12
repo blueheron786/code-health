@@ -1,18 +1,7 @@
-@code {
+@using CodeHealth.UI.Components.Pages
+
+@code {    
     [Parameter] public Dictionary<string, double> LanguageBreakdown { get; set; }
-
-    private readonly Dictionary<string, string> LanguageColors = new()
-    {
-        { "C#", "#178600" },
-        { "Java", "#b07219" },
-        { "Javascript", "#f1e05a" },
-        { "Typescript", "#3178c6" },
-        { "Kotlin", "#A97BFF"},
-        { "Other", "#D3D3D3" },
-    };
-
-    private string GetBarColor(string language) =>
-        LanguageColors.TryGetValue(language, out var color) ? color : "#95a5a6";
 }
 
 <strong>Language Distribution:</strong>
@@ -40,7 +29,7 @@
             var separatorStyle = !isFirst ? "margin-left: 2px;" : "";
 
             <div class="segment"
-                 style="width: @(lang.Value * 100)%; background-color: @GetBarColor(lang.Key); @radiusStyle @separatorStyle">
+                 style="width: @(lang.Value * 100)%; background-color: @LanguageColours.GetColour(lang.Key); @radiusStyle @separatorStyle">
             </div>
         }
     </div>
@@ -49,7 +38,7 @@
         @foreach (var lang in LanguageBreakdown)
         {
             <div class="legend-item">
-                <div class="color-box" style="background-color: @GetBarColor(lang.Key)"></div>
+                <div class="color-box" style="background-color: @LanguageColours.GetColour(lang.Key)"></div>
                 <span>@lang.Key (@($"{lang.Value * 100:F1}%"))</span>
             </div>
         }
