@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text.Json;
 using CodeHealth.Core.Dtos.TodoComments;
+using CodeHealth.Core.IO;
 
 namespace CodeHealth.UI.Services.DataLoaders;
 
@@ -9,7 +10,7 @@ public static class TodoCommentDataLoader
 {
     public static async Task<List<TodoCommentData>> LoadTodoCommentsAsync(string runDirectoryPath)
     {
-        var filePath = Path.Combine(runDirectoryPath, "todo_comments.json");
+        var filePath = Path.Combine(runDirectoryPath, Constants.FileNames.TodoCommentsFile);
 
         if (!File.Exists(filePath))
         {

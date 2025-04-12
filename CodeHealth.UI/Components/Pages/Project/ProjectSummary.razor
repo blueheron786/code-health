@@ -19,5 +19,11 @@ else
             Total @totalComplexity, Average @($"{averageComplexity:F2}")
             [<a href="@($"/project/{ProjectId}/cyclomatic-complexity")">Report</a>]
         </li>
+        <li>
+            <strong>TODOs:</strong>
+            @totalTodos todo items
+            [<a href="@($"/project/{ProjectId}/todos")">Report</a>]
+        </li>
+        
     </ul>
 }

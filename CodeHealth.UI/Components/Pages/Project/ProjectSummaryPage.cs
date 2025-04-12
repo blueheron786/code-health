@@ -10,9 +10,12 @@ public class ProjectSummaryPage : ComponentBase
     public string ProjectId { get; set; }
 
     protected bool isAllDataLoaded = false;
+    protected string lastScannedTime;
+
+    // Scanner-specific totals/summaries
     protected int totalComplexity;
     protected double averageComplexity;
-    protected string lastScannedTime;
+    protected int totalTodos;
 
     protected override async Task OnInitializedAsync()
     {
@@ -23,14 +26,19 @@ public class ProjectSummaryPage : ComponentBase
         // Load run data based on the folder name
         if (folderName != null)
         {
-            var complexityData = await CyclomaticComplexityDataLoder.LoadCyclomaticComplexityData(folderName);
-            var todoData = await TodoCommentDataLoader.LoadTodoCommentsAsync(folderName);
-            
+            var complexityData = await CyclomaticComplexityDataLoder.LoadCyclomaticComplexityData(folderName);            
             if (complexityData.Any())
             {
                 totalComplexity = complexityData.Sum(x => x.Complexity);
                 averageComplexity = complexityData.Average(x => x.Complexity);
             }
+
+            var todoData = await TodoCommentDataLoader.LoadTodoCommentsAsync(folderName);
+            if (todoData.Any())
+            {
+                totalTodos = todoData.Count;
+            }
+
         }
 
         lastScannedTime = lastRunTime?.ToString("yyyy-MM-dd HH:mm:ss") ?? "Never Scanned";

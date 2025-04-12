@@ -18,6 +18,7 @@ public static class ProjectScanner
         Console.WriteLine($"Analyzing {sourcePath} ...");
 
         new CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+        new TodoCommentScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
 
         Console.WriteLine($"Analysis complete in {stopwatch.Elapsed}!");
         return stopwatch.Elapsed;
