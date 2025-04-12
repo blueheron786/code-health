@@ -4,9 +4,9 @@ plugins {
 }
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 repositories {
@@ -19,15 +19,66 @@ dependencies {
 
 application {
     mainClass = 'com.codehealth.scanners.java.Application'
+    // Disable start scripts since we're making our own
+    applicationDefaultJvmArgs = []
 }
 
+// 1. First create the main JAR without dependencies
 jar {
-    // Build a fat JAR that includes all dependencies. Thicc boi, but easiest to run.
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
+    archiveBaseName = 'CodeHealth.Scanners.Java'
+}
+
+// 2. Copy dependencies to libs/ folder
+task copyDependencies(type: Copy) {
+    from configurations.runtimeClasspath
+    into "$buildDir/libs/libs"
+}
+
+// 3. Create an executable "fat" JAR with dependencies bundled
+task fatJar(type: Jar) {
+    archiveBaseName = 'CodeHealth.Scanners.Java-all'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
+    
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    manifest {
-        attributes "Main-Class": "com.codehealth.scanners.java.Application"
+    with jar
+    
+    // Explicitly set output directory
+    destinationDirectory.set(file("$buildDir/libs"))
+}
+
+// 4. Copy the fat JAR to the project root folder (or wherever you want it)
+task copyFatJarToRoot(type: Copy) {
+    dependsOn fatJar
+    from "$buildDir/libs/CodeHealth.Scanners.Java-all.jar"
+    into "$projectDir/binaries"
+}
+
+// 5. Custom distribution layout (not really used now)
+task createDistribution(type: Copy) {
+    from jar
+    from configurations.runtimeClasspath
+    into "$buildDir/dist"
+}
+
+// 6. Hook it all into the build lifecycle
+assemble.dependsOn copyDependencies, fatJar, createDistribution, copyFatJarToRoot
+
+// 7. Disable default distributions
+distributions {
+    main {
+        contents {
+            // Empty to skip ZIP/TAR
+        }
     }
 }
+tasks.named('distTar').configure { enabled = false }
+tasks.named('distZip').configure { enabled = false }

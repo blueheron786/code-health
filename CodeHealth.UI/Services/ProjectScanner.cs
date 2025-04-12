@@ -97,12 +97,12 @@ public static class ProjectScanner
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "java",
-                    Arguments = $"-jar CodeHealth.Scanners.Java.jar \"{sourcePath}\" \"{outputDir}\"",
+                    Arguments = $"-jar CodeHealth.Scanners.Java-all.jar \"{sourcePath}\" \"{outputDir}\"",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    WorkingDirectory = Path.Combine(applicationDirectory, "..", "CodeHealth.Scanners.Java", "build",  "libs"),
+                    WorkingDirectory = Path.Combine(applicationDirectory, "..", "CodeHealth.Scanners.Java", "binaries"),
                 }
             };
 

@@ -28,18 +28,20 @@ Make sure you have:
 - C# (.NET 8 SDK)
 - JDK 17 and java.exe on the `PATH`
 
-To build the Java analyzers, run `gradle clean build` from `CodeHealth.Scanners.Java`
+## Building Java Scanners
+
+The repository for Code Health ships with a pre-built version of the code in `CodeHealth.Scanners.Java`, so you can get started quickly. If you make any changes to the Java code and need to rebuild, run `mvn clean build` from the `CodeHealth.Scanners.Java` directory.
 
 # Design and Architecture
 
 - UI: a Blazor desktop app that consumes analysis data and presents it in a visually interesting way
-- Analyzers: single-responsibility classes that analyze, build, or test code for one thing, and spit out data for the UI
+- Scanners: single-responsibility classes that that check one thing, and spit out data for the UI. These subdivide into **static code** scanners (analyze code on disk) and **dynamic** scanners (that do things like run the build/tests and collect output).
 
-Note that not every language will support every analyzer.
+Note that not every language will support every type of analysis.
 
 Since you need to be able to build your code for runtime analysis, we went the simpler route of using language-specific scanners:
 
 - C# scanners are built in Roslyn
 - Java scanners are built in JavaParser
 
-
+The implication is that `CodeHealth.Scanners.Java` has a `binaries` directory with the Java scanners

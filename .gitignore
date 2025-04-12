@@ -1,11 +1,11 @@
 # C#
-[Bb]in
-[Oo]bj
+[Bb]in/
+[Oo]bj/
 
 # Java
 **/*.class
-.gradle
-build
+.gradle/
+build/
 
-# Data
-data
+# Data and other
+data/
