@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using CodeHealth.Core.IO;
+using CodeHealth.Scanners;
 using CodeHealth.Scanners.Common;
-using CodeHealth.Scanners.JavaScript;
 
 namespace CodeHealth.UI.Services;
 
@@ -53,17 +53,17 @@ public static class ProjectScanner
 
     private static void RunCSharpScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
-        new Scanners.CSharp.CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+        new Scanners.CSharpCyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 
     private static void RunJavaScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
-        new Scanners.Java.CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+        new JavaCyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 
     private static void RunKotlinScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
-        new Scanners.Kotlin.CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+        new KotlinCyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 
     private static void RunJavascriptScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)

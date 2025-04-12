@@ -1,15 +1,15 @@
-namespace CodeHealth.Scanners.CSharp;
+namespace CodeHealth.Scanners;
 
 using CodeHealth.Core.Dtos.CyclomaticComplexity;
-using CodeHealth.Core.IO;
 using CodeHealth.Scanners.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Text.Json;
 
-public class CyclomaticComplexityScanner : IStaticCodeScanner
+public class CSharpCyclomaticComplexityScanner : IStaticCodeScanner
 {
+    public readonly string FileExtension = ".cs";
+
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
         var report = new Report();
@@ -18,6 +18,11 @@ public class CyclomaticComplexityScanner : IStaticCodeScanner
         {
             string fileName = kvp.Key;
             var code = kvp.Value;
+
+            if (!fileName.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
 
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = tree.GetRoot();

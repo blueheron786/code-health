@@ -2,7 +2,7 @@ using CodeHealth.Core.IO;
 
 public static class FileDiscoverer
 {
-    private static readonly string[] KnownSourceCodeExtensions =
+    private static readonly string[] KnownSourceCodeExtensions = 
     {
         ".cs",
         ".java", ".kt",

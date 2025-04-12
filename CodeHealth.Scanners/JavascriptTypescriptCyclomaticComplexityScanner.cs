@@ -1,4 +1,4 @@
-namespace CodeHealth.Scanners.JavaScript;
+namespace CodeHealth.Scanners;
 
 using CodeHealth.Core.Dtos.CyclomaticComplexity;
 using CodeHealth.Scanners.Common;
@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 
 public class JavascriptTypescriptCyclomaticComplexityScanner
 {
+    public readonly string[] FileExtensions = [".js", ".jsx", ".ts", ".tsx"];
+
     private static readonly Regex MethodRegex = new(@"function\s+(\w+)\s*\(", RegexOptions.Compiled);
     private static readonly Regex ArrowFunctionRegex = new(@"(\w+)\s*=\s*\((.*?)\)\s*=>", RegexOptions.Compiled);
 
@@ -20,6 +22,11 @@ public class JavascriptTypescriptCyclomaticComplexityScanner
         {
             string filePath = kvp.Key;
             string content = kvp.Value;
+
+           if (!FileExtensions.Any(ext => filePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+            {
+                continue;
+            }
 
             var fileResult = new FileResult
             {

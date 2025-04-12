@@ -1,15 +1,13 @@
-using System;
-
-namespace CodeHealth.Scanners.Kotlin;
+namespace CodeHealth.Scanners;
 
 using CodeHealth.Core.Dtos.CyclomaticComplexity;
-using CodeHealth.Core.IO;
 using System.Text.RegularExpressions;
-using System.Text.Json;
 using CodeHealth.Scanners.Common;
 
-public class CyclomaticComplexityScanner : IStaticCodeScanner
+public class KotlinCyclomaticComplexityScanner : IStaticCodeScanner
 {
+    public readonly string FileExtension = ".kt";
+
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
         var report = new Report();
@@ -18,6 +16,11 @@ public class CyclomaticComplexityScanner : IStaticCodeScanner
         {
             string fileName = kvp.Key;
             string code = kvp.Value;
+
+            if (!fileName.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
 
             // Preprocess to strip comments and strings (will work similarly as with Java)
             code = StripCommentsAndStrings(code);

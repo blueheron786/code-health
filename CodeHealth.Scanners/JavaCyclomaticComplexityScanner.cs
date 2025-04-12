@@ -1,17 +1,17 @@
 using CodeHealth.Core.Dtos.CyclomaticComplexity;
-using CodeHealth.Core.IO;
 using System.Text.RegularExpressions;
-using System.Text.Json;
 using CodeHealth.Scanners.Common;
 
-namespace CodeHealth.Scanners.Java;
+namespace CodeHealth.Scanners;
 
 // NOTE: This is a lightweight, token-based Java cyclomatic complexity analyzer.
 // ✔ Works well with traditional Java (6–11) codebases using explicit method bodies and common control flow.
 // ⚠ Not guaranteed to handle modern Java (14+) features like lambdas, pattern matching, records, etc.
 // ❌ Does NOT use a real Java parser — it's optimized for speed, not accuracy.
-public class CyclomaticComplexityScanner : IStaticCodeScanner
+public class JavaCyclomaticComplexityScanner : IStaticCodeScanner
 {
+    public readonly string FileExtension = ".java";
+
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
         var report = new Report();
@@ -20,6 +20,11 @@ public class CyclomaticComplexityScanner : IStaticCodeScanner
         {
             string fileName = kvp.Key;
             string code = kvp.Value;
+
+            if (!fileName.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
 
             // Preprocess to strip comments & strings
             code = StripCommentsAndStrings(code);
