@@ -43,7 +43,7 @@ Currently in active development. Support varies per analysis type.
 | Language    | Static Analysis |
 |-------------|-----------------|
 | C#          | ✅ Working      |
-| Java        | ✅ In Progress  |
+| Java        | ✅ Working      |
 | JavaScript  | ⚠️ Planned      |
 | Kotlin, etc.| 🚧 Planned      |
 
