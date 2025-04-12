@@ -24,9 +24,11 @@ I just need something lightweight and fast that can look at a local repo and say
 
 # Supported Languages
 
+**Note:** While basic static code analysis runs in .NET 8, runtime analysis (build warnings, unit test coverage, etc.) require you to have a working dev environment for whichever project you're analyzing.
+
 Everything is WIP since this project is relatively new and under heavy development. Planned languages include:
 
-- C#
+- C# (requires .NET 8)
 - Java
 - Javascript
 
@@ -36,3 +38,10 @@ Everything is WIP since this project is relatively new and under heavy developme
 - Analyzers: single-responsibility classes that analyze, build, or test code for one thing, and spit out data for the UI
 
 Note that not every language will support every analyzer.
+
+Since you need to be able to build your code for runtime analysis, we went the simpler route of using language-specific scanners:
+
+- C# scanners are built in Roslyn
+- Java scanners are built in JavaParser
+
+
