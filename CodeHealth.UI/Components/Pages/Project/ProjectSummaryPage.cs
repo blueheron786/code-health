@@ -9,6 +9,8 @@ public class ProjectSummaryPage : ComponentBase
     [Parameter]
     public string ProjectId { get; set; }
 
+    protected string scanResultsMessage;
+
     protected bool isAllDataLoaded = false;
     protected string lastScannedTime;
 
@@ -50,7 +52,16 @@ public class ProjectSummaryPage : ComponentBase
     {
         var folderPath = await SharedProjectService.GetProjectSourcePath(ProjectId);
         
-        var results = ProjectScanner.Scan(folderPath);
+        try
+        {
+            var results = ProjectScanner.Scan(folderPath);
+            scanResultsMessage = $"Scan of {folderPath} done in {results}";
+        }
+        catch (Exception ex)
+        {
+            scanResultsMessage = $"Scan failed: {ex.Message}!";
+        }
+
         // Refresh UI
         await OnInitializedAsync();
         StateHasChanged();

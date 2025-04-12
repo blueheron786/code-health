@@ -28,8 +28,15 @@ public partial class HomePage : ComponentBase
             Debug.WriteLine($"Selected folder: {folderPath}");
             StateHasChanged(); // Update UI
 
-            var results = ProjectScanner.Scan(folderPath);
-            outputMessages = $"Scan of {folderPath} done in {results}";
+            try
+            {
+                var results = ProjectScanner.Scan(folderPath);
+                outputMessages = $"Scan of {folderPath} done in {results}";
+            }
+            catch (Exception ex)
+            {
+                outputMessages = $"Scan failed: {ex.Message}!";
+            }
         }
         else {
             // User cancelled

@@ -41,28 +41,41 @@ public static class ProjectScanner
         new TodoCommentScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 
-    private static void RunJavaScanners(string sourcePath, string resultsDirectory)
+    private static void RunJavaScanners(string sourcePath, string outputDir)
     {
-        var process = new Process
+        try
         {
-            StartInfo = new ProcessStartInfo
+            var process = new Process
             {
-                FileName = "java",
-                Arguments = $"-jar CodeHealthJavaScanner.jar \"{sourcePath}\" \"{resultsDirectory}\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "java",
+                    Arguments = $"-jar \"{jarPath}\" \"{sourcePath}\" \"{outputDir}\" {scannerName}",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            string error = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                throw new InvalidOperationException($"Java scanner failed:\n{error}");
             }
-        };
-
-        process.OutputDataReceived += (sender, args) => Console.WriteLine(args.Data);
-        process.ErrorDataReceived += (sender, args) => Console.Error.WriteLine(args.Data);
-
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-        process.WaitForExit();
+        }
+        catch (System.ComponentModel.Win32Exception win32Ex) when (win32Ex.Message.Contains("The system cannot find the file"))
+        {
+            throw new InvalidOperationException("Java is not installed or not on the system PATH. Please install Java and try again.");
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"An error occurred while running the Java scanner: {ex.Message}", ex);
+        }
     }
 
 }
