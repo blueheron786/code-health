@@ -25,21 +25,20 @@ else
             <tr>
                 <td>Cyclomatic Complexity</td>
                 <td>
-                    Total @totalComplexity, Average @($"{averageComplexity:F2}")
-                    @* Example logic for status *@
                     <span class="badge @(averageComplexity > 20 ? "bg-danger" : averageComplexity > 10 ? "bg-warning" : "bg-success")">
                         @(averageComplexity > 20 ? "High" : averageComplexity > 10 ? "Moderate" : "Low")
                     </span>
+                    Total @totalComplexity, Average @($"{averageComplexity:F2}")
                 </td>
                 <td><a href="@($"/project/{ProjectId}/cyclomatic-complexity")">View Report</a></td>
             </tr>
             <tr>
                 <td>TODOs</td>
                 <td>
-                    @totalTodos TODO items
                     <span class="badge @(totalTodos > 20 ? "bg-danger" : totalTodos > 5 ? "bg-warning" : "bg-success")">
                         @(totalTodos > 20 ? "Many" : totalTodos > 5 ? "Some" : "Few")
                     </span>
+                    @totalTodos TODO items
                 </td>
                 <td><a href="@($"/project/{ProjectId}/todos")">View Report</a></td>
             </tr>
