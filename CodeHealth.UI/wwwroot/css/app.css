@@ -64,9 +64,3 @@ h1:focus {
 .blazor-error-boundary::after {
     content: "An error has occurred."
 }
-
-/* Scanner stuff */
-.highlight-todo {
-    background-color: #ccf; /* Or any color you prefer */
-    font-weight: bold;
-}

@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Components.Pages.Project;
 
+/// <summary>
+/// Shows the actual TODOs and surrounding code. Note that this uses the current code
+/// (on-disk), which might not be the same as the code at the time you scanned it.
+/// </summary>
 public class TodosPage : ComponentBase
 {
     private const int LinesToShowBeforeAndAfterTodo = 4;

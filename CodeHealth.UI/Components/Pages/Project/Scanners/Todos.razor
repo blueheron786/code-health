@@ -22,19 +22,27 @@ else
                 <div class="mb-3">
                     <p><strong>Line @todo.Line:</strong></p>
 
-                    <pre class="bg-white p-2 border rounded">
-                        @foreach (var line in todo.Context ?? new List<string> { "// No context available" })
-                        {
-                            @if (line.Contains(todo.Text))
+                    <div class="code-container">
+                        <div class="line-numbers">
+                            @for (int i = 1; i <= (todo.Context?.Count ?? 0); i++)
                             {
-                                <span class="highlight-todo">@line</span><br />
+                                <div class="line-number">@i</div>
                             }
-                            else
+                        </div>
+                        <pre class="bg-white p-2 border rounded code-content">
+                            @foreach (var line in todo.Context ?? new List<string> { "// No context available" })
                             {
-                                @line<br />
+                                @if (line.Contains(todo.Text))
+                                {
+                                    <span class="highlight-todo">@line</span><br />
+                                }
+                                else
+                                {
+                                    @line<br />
+                                }
                             }
-                        }
-                    </pre>
+                        </pre>
+                    </div>
                 </div>
             }
         </div>
