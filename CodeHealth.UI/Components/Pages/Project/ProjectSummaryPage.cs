@@ -50,6 +50,7 @@ public class ProjectSummaryPage : ComponentBase
 
     protected async void ScanProject()
     {
+        scanResultsMessage = "";
         var folderPath = await SharedProjectService.GetProjectSourcePath(ProjectId);
         
         try
