@@ -2,84 +2,77 @@ package com.codehealth.scanners.java;
 
 import java.util.*;
 import java.io.*;
-import java.nio.file.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 @SuppressWarnings("unchecked")
 public class CyclomaticComplexityScanner {
-    public static void scan(String sourceRoot, String outputFile) {
+    public static void scan(Map<String, String> filesContent, String outputPath) {
         JSONObject report = new JSONObject();
-        JSONArray files = new JSONArray();
-        
-        // Using single-element arrays to bypass the "effectively final" requirement
+        JSONArray fileReports = new JSONArray();
+
         final int[] totalComplexity = {0};
         final int[] totalMethods = {0};
 
-        try {
-            Files.walk(Paths.get(sourceRoot))
-                .filter(Files::isRegularFile)
-                .filter(p -> p.toString().endsWith(".java"))
-                .forEach(filePath -> {
-                    try {
-                        JSONObject fileJson = new JSONObject();
-                        JSONArray methodsArray = new JSONArray();
-                        String relativePath = Paths.get(sourceRoot).relativize(filePath).toString().replace("\\", "/");
-                        fileJson.put("file", relativePath);
+        for (Map.Entry<String, String> entry : filesContent.entrySet()) {
+            String filePath = entry.getKey();
+            String content = entry.getValue();
 
-                        List<String> lines = Files.readAllLines(filePath);
-                        boolean inMethod = false;
-                        int complexity = 1;
-                        String methodName = null;
+            JSONObject fileJson = new JSONObject();
+            JSONArray methodsArray = new JSONArray();
 
-                        for (String line : lines) {
-                            line = line.trim();
-                            if (line.matches(".*\\b(public|private|protected)?\\s+\\w+\\s+\\w+\\(.*\\)\\s*\\{.*")) {
-                                inMethod = true;
-                                methodName = line.split("\\(")[0].replaceAll(".*\\s", "");
-                                complexity = 1;
-                                continue;
-                            }
-                            
-                            if (inMethod) {
-                                if (line.contains("{")) complexity++;
-                                if (line.contains("if") || line.contains("for") || line.contains("while") ||
-                                    line.contains("case") || line.contains("catch") ||
-                                    line.contains("&&") || line.contains("||") || line.contains("?")) {
-                                    complexity++;
-                                }
+            fileJson.put("file", filePath.replace("\\", "/"));  // Normalize path
 
-                                if (line.contains("}")) {
-                                    JSONObject methodJson = new JSONObject();
-                                    methodJson.put("method", methodName);
-                                    methodJson.put("complexity", complexity);
-                                    methodsArray.add(methodJson);
-                                    totalComplexity[0] += complexity;  // Modify array element
-                                    totalMethods[0]++;                 // Modify array element
-                                    inMethod = false;
-                                }
-                            }
-                        }
+            boolean inMethod = false;
+            int complexity = 1;
+            String methodName = null;
 
-                        if (!methodsArray.isEmpty()) {
-                            fileJson.put("methods", methodsArray);
-                            files.add(fileJson);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            String[] lines = content.split("\n");
+            for (String rawLine : lines) {
+                String line = rawLine.trim();
+
+                if (line.matches(".*\\b(public|private|protected)?\\s+\\w+\\s+\\w+\\(.*\\)\\s*\\{?.*")) {
+                    inMethod = true;
+                    methodName = line.split("\\(")[0].replaceAll(".*\\s", "");
+                    complexity = 1;
+                    continue;
+                }
+
+                if (inMethod) {
+                    if (line.contains("{")) complexity++;
+                    if (line.contains("if") || line.contains("for") || line.contains("while") ||
+                        line.contains("case") || line.contains("catch") ||
+                        line.contains("&&") || line.contains("||") || line.contains("?")) {
+                        complexity++;
                     }
-                });
 
-            report.put("files", files);
-            report.put("totalComplexity", totalComplexity[0]);
-            report.put("averageComplexity", 
-                totalMethods[0] > 0 ? 
-                (double) totalComplexity[0] / totalMethods[0] : 
-                0.0);
-
-            try (FileWriter writer = new FileWriter(outputFile)) {
-                writer.write(report.toJSONString());
+                    if (line.contains("}")) {
+                        JSONObject methodJson = new JSONObject();
+                        methodJson.put("method", methodName);
+                        methodJson.put("complexity", complexity);
+                        methodsArray.add(methodJson);
+                        totalComplexity[0] += complexity;
+                        totalMethods[0]++;
+                        inMethod = false;
+                    }
+                }
             }
+
+            if (!methodsArray.isEmpty()) {
+                fileJson.put("methods", methodsArray);
+                fileReports.add(fileJson);
+            }
+        }
+
+        report.put("files", fileReports);
+        report.put("totalComplexity", totalComplexity[0]);
+        report.put("averageComplexity",
+                totalMethods[0] > 0 ?
+                        (double) totalComplexity[0] / totalMethods[0] :
+                        0.0);
+
+        try (FileWriter writer = new FileWriter(outputPath)) {
+            writer.write(report.toJSONString());
         } catch (IOException e) {
             e.printStackTrace();
         }
