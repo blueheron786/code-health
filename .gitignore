@@ -2,10 +2,5 @@
 [Bb]in/
 [Oo]bj/
 
-# Java
-**/*.class
-.gradle/
-build/
-
 # Data and other
 data/
