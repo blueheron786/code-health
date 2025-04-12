@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using CodeHealth.Core.IO;
 using CodeHealth.Scanners.Common;
+using CodeHealth.Scanners.JavaScript;
 
 namespace CodeHealth.UI.Services;
 
@@ -67,7 +68,7 @@ public static class ProjectScanner
 
     private static void RunJavascriptScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
-        new Scanners.JavaScript.CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+        new JavascriptTypescriptCyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 
     private static void RunCommonScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)

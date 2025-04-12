@@ -1,12 +1,10 @@
 namespace CodeHealth.Scanners.JavaScript;
 
 using CodeHealth.Core.Dtos.CyclomaticComplexity;
-using CodeHealth.Core.IO;
 using CodeHealth.Scanners.Common;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
-public class CyclomaticComplexityScanner
+public class JavascriptTypescriptCyclomaticComplexityScanner
 {
     private static readonly Regex MethodRegex = new(@"function\s+(\w+)\s*\(", RegexOptions.Compiled);
     private static readonly Regex ArrowFunctionRegex = new(@"(\w+)\s*=\s*\((.*?)\)\s*=>", RegexOptions.Compiled);
@@ -15,7 +13,8 @@ public class CyclomaticComplexityScanner
 
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
-        var report = new Report();
+        var javascriptReport = new Report();
+        var typescriptReport = new Report();
 
         foreach (var kvp in sourceFiles)
         {
@@ -26,6 +25,9 @@ public class CyclomaticComplexityScanner
             {
                 File = Path.GetRelativePath(rootPath, filePath).Replace("\\", "/")
             };
+
+            var isTypescript = filePath.Contains(".ts", StringComparison.OrdinalIgnoreCase) ||
+                filePath.Contains(".tsx", StringComparison.OrdinalIgnoreCase);
 
             // Combine function/arrow-func detection
             var matches = MethodRegex.Matches(content)
@@ -46,14 +48,26 @@ public class CyclomaticComplexityScanner
                     Complexity = complexity
                 });
 
-                report.TotalComplexity += complexity;
+                if (isTypescript) {
+                    typescriptReport.TotalComplexity += complexity;
+                } else {
+                    javascriptReport.TotalComplexity += complexity;
+                }
             }
 
             if (fileResult.Methods.Any())
-                report.Files.Add(fileResult);
+            {
+                if (isTypescript) {
+                    typescriptReport.Files.Add(fileResult);
+                } else {
+                    javascriptReport.Files.Add(fileResult);
+                }
+            }
         }
 
-        CyclomaticComplexityReporter.FinalizeReport(report, outputDir, "cyclomatic_complexity.javascript.json");
+        CyclomaticComplexityReporter.FinalizeReport(javascriptReport, outputDir, "cyclomatic_complexity.javascript.json");
+        // Necessary for proper file-level tagging of language
+        CyclomaticComplexityReporter.FinalizeReport(typescriptReport, outputDir, "cyclomatic_complexity.typescript.json");
     }
 }
 
