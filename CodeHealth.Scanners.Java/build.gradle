@@ -22,11 +22,12 @@ application {
 }
 
 jar {
-    manifest {
-        attributes 'Main-Class': 'com.codehealth.scanners.java.Application'
-    }
+    // Build a fat JAR that includes all dependencies. Thicc boi, but easiest to run.
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes "Main-Class": "com.codehealth.scanners.java.Application"
+    }
 }
