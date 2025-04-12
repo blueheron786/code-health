@@ -2,7 +2,7 @@
 
 [![.NET](https://github.com/blueheron786/code-health/actions/workflows/dotnet.yml/badge.svg)](https://github.com/blueheron786/code-health/actions/workflows/dotnet.yml)
 
-Analyze your local code-base for code health. Fix things. Go faster. Code better.
+Analyze your local code-base for code health, without heavy installations or slow runtimes. Fix things. Go faster. Code better.
 
 - Variety of code-quality and code-health metrics
 - Runs entirely locally, no need for network
@@ -10,17 +10,6 @@ Analyze your local code-base for code health. Fix things. Go faster. Code better
 - No expensive fees
 
 Made in C# with Blazor.
-
-# Why Does This Exist?
-
-Honestly? Because SonarQube is really heavy-weight.
-
-- It requires docker, a DB, etc. to install (not to mention admin permissions)
-- It takes ages to scan even small code-bases
-- When things don't work (e.g. code coverage analysis), it's virtually impossible to figure out why
-- It's expensive (and therefore often not approved in corporate settings)
-
-I just need something lightweight and fast that can look at a local repo and say "yeah ok fix *these* things." That's what Code Health is.
 
 # Supported Languages
 
