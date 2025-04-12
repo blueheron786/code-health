@@ -21,9 +21,17 @@
             var isFirst = i == 0;
             var isLast = i == LanguageBreakdown.Count - 1;
 
-            var radiusStyle = isFirst ? "border-top-left-radius: 6px; border-bottom-left-radius: 6px;" :
-                              isLast ? "border-top-right-radius: 6px; border-bottom-right-radius: 6px;" :
+            var roundedLeftStyle = "border-top-left-radius: 6px; border-bottom-left-radius: 6px;";
+            var roundedRightStyle = "border-top-right-radius: 6px; border-bottom-right-radius: 6px;";
+
+            var radiusStyle = isFirst ? roundedLeftStyle :
+                              isLast ? roundedRightStyle :
                               "";
+
+            if (isFirst && isLast)
+            {
+                radiusStyle = roundedLeftStyle + roundedRightStyle;
+            }
 
             // Use margin-left to create a "gap" effect between segments (but not before the first)
             var separatorStyle = !isFirst ? "margin-left: 2px;" : "";
