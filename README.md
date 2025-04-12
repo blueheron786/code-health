@@ -17,9 +17,18 @@ Made in C# with Blazor.
 
 Everything is WIP since this project is relatively new and under heavy development. Planned languages include:
 
-- C# (requires .NET 8)
+- C#
 - Java
 - Javascript
+
+# Developer Environment Setup
+
+Make sure you have:
+
+- C# (.NET 8 SDK)
+- JDK 17 and java.exe on the `PATH`
+
+To build the Java analyzers, run `gradle clean build` from `CodeHealth.Scanners.Java`
 
 # Design and Architecture
 
