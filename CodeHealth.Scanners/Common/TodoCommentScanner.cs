@@ -4,7 +4,7 @@ using CodeHealth.Core.IO;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace CodeHealth.Scanners.CSharp;
+namespace CodeHealth.Scanners.Common;
 
 public class TodoCommentScanner : IStaticCodeScanner
 {

@@ -2,6 +2,7 @@ namespace CodeHealth.Scanners.CSharp;
 
 using CodeHealth.Core.Dtos.CyclomaticComplexity;
 using CodeHealth.Core.IO;
+using CodeHealth.Scanners.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

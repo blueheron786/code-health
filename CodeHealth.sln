@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHealth.UI", "CodeHealth
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHealth.Core", "CodeHealth.Core\CodeHealth.Core.csproj", "{1115608E-AB27-4148-ABD4-898AF2B3F622}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHealth.Scanners.CSharp", "CodeHealth.Scanners.CSharp\CodeHealth.Scanners.CSharp.csproj", "{0A482DA8-D1A0-4493-BCEB-0B2C32F56374}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeHealth.Scanners", "CodeHealth.Scanners\CodeHealth.Scanners.csproj", "{0A482DA8-D1A0-4493-BCEB-0B2C32F56374}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

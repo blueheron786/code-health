@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using CodeHealth.Core.IO;
-using CodeHealth.Scanners.CSharp;
+using CodeHealth.Scanners.Common;
 
 namespace CodeHealth.UI.Services;
 
@@ -19,15 +19,39 @@ public static class ProjectScanner
 
         // Common and language-specific scans
         LanguageLineCounter.AnalyzeLanguageBreakdown(sourceFiles, resultsDirectory);
-        RunScanners(sourcePath, sourceFiles, resultsDirectory);
+        DetectLanguagesAndRunScanners(sourcePath, sourceFiles, resultsDirectory);
         
         Console.WriteLine($"Analysis complete in {stopwatch.Elapsed}!");
         return stopwatch.Elapsed;
     }
     
-    private static void RunScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
+    private static void DetectLanguagesAndRunScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
-        new CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+        if (sourceFiles.Any(f => f.Key.EndsWith(".cs", StringComparison.OrdinalIgnoreCase)))
+        {
+            // Cache files so we don't slam the disk with I/O over and over
+            RunCSharpScanners(sourcePath, sourceFiles, resultsDirectory);
+        }
+        if (sourceFiles.Any(f => f.Key.EndsWith(".java", StringComparison.OrdinalIgnoreCase)))
+        {
+            RunJavaScanners(sourcePath, sourceFiles, resultsDirectory);
+        }
+
+        RunCommonScanners(sourcePath, sourceFiles, resultsDirectory);
+    }
+
+    private static void RunCSharpScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
+    {
+        new Scanners.CSharp.CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+    }
+
+    private static void RunJavaScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
+    {
+        new Scanners.Java.CyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+    }
+
+    private static void RunCommonScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
+    {
         new TodoCommentScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 }
