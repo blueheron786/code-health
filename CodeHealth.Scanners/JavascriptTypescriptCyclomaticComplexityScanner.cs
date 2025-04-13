@@ -1,99 +1,108 @@
-namespace CodeHealth.Scanners;
-
-using CodeHealth.Core.Dtos.CyclomaticComplexity;
-using CodeHealth.Scanners.Common;
-using System.Text.RegularExpressions;
-
-public class JavascriptTypescriptCyclomaticComplexityScanner
+namespace CodeHealth.Scanners
 {
-    public readonly string[] FileExtensions = [".js", ".jsx", ".ts", ".tsx"];
+    using CodeHealth.Core.Dtos.CyclomaticComplexity;
+    using CodeHealth.Scanners.Common;
+    using System.Text.RegularExpressions;
+    using System.Linq;
 
-    private static readonly Regex MethodRegex = new(@"function\s+(\w+)\s*\(", RegexOptions.Compiled);
-    private static readonly Regex ArrowFunctionRegex = new(@"(\w+)\s*=\s*\((.*?)\)\s*=>", RegexOptions.Compiled);
-    private static readonly Regex ComplexityRegex = new(@"(\bif\b|\bfor\b|\bwhile\b|\bcase\b|\bcatch\b|\?\s|&&|\|\|)", RegexOptions.Compiled);
-
-    public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
+    public class JavascriptTypescriptCyclomaticComplexityScanner
     {
-        var javascriptReport = new Report();
-        var typescriptReport = new Report();
+        public readonly string[] FileExtensions = { ".js", ".jsx", ".ts", ".tsx" };
 
-        foreach (var kvp in sourceFiles)
+        private static readonly Regex MethodRegex = new(@"function\s+(\w+)\s*\(", RegexOptions.Compiled);
+        private static readonly Regex ArrowFunctionRegex = new(@"(\w+)\s*=\s*\((.*?)\)\s*=>", RegexOptions.Compiled);
+        private static readonly Regex ComplexityRegex = new(@"(\bif\b|\bfor\b|\bwhile\b|\bcase\b|\bcatch\b|\?\s|&&|\|\|)", RegexOptions.Compiled);
+
+        public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
         {
-            string filePath = kvp.Key;
-            string content = kvp.Value;
+            var javascriptReport = new Report();
+            var typescriptReport = new Report();
 
-            if (!FileExtensions.Any(ext => filePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+            foreach (var kvp in sourceFiles)
             {
-                continue;
-            }
+                string filePath = kvp.Key;
+                string content = kvp.Value;
 
-            var fileResult = new FileResult
-            {
-                File = Path.GetRelativePath(rootPath, filePath).Replace("\\", "/")
-            };
-
-            var isTypescript = filePath.Contains(".ts", StringComparison.OrdinalIgnoreCase) ||
-                filePath.Contains(".tsx", StringComparison.OrdinalIgnoreCase);
-
-            // Get all lines for line number calculation
-            var lines = content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            
-            // Combine function/arrow-func detection
-            var matches = MethodRegex.Matches(content)
-                .Cast<Match>()
-                .Concat(ArrowFunctionRegex.Matches(content).Cast<Match>());
-
-            foreach (var match in matches)
-            {
-                string methodName = match.Groups[1].Value;
-                
-                // Calculate start line
-                int startLine = 1;
-                int position = match.Index;
-                for (int i = 0; i < lines.Length; i++)
+                if (!FileExtensions.Any(ext => filePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
                 {
-                    if (position <= 0)
+                    continue;
+                }
+
+                var isTypescript = filePath.Contains(".ts", StringComparison.OrdinalIgnoreCase) ||
+                                    filePath.Contains(".tsx", StringComparison.OrdinalIgnoreCase);
+
+                // Get all lines for line number calculation
+                var lines = content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                // Combine function/arrow-func detection
+                var matches = MethodRegex.Matches(content)
+                    .Cast<Match>()
+                    .Concat(ArrowFunctionRegex.Matches(content).Cast<Match>());
+
+                foreach (var match in matches)
+                {
+                    string methodName = match.Groups[1].Value;
+
+                    // Calculate start line
+                    int startLine = 1;
+                    int position = match.Index;
+                    for (int i = 0; i < lines.Length; i++)
                     {
-                        startLine = i + 1;
-                        break;
+                        if (position <= 0)
+                        {
+                            startLine = i + 1;
+                            break;
+                        }
+                        position -= lines[i].Length + Environment.NewLine.Length;
                     }
-                    position -= lines[i].Length + Environment.NewLine.Length;
-                }
 
-                // Naive end line calculation (could be improved with proper parsing)
-                int endLine = startLine;
-                int complexity = 1; // Start with 1 for the method itself
-                
-                // Count complexity tokens within the method (naive implementation)
-                // This is just a placeholder - you might want to implement proper scope detection
-                complexity += ComplexityRegex.Matches(content).Count;
+                    // Naive end line calculation (could be improved with proper parsing)
+                    int endLine = startLine;
+                    int complexity = 1; // Start with 1 for the method itself
 
-                fileResult.Methods.Add(new MethodResult
-                {
-                    Method = methodName,
-                    Complexity = complexity,
-                    StartLine = startLine,
-                    EndLine = endLine
-                });
+                    // Count complexity tokens within the method (naive implementation)
+                    complexity += ComplexityRegex.Matches(content).Count;
 
-                if (isTypescript) {
-                    typescriptReport.TotalComplexity += complexity;
-                } else {
-                    javascriptReport.TotalComplexity += complexity;
+                    var issueResult = new IssueResult
+                    {
+                        File = Path.GetRelativePath(rootPath, filePath).Replace("\\", "/"),
+                        Line = startLine,
+                        EndLine = endLine,
+                        Name = methodName,
+                        Metric = new Metric
+                        {
+                            Name = "Cyclomatic Complexity",
+                            Value = complexity,
+                            Threshold = 10 // Example threshold for high complexity
+                        },
+                        Message = $"Method '{methodName}' has a cyclomatic complexity of {complexity}.",
+                        CodeSnippet = new List<string>
+                        {
+                            content.Substring(match.Index, Math.Min(100, content.Length - match.Index)) // Capture first 100 characters or less
+                        },
+                        Severity = complexity > 10 ? "High" : "Medium", // Simple severity based on complexity value
+                        Suggestion = "Consider refactoring the method to reduce complexity.",
+                        Tags = new List<string> { "complexity", "refactor" },
+                        Fixable = true // This can be updated later if refactoring suggestions are automated
+                    };
+
+                    // Add to the appropriate report
+                    if (isTypescript)
+                    {
+                        typescriptReport.TotalComplexity += complexity;
+                        typescriptReport.Issues.Add(issueResult);
+                    }
+                    else
+                    {
+                        javascriptReport.TotalComplexity += complexity;
+                        javascriptReport.Issues.Add(issueResult);
+                    }
                 }
             }
 
-            if (fileResult.Methods.Any())
-            {
-                if (isTypescript) {
-                    typescriptReport.Files.Add(fileResult);
-                } else {
-                    javascriptReport.Files.Add(fileResult);
-                }
-            }
+            // Finalize the report output for both JavaScript and TypeScript
+            CyclomaticComplexityReporter.FinalizeReport(javascriptReport, outputDir, "cyclomatic_complexity.javascript.json");
+            CyclomaticComplexityReporter.FinalizeReport(typescriptReport, outputDir, "cyclomatic_complexity.typescript.json");
         }
-
-        CyclomaticComplexityReporter.FinalizeReport(javascriptReport, outputDir, "cyclomatic_complexity.javascript.json");
-        CyclomaticComplexityReporter.FinalizeReport(typescriptReport, outputDir, "cyclomatic_complexity.typescript.json");
     }
 }

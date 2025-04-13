@@ -1,81 +1,93 @@
-namespace CodeHealth.Scanners;
-
-using CodeHealth.Core.Dtos.CyclomaticComplexity;
-using CodeHealth.Scanners.Common;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-public class CSharpCyclomaticComplexityScanner : IStaticCodeScanner
+namespace CodeHealth.Scanners
 {
-    public const string FileExtension = ".cs";
+    using CodeHealth.Core.Dtos.CyclomaticComplexity;
+    using CodeHealth.Scanners.Common;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
+    public class CSharpCyclomaticComplexityScanner : IStaticCodeScanner
     {
-        var report = new Report();
+        public const string FileExtension = ".cs";
 
-        foreach (var kvp in sourceFiles)
+        public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
         {
-            string fileName = kvp.Key;
-            var code = kvp.Value;
+            var report = new Report();
 
-            if (!fileName.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))
+            foreach (var kvp in sourceFiles)
             {
-                continue;
-            }
+                string fileName = kvp.Key;
+                var code = kvp.Value;
 
-            var tree = CSharpSyntaxTree.ParseText(code);
-            var root = tree.GetRoot();
-            var text = tree.GetText();
-
-            var fileResult = new FileResult
-            {
-                File = Path.GetRelativePath(rootPath, fileName).Replace("\\", "/")
-            };
-
-            var methodNodes = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
-
-            foreach (var method in methodNodes)
-            {
-                var complexity = 1;
-                var body = method.Body ?? (SyntaxNode?)method.ExpressionBody;
-
-                if (body != null)
+                if (!fileName.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    var nodes = body.DescendantNodes();
-                    complexity += nodes.Count(n =>
-                        n is IfStatementSyntax
-                        || n is ForStatementSyntax
-                        || n is ForEachStatementSyntax
-                        || n is WhileStatementSyntax
-                        || n is DoStatementSyntax
-                        || n is CaseSwitchLabelSyntax
-                        || n is ConditionalExpressionSyntax
-                        || n is BinaryExpressionSyntax bin &&
-                            (bin.IsKind(SyntaxKind.LogicalAndExpression) || bin.IsKind(SyntaxKind.LogicalOrExpression))
-                        || n is CatchClauseSyntax
-                    );
+                    continue;
                 }
 
-                var lineSpan = method.GetLocation().GetLineSpan();
-                var startLine = lineSpan.StartLinePosition.Line + 1; // +1 for 1-based indexing
-                var endLine = lineSpan.EndLinePosition.Line + 1;
+                var tree = CSharpSyntaxTree.ParseText(code);
+                var root = tree.GetRoot();
 
-                fileResult.Methods.Add(new MethodResult
+                var methodNodes = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+
+                foreach (var method in methodNodes)
                 {
-                    Method = method.Identifier.Text,
-                    Complexity = complexity,
-                    StartLine = startLine,
-                    EndLine = endLine
-                });
+                    var complexity = 1;
+                    var body = method.Body ?? (SyntaxNode?)method.ExpressionBody;
 
-                report.TotalComplexity += complexity;
+                    if (body != null)
+                    {
+                        var nodes = body.DescendantNodes();
+                        complexity += nodes.Count(n =>
+                            n is IfStatementSyntax
+                            || n is ForStatementSyntax
+                            || n is ForEachStatementSyntax
+                            || n is WhileStatementSyntax
+                            || n is DoStatementSyntax
+                            || n is CaseSwitchLabelSyntax
+                            || n is ConditionalExpressionSyntax
+                            || n is BinaryExpressionSyntax bin &&
+                                (bin.IsKind(SyntaxKind.LogicalAndExpression) || bin.IsKind(SyntaxKind.LogicalOrExpression))
+                            || n is CatchClauseSyntax
+                        );
+                    }
+
+                    var lineSpan = method.GetLocation().GetLineSpan();
+                    var startLine = lineSpan.StartLinePosition.Line + 1; // +1 for 1-based indexing
+                    var endLine = lineSpan.EndLinePosition.Line + 1;
+
+                    var issue = new IssueResult
+                    {
+                        File = Path.GetRelativePath(rootPath, fileName).Replace("\\", "/"),
+                        Line = startLine,
+                        EndLine = endLine,
+                        Name = method.Identifier.Text,
+                        Metric = new Metric
+                        {
+                            Name = "Cyclomatic Complexity",
+                            Value = complexity,
+                            Threshold = 10 // Example threshold for high complexity
+                        },
+                        Message = $"Method '{method.Identifier.Text}' has a cyclomatic complexity of {complexity}.",
+                        CodeSnippet = new List<string>
+                        {
+                            code.Substring(lineSpan.StartLinePosition.Character, Math.Min(100, code.Length - lineSpan.StartLinePosition.Character)) // Capture first 100 characters or less
+                        },
+                        Severity = complexity > 10 ? "High" : "Medium", // Simple severity based on complexity value
+                        Suggestion = "Consider refactoring the method to reduce complexity.",
+                        Tags = new List<string> { "complexity", "refactor" },
+                        Fixable = true // This can be updated later if refactoring suggestions are automated
+                    };
+
+                    report.Issues.Add(issue);
+                    report.TotalComplexity += complexity;
+                }
             }
 
-            if (fileResult.Methods.Any())
-                report.Files.Add(fileResult);
-        }
+            // Calculate Average Complexity
+            report.AverageComplexity = report.TotalComplexity / (double)report.Issues.Count;
 
-        CyclomaticComplexityReporter.FinalizeReport(report, outputDir, "cyclomatic_complexity.csharp.json");
+            // Finalize the report output (e.g., saving it to a JSON file)
+            CyclomaticComplexityReporter.FinalizeReport(report, outputDir, "cyclomatic_complexity.csharp.json");
+        }
     }
 }

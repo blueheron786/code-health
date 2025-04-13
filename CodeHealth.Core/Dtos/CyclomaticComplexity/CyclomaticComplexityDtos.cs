@@ -1,22 +1,33 @@
-namespace CodeHealth.Core.Dtos.CyclomaticComplexity;
-
-public class MethodResult
+namespace CodeHealth.Core.Dtos.CyclomaticComplexity
 {
-    public string Method { get; set; } = "";
-    public int Complexity { get; set; }
-    public int StartLine { get; set; }
-    public int EndLine { get; set; }
-}
+    public class Metric
+    {
+        public string Name { get; set; } = "";
+        public int Value { get; set; }
+        public int Threshold { get; set; }
+    }
 
-public class FileResult
-{
-    public string File { get; set; } = "";
-    public List<MethodResult> Methods { get; set; } = new();
-}
+    public class IssueResult
+    {
+        public string Scanner { get; set; } = "CyclomaticComplexity";
+        public string Type { get; set; } = "Method";
+        public string File { get; set; } = "";
+        public int Line { get; set; }
+        public int EndLine { get; set; }
+        public string Name { get; set; } = "";
+        public Metric Metric { get; set; } = new Metric();
+        public string Message { get; set; } = "";
+        public List<string> CodeSnippet { get; set; } = new List<string>();
+        public string Severity { get; set; } = "High"; // "Low", "Medium", "High"
+        public string Suggestion { get; set; } = "Consider refactoring the method to improve readability.";
+        public List<string> Tags { get; set; } = new List<string> { "complexity", "refactor" };
+        public bool Fixable { get; set; } = true; // Or false if not easily fixable
+    }
 
-public class Report
-{
-    public List<FileResult> Files { get; set; } = new();
-    public int TotalComplexity { get; set; }
-    public double AverageComplexity { get; set; }
+    public class Report
+    {
+        public List<IssueResult> Issues { get; set; } = new List<IssueResult>();
+        public int TotalComplexity { get; set; }
+        public double AverageComplexity { get; set; }
+    }
 }
