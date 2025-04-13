@@ -8,7 +8,7 @@ public class ProjectInfo
     public DateTime Timestamp { get; set; }
 
     /// <summary>
-    /// What's the folder name with the latest run data?
+    /// What's the (relative) folder name with the latest run data?
     /// </summary>
     public string FolderName { get; set; }
 }

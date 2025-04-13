@@ -37,7 +37,7 @@ public class ProjectSummaryPage : ComponentBase
                 averageComplexity = complexityData.Average(x => x.Complexity);
             }
 
-            var todoData = await TodoCommentDataLoader.LoadTodoCommentsAsync(folderName);
+            var todoData = await TodoCommentDataLoader.LoadTodoCommentsAsync(ProjectId, folderName);
             if (todoData.Any())
             {
                 totalTodos = todoData.Count;

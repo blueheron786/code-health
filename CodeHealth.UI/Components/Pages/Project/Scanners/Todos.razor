@@ -20,19 +20,25 @@ else
             @foreach (var todo in fileGroup)
             {
                 <div class="mb-3">
-                    <p><strong>Line @todo.Line:</strong></p>
+                    <p><strong>Line @todo.Line:</strong> @todo.Text</p>
 
                     <div class="code-container">
                         <div class="line-numbers">
-                            @for (int i = 1; i <= (todo.Context?.Count ?? 0); i++)
+                            @{
+                                int contextStartLine = todo.Context != null && todo.Context.Any() 
+                                    ? todo.Line - (Array.IndexOf(todo.Context.ToArray(), todo.Context.FirstOrDefault(l => l.Trim() == todo.Text)))
+                                    : 1;
+                            }
+                            @for (int i = 0; i < (todo.Context?.Count ?? 0); i++)
                             {
-                                <div class="line-number">@i</div>
+                                <div class="line-number">@(contextStartLine + i)</div>
                             }
                         </div>
                         <pre class="bg-white p-2 border rounded code-content">
-                            @foreach (var line in todo.Context ?? new List<string> { "// No context available" })
+                            @foreach (var (line, index) in todo.Context?.Select((line, idx) => (line, idx)) ?? new List<(string, int)>())
                             {
-                                @if (line.Contains(todo.Text))
+                                var currentLineNumber = contextStartLine + index;
+                                @if (currentLineNumber == todo.Line)
                                 {
                                     <span class="highlight-todo">@line</span><br />
                                 }
@@ -48,3 +54,34 @@ else
         </div>
     }
 }
+
+<style>
+    .code-container {
+        display: flex;
+        overflow-x: auto;
+    }
+    
+    .line-numbers {
+        padding: 0.5rem;
+        background-color: #f8f9fa;
+        border-right: 1px solid #dee2e6;
+        text-align: right;
+        user-select: none;
+    }
+    
+    .line-number {
+        color: #6c757d;
+    }
+    
+    .code-content {
+        flex: 1;
+        margin: 0;
+        overflow-x: auto;
+        white-space: pre-wrap;
+    }
+    
+    .highlight-todo {
+        background-color: #fff3cd;
+        font-weight: bold;
+    }
+</style>

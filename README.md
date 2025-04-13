@@ -29,10 +29,10 @@ Most code quality tools are either:
 
 - Cyclomatic complexity
 - TODOs / tech debt comments
-- Style violations
-- Build warnings (if enabled)
-- Unit test coverage (if enabled)
-- More to come...
+- Long methods
+- Large classes
+- Empty try/catch blocks
+- And more ...
 
 ---
 

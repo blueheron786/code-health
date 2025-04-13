@@ -15,5 +15,4 @@ public class FileResult
 public class CommentResult
 {
     public int Line { get; set; }
-    public string Text { get; set; } = string.Empty;
 }

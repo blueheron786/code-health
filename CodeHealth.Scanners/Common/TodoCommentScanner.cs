@@ -38,14 +38,15 @@ public class TodoCommentScanner : IStaticCodeScanner
                 fileResult.Comments.Add(new CommentResult
                 {
                     Line = line,
-                    Text = comment.ToString().Trim()
                 });
 
                 report.TotalTodos++;
             }
 
             if (fileResult.Comments.Any())
+            {
                 report.Files.Add(fileResult);
+            }
         }
 
         var outputFile = Path.Combine(outputDir, Constants.FileNames.TodoCommentsFile);

@@ -23,7 +23,7 @@ public class TodosPage : ComponentBase
     {
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
         var projectSourcePath = await SharedProjectService.GetProjectSourcePath(ProjectId);
-        todoData = await TodoCommentDataLoader.LoadTodoCommentsAsync(runDirectoryPath);
+        todoData = await TodoCommentDataLoader.LoadTodoCommentsAsync(ProjectId, runDirectoryPath);
 
         foreach (var todo in todoData)
         {
