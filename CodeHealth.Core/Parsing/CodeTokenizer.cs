@@ -1,4 +1,4 @@
-using CodeHealth.Core.Dtos.CyclomaticComplexity;
+using CodeHealth.Core.Dtos;
 
 namespace CodeHealth.Core.Parsing;
 

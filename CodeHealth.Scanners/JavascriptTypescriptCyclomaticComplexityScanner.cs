@@ -1,9 +1,9 @@
 namespace CodeHealth.Scanners
 {
-    using CodeHealth.Core.Dtos.CyclomaticComplexity;
     using CodeHealth.Scanners.Common;
     using System.Text.RegularExpressions;
     using System.Linq;
+    using CodeHealth.Core.Dtos;
 
     public class JavascriptTypescriptCyclomaticComplexityScanner
     {

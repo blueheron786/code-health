@@ -1,6 +1,6 @@
 namespace CodeHealth.Scanners
 {
-    using CodeHealth.Core.Dtos.CyclomaticComplexity;
+    using CodeHealth.Core.Dtos;
     using CodeHealth.Core.Dtos.TodoComments;
     using CodeHealth.Scanners.Common;
     using System.Text.RegularExpressions;

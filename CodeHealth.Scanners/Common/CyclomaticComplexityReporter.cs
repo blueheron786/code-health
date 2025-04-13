@@ -1,5 +1,5 @@
 using System.Text.Json;
-using CodeHealth.Core.Dtos.CyclomaticComplexity;
+using CodeHealth.Core.Dtos;
 
 namespace CodeHealth.Scanners.Common
 {

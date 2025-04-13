@@ -1,6 +1,6 @@
 namespace CodeHealth.Scanners
 {
-    using CodeHealth.Core.Dtos.CyclomaticComplexity;
+    using CodeHealth.Core.Dtos;
     using CodeHealth.Scanners.Common;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;

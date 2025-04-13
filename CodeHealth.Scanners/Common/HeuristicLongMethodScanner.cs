@@ -1,4 +1,4 @@
-using CodeHealth.Core.Dtos.CyclomaticComplexity;
+using CodeHealth.Core.Dtos;
 using Microsoft.CodeAnalysis;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -7,8 +7,8 @@ namespace CodeHealth.Scanners.Common;
 
 public class HeuristicLongMethodScanner
 {
-private const string CStyleMethodRegex = @"\b(public|private|protected)?\s*(static\s+)?[\w<>\[\]]+\s+\w+\s*\(.*\)\s*{?\s*$";
-private const string JsLikeFunctionRegex = @"\bfunction\b|\s*=>\s*{";
+    private const string CStyleMethodRegex = @"\b(public|private|protected)?\s*(static\s+)?[\w<>\[\]]+\s+\w+\s*\(.*\)\s*{?\s*$";
+    private const string JsLikeFunctionRegex = @"\bfunction\b|\s*=>\s*{";
     private readonly int _threshold;
 
     public HeuristicLongMethodScanner(int threshold = 40)

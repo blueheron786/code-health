@@ -1,7 +1,7 @@
 namespace CodeHealth.Scanners
 {
-    using CodeHealth.Core.Dtos.CyclomaticComplexity;
     using System.Text.RegularExpressions;
+    using CodeHealth.Core.Dtos;
     using CodeHealth.Scanners.Common;
 
     public class KotlinCyclomaticComplexityScanner : IStaticCodeScanner
