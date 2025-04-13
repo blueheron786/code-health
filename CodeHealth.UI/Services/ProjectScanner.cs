@@ -53,7 +53,7 @@ public static class ProjectScanner
 
     private static void RunCSharpScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
-        new Scanners.CSharpCyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+        new CSharpCyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 
     private static void RunJavaScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
@@ -74,6 +74,8 @@ public static class ProjectScanner
     private static void RunCommonScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
         LanguageLineCounter.AnalyzeLanguageBreakdown(sourceFiles, resultsDirectory);
+        
         new TodoCommentScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+        new HeuristicLongMethodScanner().AnalyzeFiles(sourceFiles, resultsDirectory);
     }
 }
