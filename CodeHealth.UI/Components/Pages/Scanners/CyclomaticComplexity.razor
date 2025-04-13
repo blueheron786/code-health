@@ -47,6 +47,20 @@ else
             vertical-align: baseline;
             border-radius: 0.25rem;
         }
+
+        .table th:nth-child(1), /* Style for the Folder header */
+        .table td:nth-child(1) { /* Style for the Folder cells */
+            max-width: 200px; /* Adjust as needed */
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .table th:nth-child(2), /* Style for the File header */
+        .table td:nth-child(2) { /* Style for the File cells */
+            max-width: 250px; /* Adjust as needed */
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
     </style>
 
     <table class="table table-striped table-hover">
@@ -55,7 +69,7 @@ else
                 <th>Folder</th>
                 <th>File</th>
                 <th>Method</th>
-                <th>Cyclomatic Complexity</th>
+                <th>Complexity</th>
             </tr>
         </thead>
         <tbody>
