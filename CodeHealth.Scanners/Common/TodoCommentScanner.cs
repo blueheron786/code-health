@@ -1,56 +1,52 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using CodeHealth.Core.Dtos.TodoComments;
 using CodeHealth.Core.IO;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
-namespace CodeHealth.Scanners.Common;
-
-public class TodoCommentScanner : IStaticCodeScanner
+namespace CodeHealth.Scanners.Common
 {
-    public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
+    public class TodoCommentScanner : IStaticCodeScanner
     {
-        var report = new TodoCommentsReport();
+        private static readonly Regex TodoRegex = new Regex(@"//\s*TODO", RegexOptions.Compiled);
 
-        foreach (var kvp in sourceFiles)
+        public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
         {
-            string filePath = kvp.Key;
-            string code = kvp.Value;
+            var report = new TodoCommentsReport();
 
-            var tree = CSharpSyntaxTree.ParseText(code, path: filePath);
-            var root = tree.GetRoot();
-
-            var fileResult = new FileResult
+            foreach (var kvp in sourceFiles)
             {
-                File = Path.GetRelativePath(rootPath, filePath).Replace("\\", "/")
-            };
+                string filePath = kvp.Key;
+                string code = kvp.Value;
 
-            var todoComments = root
-                .DescendantTrivia()
-                .Where(t => t.IsKind(SyntaxKind.SingleLineCommentTrivia))
-                .Where(t => t.ToString().Contains("// TODO") || t.ToString().Contains("//TODO"));
-
-            foreach (var comment in todoComments)
-            {
-                var lineSpan = comment.GetLocation().GetLineSpan();
-                var line = lineSpan.StartLinePosition.Line + 1;
-
-                fileResult.Comments.Add(new CommentResult
+                var fileResult = new FileResult
                 {
-                    Line = line,
-                });
+                    File = Path.GetRelativePath(rootPath, filePath).Replace("\\", "/")
+                };
 
-                report.TotalTodos++;
+                // Find all TODO comments using regex
+                var matches = TodoRegex.Matches(code);
+                foreach (Match match in matches)
+                {
+                    var line = code.Substring(0, match.Index).Split('\n').Length; // Calculate the line number
+
+                    fileResult.Comments.Add(new CommentResult
+                    {
+                        Line = line,
+                    });
+
+                    report.TotalTodos++;
+                }
+
+                if (fileResult.Comments.Any())
+                {
+                    report.Files.Add(fileResult);
+                }
             }
 
-            if (fileResult.Comments.Any())
-            {
-                report.Files.Add(fileResult);
-            }
+            // Finalize and output the report
+            var outputFile = Path.Combine(outputDir, Constants.FileNames.TodoCommentsFile);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            File.WriteAllText(outputFile, JsonSerializer.Serialize(report, options));
         }
-
-        var outputFile = Path.Combine(outputDir, Constants.FileNames.TodoCommentsFile);
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        File.WriteAllText(outputFile, JsonSerializer.Serialize(report, options));
     }
 }
