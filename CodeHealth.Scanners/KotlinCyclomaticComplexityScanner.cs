@@ -7,6 +7,26 @@ using CodeHealth.Scanners.Common;
 public class KotlinCyclomaticComplexityScanner : IStaticCodeScanner
 {
     public const string FileExtension = ".kt";
+    
+    // Method detection patterns
+    private const string MethodPattern = @"(?:fun)\s+(\w+)\s*\([^)]*\)\s*(\{?)";
+    
+    // String/comment stripping patterns
+    private const string StringLiteralPattern = "\"(?:\\\\.|[^\"\\\\])*\"";
+    private const string SingleLineCommentPattern = @"//.*";
+    private const string MultiLineCommentPattern = @"/\*.*?\*/";
+    
+    // Complexity decision point patterns
+    private static readonly string[] DecisionPointPatterns = new[]
+    {
+        @"if\s*\(",    // if statements
+        @"for\s*\(",   // for loops
+        @"while\s*\(", // while loops
+        @"when\s*\(",  // Kotlin when expressions
+        @"&&",         // logical AND
+        @"\|\|",       // logical OR
+        @"\?\s*"       // ternary operator
+    };
 
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
@@ -18,12 +38,10 @@ public class KotlinCyclomaticComplexityScanner : IStaticCodeScanner
             string code = kvp.Value;
 
             if (!fileName.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))
-            {
                 continue;
-            }
-
             // Preprocess to strip comments and strings (will work similarly as with Java)
             code = StripCommentsAndStrings(code);
+            string[] lines = code.Split('\n');
 
             var fileResult = new FileResult
             {
@@ -31,23 +49,23 @@ public class KotlinCyclomaticComplexityScanner : IStaticCodeScanner
             };
 
             // Find all method-like declarations using regex
-            var methodMatches = Regex.Matches(code, @"(?:fun)\s+(\w+)\s*\([^)]*\)\s*(\{?)");
-
+            var methodMatches = Regex.Matches(code, MethodPattern);
             foreach (Match match in methodMatches)
             {
                 string methodName = match.Groups[1].Value;
-                int methodStart = match.Index;
-                string methodBlock = ExtractMethodBody(code, methodStart);
-
-                int complexity = CountDecisionPoints(methodBlock) + 1;
+                int methodStartPos = match.Index;
+                
+                int startLine = GetLineNumber(code, methodStartPos, lines);
+                string methodBlock = ExtractMethodBody(code, methodStartPos);
+                int endLine = GetLineNumber(code, methodStartPos + methodBlock.Length, lines);
 
                 fileResult.Methods.Add(new MethodResult
                 {
                     Method = methodName,
-                    Complexity = complexity
+                    Complexity = CountDecisionPoints(methodBlock) + 1,
+                    StartLine = startLine,
+                    EndLine = endLine
                 });
-
-                report.TotalComplexity += complexity;
             }
 
             if (fileResult.Methods.Any())
@@ -59,44 +77,50 @@ public class KotlinCyclomaticComplexityScanner : IStaticCodeScanner
 
     private static string StripCommentsAndStrings(string code)
     {
-        // Remove strings
-        code = Regex.Replace(code, "\"(?:\\\\.|[^\"\\\\])*\"", "\"\"");
-        // Remove single-line comments
-        code = Regex.Replace(code, @"//.*", "");
-        // Remove multi-line comments
-        code = Regex.Replace(code, @"/\*.*?\*/", "", RegexOptions.Singleline);
-        return code;
+        code = Regex.Replace(code, StringLiteralPattern, "\"\"");
+        code = Regex.Replace(code, SingleLineCommentPattern, "");
+        return Regex.Replace(code, MultiLineCommentPattern, "", RegexOptions.Singleline);
     }
 
     private static int CountDecisionPoints(string code)
     {
-        // Simple decision points to match
-        var patterns = new[]
-        {
-            "if\\s*\\(", "for\\s*\\(", "while\\s*\\(", "when\\s*\\(", // Kotlin’s "when"
-            "&&", "\\|\\|", "\\?\\s*" // Ternary operator-like expressions
-        };
+        return DecisionPointPatterns.Sum(pattern => 
+            Regex.Matches(code, pattern).Count);
+    }
 
-        return patterns.Sum(p => Regex.Matches(code, p).Count);
+    private static int GetLineNumber(string code, int position, string[] lines)
+    {
+        int currentPos = 0;
+        for (int i = 0; i < lines.Length; i++)
+        {
+            currentPos += lines[i].Length + 1;
+            if (currentPos > position)
+                return i + 1;
+        }
+        return 1;
     }
 
     private static string ExtractMethodBody(string code, int startIndex)
     {
-        // Similar to Java/C# body extraction
         int braceCount = 0;
         int i = code.IndexOf('{', startIndex);
-        if (i == -1) return ""; // no body found
+        if (i == -1) {
+            return "";
+        }
 
         int start = i;
         for (; i < code.Length; i++)
         {
-            if (code[i] == '{') braceCount++;
-            else if (code[i] == '}') braceCount--;
-
-            if (braceCount == 0) break;
+            if (code[i] == '{') {
+                braceCount++;
+            } else if (code[i] == '}') {
+                braceCount--;
+            }
+            
+            if (braceCount == 0) {
+                break;
+            }
         }
-
-        return code.Substring(start, i - start + 1);
+        return i < code.Length ? code.Substring(start, i - start + 1) : "";
     }
 }
-
