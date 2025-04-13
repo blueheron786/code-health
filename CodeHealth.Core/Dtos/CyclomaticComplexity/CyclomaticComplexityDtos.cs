@@ -4,6 +4,8 @@ public class MethodResult
 {
     public string Method { get; set; } = "";
     public int Complexity { get; set; }
+    public int StartLine { get; set; }
+    public int EndLine { get; set; }
 }
 
 public class FileResult

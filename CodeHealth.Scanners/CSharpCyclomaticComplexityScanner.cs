@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 public class CSharpCyclomaticComplexityScanner : IStaticCodeScanner
 {
-    public readonly string FileExtension = ".cs";
+    public const string FileExtension = ".cs";
 
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
@@ -26,6 +26,7 @@ public class CSharpCyclomaticComplexityScanner : IStaticCodeScanner
 
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = tree.GetRoot();
+            var text = tree.GetText();
 
             var fileResult = new FileResult
             {
@@ -56,10 +57,16 @@ public class CSharpCyclomaticComplexityScanner : IStaticCodeScanner
                     );
                 }
 
+                var lineSpan = method.GetLocation().GetLineSpan();
+                var startLine = lineSpan.StartLinePosition.Line + 1; // +1 for 1-based indexing
+                var endLine = lineSpan.EndLinePosition.Line + 1;
+
                 fileResult.Methods.Add(new MethodResult
                 {
                     Method = method.Identifier.Text,
-                    Complexity = complexity
+                    Complexity = complexity,
+                    StartLine = startLine,
+                    EndLine = endLine
                 });
 
                 report.TotalComplexity += complexity;

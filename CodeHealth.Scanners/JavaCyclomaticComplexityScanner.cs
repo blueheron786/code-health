@@ -12,6 +12,23 @@ public class JavaCyclomaticComplexityScanner : IStaticCodeScanner
 {
     public readonly string FileExtension = ".java";
 
+    private const string MethodPattern = @"(?:public|private|protected)?\s*(?:static\s+)?[\w<>\[\]]+\s+(\w+)\s*\([^)]*\)\s*(\{?)";
+    private static readonly string[] DecisionPatterns = new[]
+    {
+        @"if\s*\(",
+        @"for\s*\(",
+        @"while\s*\(",
+        @"case\s+[^:]+:",
+        @"catch\s*\(",
+        @"&&",
+        @"\|\|",
+        @"\?\s*"
+    };
+
+    private const string StringPattern = "\"(?:\\\\.|[^\"\\\\])*\"";
+    private const string SingleLineCommentPattern = @"//.*";
+    private const string MultiLineCommentPattern = @"/\*.*?\*/";
+
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
         var report = new Report();
@@ -19,7 +36,7 @@ public class JavaCyclomaticComplexityScanner : IStaticCodeScanner
         foreach (var kvp in sourceFiles)
         {
             string fileName = kvp.Key;
-            string code = kvp.Value;
+            string originalCode = kvp.Value;
 
             if (!fileName.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))
             {
@@ -27,7 +44,7 @@ public class JavaCyclomaticComplexityScanner : IStaticCodeScanner
             }
 
             // Preprocess to strip comments & strings
-            code = StripCommentsAndStrings(code);
+            string strippedCode = StripCommentsAndStrings(originalCode);
 
             var fileResult = new FileResult
             {
@@ -35,20 +52,27 @@ public class JavaCyclomaticComplexityScanner : IStaticCodeScanner
             };
 
             // Use regex to find method declarations
-            var methodMatches = Regex.Matches(code, @"(?:public|private|protected)?\s*(?:static\s+)?[\w<>\[\]]+\s+(\w+)\s*\([^)]*\)\s*(\{?)");
+            var methodMatches = Regex.Matches(strippedCode, MethodPattern);
 
             foreach (Match match in methodMatches)
             {
                 string methodName = match.Groups[1].Value;
                 int methodStart = match.Index;
-                string methodBlock = ExtractMethodBody(code, methodStart);
+                string methodBlock = ExtractMethodBody(strippedCode, methodStart);
 
                 int complexity = CountDecisionPoints(methodBlock) + 1;
+
+                int charIndexInOriginal = match.Index;
+                int startLine = originalCode.Take(charIndexInOriginal).Count(c => c == '\n') + 1;
+                int endCharIndex = charIndexInOriginal + methodBlock.Length;
+                int endLine = originalCode.Take(endCharIndex).Count(c => c == '\n') + 1;
 
                 fileResult.Methods.Add(new MethodResult
                 {
                     Method = methodName,
-                    Complexity = complexity
+                    Complexity = complexity,
+                    StartLine = startLine,
+                    EndLine = endLine
                 });
 
                 report.TotalComplexity += complexity;
@@ -65,32 +89,22 @@ public class JavaCyclomaticComplexityScanner : IStaticCodeScanner
 
     private static string StripCommentsAndStrings(string code)
     {
-        // Remove strings
-        code = Regex.Replace(code, "\"(?:\\\\.|[^\"\\\\])*\"", "\"\"");
-        // Remove single-line comments
-        code = Regex.Replace(code, @"//.*", "");
-        // Remove multi-line comments
-        code = Regex.Replace(code, @"/\*.*?\*/", "", RegexOptions.Singleline);
+        code = Regex.Replace(code, StringPattern, "\"\"");
+        code = Regex.Replace(code, SingleLineCommentPattern, "");
+        code = Regex.Replace(code, MultiLineCommentPattern, "", RegexOptions.Singleline);
         return code;
     }
 
     private static int CountDecisionPoints(string code)
     {
-        // Simple token-based matchers
-        var patterns = new[]
-        {
-            "if\\s*\\(", "for\\s*\\(", "while\\s*\\(", "case\\s+[^:]+:", "catch\\s*\\(",
-            "&&", "\\|\\|", "\\?\\s*" // ternary operator
-        };
-
-        return patterns.Sum(p => Regex.Matches(code, p).Count);
+        return DecisionPatterns.Sum(p => Regex.Matches(code, p).Count);
     }
 
     private static string ExtractMethodBody(string code, int startIndex)
     {
         int braceCount = 0;
         int i = code.IndexOf('{', startIndex);
-        if (i == -1) return ""; // no body found
+        if (i == -1) return "";
 
         int start = i;
         for (; i < code.Length; i++)

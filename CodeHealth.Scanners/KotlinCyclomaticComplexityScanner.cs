@@ -6,7 +6,7 @@ using CodeHealth.Scanners.Common;
 
 public class KotlinCyclomaticComplexityScanner : IStaticCodeScanner
 {
-    public readonly string FileExtension = ".kt";
+    public const string FileExtension = ".kt";
 
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
