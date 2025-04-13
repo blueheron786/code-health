@@ -83,7 +83,6 @@ private const string JsLikeFunctionRegex = @"\bfunction\b|\s*=>\s*{";
                                 Threshold = _threshold
                             },
                             Message = $"Possible method block is {length} lines long.",
-                            CodeSnippet = lines.Skip(methodStart).Take(length).Select(l => l.TrimEnd()).ToList(),
                             Severity = "Medium",
                             Suggestion = "Consider breaking this block into smaller units.",
                             Tags = new List<string> { "long-method", "heuristic" },

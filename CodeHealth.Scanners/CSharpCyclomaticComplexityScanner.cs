@@ -68,10 +68,6 @@ namespace CodeHealth.Scanners
                             Threshold = 10 // Example threshold for high complexity
                         },
                         Message = $"Method '{method.Identifier.Text}' has a cyclomatic complexity of {complexity}.",
-                        CodeSnippet = new List<string>
-                        {
-                            code.Substring(lineSpan.StartLinePosition.Character, Math.Min(100, code.Length - lineSpan.StartLinePosition.Character)) // Capture first 100 characters or less
-                        },
                         Severity = complexity > 10 ? "High" : "Medium", // Simple severity based on complexity value
                         Suggestion = "Consider refactoring the method to reduce complexity.",
                         Tags = new List<string> { "complexity", "refactor" },

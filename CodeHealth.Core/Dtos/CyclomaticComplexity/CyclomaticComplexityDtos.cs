@@ -17,7 +17,6 @@ namespace CodeHealth.Core.Dtos.CyclomaticComplexity
         public string Name { get; set; } = "";
         public Metric Metric { get; set; } = new Metric();
         public string Message { get; set; } = "";
-        public List<string> CodeSnippet { get; set; } = new List<string>();
         public string Severity { get; set; } = "High"; // "Low", "Medium", "High"
         public string Suggestion { get; set; } = "Consider refactoring the method to improve readability.";
         public List<string> Tags { get; set; } = new List<string> { "complexity", "refactor" };
