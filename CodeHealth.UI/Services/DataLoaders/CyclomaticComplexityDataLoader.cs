@@ -20,18 +20,18 @@ public static class CyclomaticComplexityDataLoader
                 var jsonData = await File.ReadAllTextAsync(filePath);
                 var report = JsonSerializer.Deserialize<Report>(jsonData);
 
-                if (report?.Files != null)
+                if (report?.Issues != null) // Use Issues instead of Files.Methods
                 {
                     var language = GetLanguageFromCyclomaticComplexityReportFile(filePath);
 
-                    var methods = report.Files
-                        .SelectMany(file => file.Methods.Select(method => new CyclomaticComplexityData
+                    var methods = report.Issues
+                        .Select(issue => new CyclomaticComplexityData
                         {
-                            File = file.File,
-                            Method = method.Method,
-                            Complexity = method.Complexity,
+                            File = issue.File,
+                            Method = issue.Name, // Use the method name from the issue
+                            Complexity = issue.Metric.Value,
                             Language = language,
-                        }));
+                        });
 
                     allMethods.AddRange(methods);
                 }

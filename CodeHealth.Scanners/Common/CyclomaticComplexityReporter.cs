@@ -1,18 +1,24 @@
 using System.Text.Json;
 using CodeHealth.Core.Dtos.CyclomaticComplexity;
-using CodeHealth.Core.IO;
 
-namespace CodeHealth.Scanners.Common;
-
-public static class CyclomaticComplexityReporter
+namespace CodeHealth.Scanners.Common
 {
-    public static void FinalizeReport(Report report, string outputDir, string outputFilename)
+    public static class CyclomaticComplexityReporter
     {
-        int methodCount = report.Files.Sum(f => f.Methods.Count);
-        report.AverageComplexity = methodCount > 0 ? (double)report.TotalComplexity / methodCount : 0;
+        public static void FinalizeReport(Report report, string outputDir, string outputFilename)
+        {
+            // Sum complexity from all issues
+            int methodCount = report.Issues.Count;
+            int totalComplexity = report.Issues.Sum(issue => issue.Metric.Value);
+            
+            // Set average complexity if methodCount > 0
+            report.TotalComplexity = totalComplexity;
+            report.AverageComplexity = methodCount > 0 ? (double)totalComplexity / methodCount : 0;
 
-        var outputFile = Path.Combine(outputDir, outputFilename);
-        var json = JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(outputFile, json);
+            // Create the output file
+            var outputFile = Path.Combine(outputDir, outputFilename);
+            var json = JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(outputFile, json);
+        }
     }
 }
