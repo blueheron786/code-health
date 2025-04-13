@@ -1,0 +1,83 @@
+@page "/project/{ProjectId}/cyclomatic-complexity"
+@inherits CyclomaticComplexityPage
+
+@using System.IO
+
+<h3>Cyclomatic Complexity for Project: @ProjectId</h3>
+
+@if (complexityData == null)
+{
+    <p>Loading data...</p>
+}
+else if (!complexityData.Any())
+{
+    <p>No cyclomatic complexity data available for this project.</p>
+}
+else
+{
+    <style>
+        .high-complexity {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .medium-complexity {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .low-complexity {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .file-link {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .file-link:hover {
+            color: #0056b3;
+        }
+        .complexity-badge {
+            display: inline-block;
+            padding: 0.25em 0.4em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+        }
+    </style>
+
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Folder</th>
+                <th>File</th>
+                <th>Method</th>
+                <th>Cyclomatic Complexity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in complexityData)
+            {
+                var fileName = Path.GetFileName(item.File);
+                var package = Path.GetDirectoryName(item.File)?.Replace(Path.DirectorySeparatorChar, '.');
+
+                <tr>
+                    <td>@package</td>
+                    <td>
+                        <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: @LanguageColours.GetColour(item.Language); margin-right: 5px;"></span>
+                        <span class="file-link" @onclick="() => NavigateToFileView(item.File)">@fileName</span>
+                    </td>
+                    <td>@item.Method</td>
+                    <td>
+                        <span class="complexity-badge @GetComplexityClass(item.Complexity)">
+                            @item.Complexity (@GetComplexityText(item.Complexity))
+                        </span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

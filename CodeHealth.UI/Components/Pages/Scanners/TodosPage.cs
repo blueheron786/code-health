@@ -4,7 +4,7 @@ using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
 
-namespace CodeHealth.UI.Components.Pages.Project;
+namespace CodeHealth.UI.Components.Pages.Scanners;
 
 /// <summary>
 /// Shows the actual TODOs and surrounding code. Note that this uses the current code
