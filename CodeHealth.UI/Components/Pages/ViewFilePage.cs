@@ -115,14 +115,18 @@ public partial class ViewFilePage : ComponentBase
         return Lines.Length; // Default to end of file if we can't find the closing brace
     }
 
-    protected IssueResult GetIssueForLine(int lineNumber)
+    protected List<IssueResult> GetIssuesForLine(int lineNumber)
     {
-        return FileIssues.FirstOrDefault(issue =>
-            lineNumber >= issue.Line && lineNumber <= issue.EndLine);
+        return FileIssues
+            .Where(issue => lineNumber >= issue.Line && lineNumber <= issue.EndLine)
+            .ToList();
     }
 
     protected string GetIssueClass(IssueResult issue)
     {
+        if (issue.Type == "Method")
+            return "long-line";
+
         if (issue.Metric?.Value != 0 && issue.Metric?.Threshold != 0)
         {
             var ratio = (double)issue.Metric.Value / issue.Metric.Threshold;

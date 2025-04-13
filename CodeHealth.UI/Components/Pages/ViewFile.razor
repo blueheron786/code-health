@@ -30,6 +30,22 @@ else
             </div>
             <div class="card-body p-0">
                 <div class="code-container">
+                    <!-- fancy symbols for line-level indicators -->
+                    <div class="gutter">
+                    @for (int i = 1; i <= Lines.Length; i++)
+                    {
+                        var issues = GetIssuesForLine(i);
+                        var hasBlockIssue = issues.Any(issue => issue.Type is "CyclomaticComplexity" or "LongMethod" or "LongClass");
+
+                        <div class="gutter-icon">
+                            @if (hasBlockIssue)
+                            {
+                                <span class="icon" title="@string.Join(", ", issues.Select(i => i.Type))">⚠️</span>
+                            }
+                        </div>
+                    }
+                </div>
+
                     <div class="line-numbers">
                         @for (int i = 1; i <= Lines.Length; i++)
                         {
@@ -40,10 +56,11 @@ else
                         @foreach (var (line, index) in Lines.Select((line, idx) => (line, idx)))
                         {
                             var lineNumber = index + 1;
-                            var issue = GetIssueForLine(lineNumber);
-                            if (issue != null)
+                            var issues = GetIssuesForLine(lineNumber);
+                            if (issues.Any())
                             {
-                                <span class="@GetIssueClass(issue)">@line<br /></span>
+                                var classes = string.Join(" ", issues.Select(GetIssueClass));
+                                <span class="@classes">@line<br /></span>
                             }
                             else
                             {
@@ -58,6 +75,8 @@ else
 }
 
 <style>
+    /* code, line numbers, etc. */
+
     .code-container {
         display: flex;
         overflow-x: auto;
@@ -81,6 +100,27 @@ else
         white-space: pre-wrap;
         word-wrap: break-word;
     }
+
+    /* Gutter and icons */
+    .gutter {
+        background-color: #fefefe;
+        border-right: 1px solid #ccc;
+        text-align: center;
+        width: 2rem;
+        user-select: none;
+        padding: 0.5rem 0;
+    }
+
+    .gutter-icon {
+        height: 1.2rem;
+    }
+
+    .icon {
+        font-size: 0.8rem;
+        cursor: help;
+    }
+
+    /* Code complexity */
     
     .high-complexity {
         background-color: #ffcccc;
@@ -104,7 +144,7 @@ else
         font-size: 0.8rem;
     }
 
-    /* headers */
+    /* CC headers */
     .complexity-legend {
         display: flex;
         gap: 10px;
@@ -130,4 +170,12 @@ else
     .low-complexity, .badge.low-complexity {
         background-color: #d4edda;
     }
+
+    /* Long lines */
+    .long-line {
+        outline-left: 4px solid orange; /* or whatever makes it distinct */
+        background-color: #fff4e5;
+    }
+
+
 </style>
