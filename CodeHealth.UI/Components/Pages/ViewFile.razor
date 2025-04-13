@@ -1,0 +1,38 @@
+@page "/project/{ProjectId}/file-view"
+@inherits ViewFilePage
+
+@using CodeHealth.UI.Components.Pages
+
+@if (FileContent == null)
+{
+    <p>Loading file...</p>
+}
+else
+{
+    <div class="container-fluid">
+        <h3>@FileName</h3>
+        <div class="mb-3">
+            <button class="btn btn-secondary mt-3" @onclick="NavigateBack">
+                Back
+            </button>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5>Method Complexities</h5>
+                <ul class="list-group list-group-flush">
+                    @foreach (var item in FileComplexities)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center @GetComplexityClass(item.Complexity)">
+                            @item.Method
+                            <span class="badge @GetComplexityClass(item.Complexity) rounded-pill">@item.Complexity</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="card-body">
+                <pre><code>@FileContent</code></pre>
+            </div>
+        </div>
+    </div>
+}
