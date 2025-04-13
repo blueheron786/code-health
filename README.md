@@ -11,7 +11,7 @@
 ### 💡 Why Code Health?
 
 Most code quality tools are either:
-- Heavyweight (hello SonarQube), or
+- Heavyweight and slow (hello SonarQube), or
 - Language-specific (like Detekt or ESLint), or
 - Locked behind subscriptions accounts
 
@@ -22,6 +22,15 @@ Most code quality tools are either:
 - ✅ Zero external dependencies at runtime
 
 > Analyze what matters. Skip the noise.
+
+### 🧱 Why Not Use Detekt (and Friends)?
+Simplicity and scan speed are the core of Code Health.
+
+- Tools like Detekt, PMD, or SpotBugs are powerful—but come with baggage
+- They require platform-specific binaries, slow startup times, and their output isn’t made for custom pipelines
+- We need something fast, portable, and minimal: no build steps, no IDE integration, just scan and go
+
+This means we avoid runtime scanning (build warnings, unit test coverage, etc.) but we think the trade-off is well worthi t.
 
 ---
 
