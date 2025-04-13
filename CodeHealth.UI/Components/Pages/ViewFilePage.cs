@@ -23,6 +23,7 @@ public partial class ViewFilePage : ComponentBase
     protected string[] Lines { get; set; }
     protected List<CyclomaticComplexityData> FileComplexities { get; set; }
     protected string FileName { get; set; }
+    protected List<IssueResult> FileIssues { get; set; } = new();
 
     // Store method start and end lines for highlighting
     protected Dictionary<string, (int start, int end)> MethodRanges { get; set; } = new();
@@ -39,11 +40,11 @@ public partial class ViewFilePage : ComponentBase
         FileName = System.IO.Path.GetFileName(decodedPath);
         
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
-        var allComplexities = await CyclomaticComplexityDataLoader.LoadCyclomaticComplexityData(runDirectoryPath);
-        
-        FileComplexities = allComplexities
-            .Where(c => c.File.Equals(decodedPath, StringComparison.OrdinalIgnoreCase))
+        var allIssues = await IssueResultLoader.LoadIssues(runDirectoryPath);
+        FileIssues = allIssues
+            .Where(i => i.File.Equals(decodedPath, StringComparison.OrdinalIgnoreCase))
             .ToList();
+
             
         FileContent = await LoadFileContent(decodedPath);
         Lines = FileContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
@@ -114,25 +115,21 @@ public partial class ViewFilePage : ComponentBase
         return Lines.Length; // Default to end of file if we can't find the closing brace
     }
 
-    protected CyclomaticComplexityData GetMethodComplexityForLine(int lineNumber)
+    protected IssueResult GetIssueForLine(int lineNumber)
     {
-        foreach (var method in FileComplexities)
-        {
-            if (MethodRanges.TryGetValue(method.Method, out var range))
-            {
-                if (lineNumber >= range.start && lineNumber <= range.end)
-                {
-                    return method;
-                }
-            }
-        }
-        return null;
+        return FileIssues.FirstOrDefault(issue =>
+            lineNumber >= issue.Line && lineNumber <= issue.EndLine);
     }
 
-    protected string GetComplexityClass(int cc)
+    protected string GetIssueClass(IssueResult issue)
     {
-        if (cc > 20) return "high-complexity";
-        if (cc > 10) return "medium-complexity";
+        if (issue.Metric?.Value != 0 && issue.Metric?.Threshold != 0)
+        {
+            var ratio = (double)issue.Metric.Value / issue.Metric.Threshold;
+            if (ratio > 2) return "high-complexity";
+            if (ratio > 1) return "medium-complexity";
+        }
+
         return "low-complexity";
     }
 

@@ -40,10 +40,10 @@ else
                         @foreach (var (line, index) in Lines.Select((line, idx) => (line, idx)))
                         {
                             var lineNumber = index + 1;
-                            var methodComplexity = GetMethodComplexityForLine(lineNumber);
-                            @if (methodComplexity != null)
+                            var issue = GetIssueForLine(lineNumber);
+                            if (issue != null)
                             {
-                                <span class="@GetComplexityClass(methodComplexity.Complexity)">@line<br /></span>
+                                <span class="@GetIssueClass(issue)">@line<br /></span>
                             }
                             else
                             {
