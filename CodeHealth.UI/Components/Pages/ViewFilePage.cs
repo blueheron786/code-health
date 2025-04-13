@@ -20,8 +20,12 @@ public partial class ViewFilePage : ComponentBase
     protected NavigationManager NavigationManager { get; set; }
     
     protected string FileContent { get; set; }
+    protected string[] Lines { get; set; }
     protected List<CyclomaticComplexityData> FileComplexities { get; set; }
     protected string FileName { get; set; }
+
+    // Store method start and end lines for highlighting
+    protected Dictionary<string, (int start, int end)> MethodRanges { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -37,8 +41,99 @@ public partial class ViewFilePage : ComponentBase
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
         var allComplexities = await CyclomaticComplexityDataLoader.LoadCyclomaticComplexityData(runDirectoryPath);
         
-        FileComplexities = allComplexities.Where(c => c.File.Equals(decodedPath, StringComparison.OrdinalIgnoreCase)).ToList();
+        FileComplexities = allComplexities
+            .Where(c => c.File.Equals(decodedPath, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+            
         FileContent = await LoadFileContent(decodedPath);
+        Lines = FileContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        
+        // Simple heuristic to find method locations (this would need to be language-specific)
+        if (FileComplexities?.Any() == true)
+        {
+            foreach (var method in FileComplexities)
+            {
+                // This is a simplified approach - you'd want to implement proper parsing
+                // for each language to find method start/end lines
+                var methodIndex = FindMethodInCode(method.Method);
+                if (methodIndex >= 0)
+                {
+                    MethodRanges[method.Method] = (methodIndex, FindMethodEnd(methodIndex));
+                }
+            }
+        }
+    }
+
+    private int FindMethodInCode(string methodName)
+    {
+        // Simplified method finder - you'll need to implement proper parsing
+        // based on the language (C#, Java, etc.)
+        for (int i = 0; i < Lines.Length; i++)
+        {
+            if (Lines[i].Contains(methodName) && 
+                (Lines[i].Contains(" void ") || 
+                 Lines[i].Contains(" int ") || 
+                 Lines[i].Contains(" string ") ||
+                 Lines[i].Contains(" public ") ||
+                 Lines[i].Contains(" private ")))
+            {
+                return i + 1; // Convert to 1-based line number
+            }
+        }
+        return -1;
+    }
+
+    private int FindMethodEnd(int startLine)
+    {
+        // Simplified method end finder - should implement proper parsing
+        int braceCount = 0;
+        bool firstBraceFound = false;
+        int currentLine = startLine - 1; // Convert to 0-based index
+        
+        while (currentLine < Lines.Length)
+        {
+            var line = Lines[currentLine];
+            if (line.Contains("{"))
+            {
+                braceCount++;
+                firstBraceFound = true;
+            }
+            if (line.Contains("}"))
+            {
+                braceCount--;
+            }
+            
+            if (firstBraceFound && braceCount == 0)
+            {
+                return currentLine + 1; // Convert to 1-based line number
+            }
+            
+            currentLine++;
+        }
+        
+        return Lines.Length; // Default to end of file if we can't find the closing brace
+    }
+
+    protected CyclomaticComplexityData GetMethodComplexityForLine(int lineNumber)
+    {
+        foreach (var method in FileComplexities)
+        {
+            if (MethodRanges.TryGetValue(method.Method, out var range))
+            {
+                if (lineNumber >= range.start && lineNumber <= range.end)
+                {
+                    return method;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected string GetComplexityClass(int cc)
+    {
+        if (cc > 20) return "high-complexity";
+        if (cc > 10) return "medium-complexity";
+        return "low-complexity";
     }
 
     private async Task<string> LoadFileContent(string filePath)
@@ -55,13 +150,6 @@ public partial class ViewFilePage : ComponentBase
             // not necessarily a coding mistake; maybe they deleted the file since the analysis.
             return $"// Source file not found: {absolutePath}";
         }
-    }
-
-    protected string GetComplexityClass(int cc)
-    {
-        if (cc > 20) return "high-complexity";
-        if (cc > 10) return "medium-complexity";
-        return "low-complexity";
     }
 
     protected void NavigateBack()

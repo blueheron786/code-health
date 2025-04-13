@@ -10,7 +10,6 @@
 else
 {
     <div class="container-fluid">
-        <h3>@FileName</h3>
         <div class="mb-3">
             <button class="btn btn-secondary mt-3" @onclick="NavigateBack">
                 Back
@@ -19,20 +18,89 @@ else
         
         <div class="card">
             <div class="card-header">
-                <h5>Method Complexities</h5>
-                <ul class="list-group list-group-flush">
-                    @foreach (var item in FileComplexities)
-                    {
-                        <li class="list-group-item d-flex justify-content-between align-items-center @GetComplexityClass(item.Complexity)">
-                            @item.Method
-                            <span class="badge @GetComplexityClass(item.Complexity) rounded-pill">@item.Complexity</span>
-                        </li>
-                    }
-                </ul>
+                <h5>@FileName</h5>
+                @if (FileComplexities?.Any() == true)
+                {
+                    <div class="complexity-legend mt-2">
+                        <span class="badge high-complexity">High Complexity</span>
+                        <span class="badge medium-complexity">Medium Complexity</span>
+                        <span class="badge low-complexity">Low Complexity</span>
+                    </div>
+                }
             </div>
-            <div class="card-body">
-                <pre><code>@FileContent</code></pre>
+            <div class="card-body p-0">
+                <div class="code-container">
+                    <div class="line-numbers">
+                        @for (int i = 1; i <= Lines.Length; i++)
+                        {
+                            <div class="line-number">@i</div>
+                        }
+                    </div>
+                    <pre class="bg-white p-2 code-content">
+                        @foreach (var (line, index) in Lines.Select((line, idx) => (line, idx)))
+                        {
+                            var lineNumber = index + 1;
+                            var methodComplexity = GetMethodComplexityForLine(lineNumber);
+                            @if (methodComplexity != null)
+                            {
+                                <span class="@GetComplexityClass(methodComplexity.Complexity)">@line<br /></span>
+                            }
+                            else
+                            {
+                                @line<br />
+                            }
+                        }
+                    </pre>
+                </div>
             </div>
         </div>
     </div>
 }
+
+<style>
+    .code-container {
+        display: flex;
+        overflow-x: auto;
+    }
+    
+    .line-numbers {
+        padding: 0.5rem;
+        background-color: #f8f9fa;
+        border-right: 1px solid #dee2e6;
+        text-align: right;
+        user-select: none;
+    }
+    
+    .line-number {
+        padding-left: 5px;
+        color: #888;
+    }
+    
+    .code-content {
+        margin: 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+    
+    .high-complexity {
+        background-color: #ffcccc;
+    }
+    
+    .medium-complexity {
+        background-color: #fff3cd;
+    }
+    
+    .low-complexity {
+        background-color: #d4edda;
+    }
+    
+    .complexity-legend {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .complexity-legend .badge {
+        padding: 3px 8px;
+        font-size: 0.8rem;
+    }
+</style>
