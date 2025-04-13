@@ -12,8 +12,15 @@ namespace CodeHealth.Core.Dtos.CyclomaticComplexity
         public string Scanner { get; set; } = "CyclomaticComplexity";
         public string Type { get; set; } = "Method";
         public string File { get; set; } = "";
+
+        // Line-level or multi-line
         public int Line { get; set; }
         public int EndLine { get; set; }
+
+        // A single word/token
+        public int? Column { get; set; }
+        public int? EndColumn { get; set; }
+
         public string Name { get; set; } = "";
         public Metric Metric { get; set; } = new Metric();
         public string Message { get; set; } = "";
