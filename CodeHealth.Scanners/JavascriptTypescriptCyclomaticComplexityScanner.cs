@@ -10,7 +10,6 @@ public class JavascriptTypescriptCyclomaticComplexityScanner
 
     private static readonly Regex MethodRegex = new(@"function\s+(\w+)\s*\(", RegexOptions.Compiled);
     private static readonly Regex ArrowFunctionRegex = new(@"(\w+)\s*=\s*\((.*?)\)\s*=>", RegexOptions.Compiled);
-
     private static readonly Regex ComplexityRegex = new(@"(\bif\b|\bfor\b|\bwhile\b|\bcase\b|\bcatch\b|\?\s|&&|\|\|)", RegexOptions.Compiled);
 
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
@@ -23,7 +22,7 @@ public class JavascriptTypescriptCyclomaticComplexityScanner
             string filePath = kvp.Key;
             string content = kvp.Value;
 
-           if (!FileExtensions.Any(ext => filePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+            if (!FileExtensions.Any(ext => filePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
             {
                 continue;
             }
@@ -36,6 +35,9 @@ public class JavascriptTypescriptCyclomaticComplexityScanner
             var isTypescript = filePath.Contains(".ts", StringComparison.OrdinalIgnoreCase) ||
                 filePath.Contains(".tsx", StringComparison.OrdinalIgnoreCase);
 
+            // Get all lines for line number calculation
+            var lines = content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            
             // Combine function/arrow-func detection
             var matches = MethodRegex.Matches(content)
                 .Cast<Match>()
@@ -44,15 +46,34 @@ public class JavascriptTypescriptCyclomaticComplexityScanner
             foreach (var match in matches)
             {
                 string methodName = match.Groups[1].Value;
+                
+                // Calculate start line
+                int startLine = 1;
+                int position = match.Index;
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    if (position <= 0)
+                    {
+                        startLine = i + 1;
+                        break;
+                    }
+                    position -= lines[i].Length + Environment.NewLine.Length;
+                }
 
-                // This is a naive way — just count all complexity-increasing constructs in the file
-                // In the future, you could scope this by function
-                int complexity = 1 + ComplexityRegex.Matches(content).Count;
+                // Naive end line calculation (could be improved with proper parsing)
+                int endLine = startLine;
+                int complexity = 1; // Start with 1 for the method itself
+                
+                // Count complexity tokens within the method (naive implementation)
+                // This is just a placeholder - you might want to implement proper scope detection
+                complexity += ComplexityRegex.Matches(content).Count;
 
                 fileResult.Methods.Add(new MethodResult
                 {
                     Method = methodName,
-                    Complexity = complexity
+                    Complexity = complexity,
+                    StartLine = startLine,
+                    EndLine = endLine
                 });
 
                 if (isTypescript) {
@@ -73,8 +94,6 @@ public class JavascriptTypescriptCyclomaticComplexityScanner
         }
 
         CyclomaticComplexityReporter.FinalizeReport(javascriptReport, outputDir, "cyclomatic_complexity.javascript.json");
-        // Necessary for proper file-level tagging of language
         CyclomaticComplexityReporter.FinalizeReport(typescriptReport, outputDir, "cyclomatic_complexity.typescript.json");
     }
 }
-
