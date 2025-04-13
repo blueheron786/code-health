@@ -21,10 +21,10 @@ else
                 <h5>@FileName</h5>
                 @if (FileComplexities?.Any() == true)
                 {
-                    <div class="complexity-legend mt-2">
-                        <span class="badge high-complexity">High Complexity</span>
-                        <span class="badge medium-complexity">Medium Complexity</span>
-                        <span class="badge low-complexity">Low Complexity</span>
+                    <div class="complexity-legend">
+                        <span class="badge high-complexity">High Complexity (CC > 20)</span>
+                        <span class="badge medium-complexity">Medium Complexity (CC > 10)</span>
+                        <span class="badge low-complexity">Low Complexity (CC ≤ 10)</span>
                     </div>
                 }
             </div>
@@ -102,5 +102,32 @@ else
     .complexity-legend .badge {
         padding: 3px 8px;
         font-size: 0.8rem;
+    }
+
+    /* headers */
+    .complexity-legend {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .complexity-legend .badge {
+        padding: 4px 10px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #212529 !important; /* Dark text for better contrast */
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .high-complexity, .badge.high-complexity {
+        background-color: #ffcccc;
+    }
+    
+    .medium-complexity, .badge.medium-complexity {
+        background-color: #fff3cd;
+    }
+    
+    .low-complexity, .badge.low-complexity {
+        background-color: #d4edda;
     }
 </style>
