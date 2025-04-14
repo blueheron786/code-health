@@ -1,4 +1,5 @@
 using CodeHealth.Core.Dtos;
+using CodeHealth.Core.IO;
 using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
@@ -11,14 +12,18 @@ public class CyclomaticComplexityPage : ComponentBase
     public string ProjectId { get; set; }
     
     [Inject]
-    protected NavigationManager NavigationManager { get; set; }
+    protected NavigationManager _navigationManager { get; set; }
     
     protected List<IssueResult> complexityData;
 
+    protected string _projectRootDirectory;
+
     protected override async Task OnInitializedAsync()
     {
+        _projectRootDirectory = await SharedProjectService.GetProjectSourcePath(ProjectId);
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
-        complexityData = await IssueResultLoader.LoadIssues(runDirectoryPath);
+        complexityData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, runDirectoryPath, Constants.FileNames.CyclomatiComplexityFiles);
+        complexityData = complexityData.Where(c => c.Metric.Value > 1).ToList(); // Ignore trivial cases
     }
 
     protected string GetComplexityClass(int cc)
@@ -38,6 +43,6 @@ public class CyclomaticComplexityPage : ComponentBase
     protected void NavigateToFileView(string filePath)
     {
         var encodedFilePath = Uri.EscapeDataString(filePath);
-        NavigationManager.NavigateTo($"/project/{ProjectId}/file-view?path={encodedFilePath}");
+        _navigationManager.NavigateTo($"/project/{ProjectId}/file-view?path={encodedFilePath}");
     }
 }

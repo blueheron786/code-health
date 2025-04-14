@@ -36,9 +36,10 @@ public class ProjectSummaryPage : ComponentBase
         if (folderName != null)
         {
             // CCD (Cyclomatic Complexity Data)
-            var complexityData = await IssueResultLoader.LoadIssues(folderName);            
+            var complexityData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, folderName, Constants.FileNames.CyclomatiComplexityFiles);
             if (complexityData.Any())
             {
+                complexityData = complexityData.Where(x => x.Metric.Value > 1).ToList(); // Ignore trivial cases
                 totalComplexity = complexityData.Sum(x => x.Metric.Value);
                 averageComplexity = complexityData.Average(x => x.Metric.Value);
             }

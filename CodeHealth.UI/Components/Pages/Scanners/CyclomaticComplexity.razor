@@ -15,54 +15,6 @@ else if (!complexityData.Any())
 }
 else
 {
-    <style>
-        .high-complexity {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .medium-complexity {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        .low-complexity {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .file-link {
-            color: #007bff;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        .file-link:hover {
-            color: #0056b3;
-        }
-        .complexity-badge {
-            display: inline-block;
-            padding: 0.25em 0.4em;
-            font-size: 75%;
-            font-weight: 700;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: 0.25rem;
-        }
-
-        .table th:nth-child(1), /* Style for the Folder header */
-        .table td:nth-child(1) { /* Style for the Folder cells */
-            max-width: 200px; /* Adjust as needed */
-            word-break: break-word;
-            overflow-wrap: break-word;
-        }
-
-        .table th:nth-child(2), /* Style for the File header */
-        .table td:nth-child(2) { /* Style for the File cells */
-            max-width: 250px; /* Adjust as needed */
-            word-break: break-word;
-            overflow-wrap: break-word;
-        }
-    </style>
-
     <table class="table table-striped table-hover">
         <thead class="thead-dark">
             <tr>
@@ -76,10 +28,10 @@ else
             @foreach (var item in complexityData)
             {
                 var fileName = Path.GetFileName(item.File);
-                var package = Path.GetDirectoryName(item.File)?.Replace(Path.DirectorySeparatorChar, '.') ?? "(root)";
+                var folder = item.File.Substring(_projectRootDirectory.Length + 1);
 
                 <tr>
-                    <td>@package</td>
+                    <td>@folder</td>
                     <td>
                         <div style="display: inline-flex; align-items: center; gap: 5px;">
                             @* <span style="width: 10px; height: 10px; border-radius: 50%; background-color: @LanguageColours.GetColour(item.Language);"></span> *@

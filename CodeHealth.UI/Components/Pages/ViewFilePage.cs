@@ -1,4 +1,5 @@
 using CodeHealth.Core.Dtos;
+using CodeHealth.Core.IO;
 using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
@@ -42,7 +43,7 @@ public partial class ViewFilePage : ComponentBase
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
         
         // Load ALL issue types (both cyclomatic complexity and long methods)
-        var allIssues = await IssueResultLoader.LoadIssues(runDirectoryPath);
+        var allIssues = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, runDirectoryPath, Constants.FileNames.CyclomatiComplexityFiles);
         FileIssues = allIssues
             .Where(i => i.File.Equals(decodedPath, StringComparison.OrdinalIgnoreCase))
             .ToList();
