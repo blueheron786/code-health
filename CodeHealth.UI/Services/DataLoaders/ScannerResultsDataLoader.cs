@@ -19,39 +19,38 @@ public static class ScannerResultsDataLoader
         var jsonData = await File.ReadAllTextAsync(resultsReportFilePath);
         var report = JsonSerializer.Deserialize<Report>(jsonData);
 
-        var scanResults = new List<IssueResult>();
-
-        if (report?.Issues != null)
+        if (report?.Issues == null)
         {
-            foreach (var file in report.Issues)
+            return new List<IssueResult>();
+        }
+
+        foreach (var issue in report.Issues)
+        {
+            var absolutePath = Path.Combine(projectSourcePath, issue.File);
+
+            if (!File.Exists(absolutePath))
             {
-                var absolutePath = Path.Combine(projectSourcePath, file.File);
-                if (!File.Exists(absolutePath))
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                var sourceLines = await File.ReadAllLinesAsync(absolutePath);
-                
-                // foreach (var comment in file.Comments)
-                // {
-                //     var lineText = comment.Line > 0 && comment.Line <= sourceLines.Length 
-                //         ? sourceLines[comment.Line - 1].Trim() 
-                //         : "// Unable to read source line";
+            var sourceLines = await File.ReadAllLinesAsync(absolutePath);
 
-                //     scanResults.Add(new IssueResult
-                //     {
-                //         File = absolutePath,
-                //         Line = comment.Line,
-                //         Message = lineText,
-                //     });
-                // }
+            issue.File = absolutePath; // Convert to full path
+
+            if (issue.Line > 0 && issue.Line <= sourceLines.Length)
+            {
+                issue.Message += $" → \"{sourceLines[issue.Line - 1].Trim()}\"";
+            }
+            else
+            {
+                issue.Message += " → [Unable to read source line]";
             }
         }
 
-        return scanResults.OrderBy(c => c.File)
-                    .ThenBy(c => c.Line)
-                    .ToList();
+        return report.Issues
+                     .OrderBy(i => i.File)
+                     .ThenBy(i => i.Line)
+                     .ToList();
     }
 
     private static List<string> GetContextLines(string[] sourceLines, int lineNumber, int contextSize = 3)
