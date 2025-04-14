@@ -1,0 +1,50 @@
+@using CodeHealth.UI.Services
+@using Microsoft.Win32
+@using System.Diagnostics
+
+@code
+{
+    [Parameter] public EventCallback OnComplete { get; set; }
+
+    protected string? OutputMessages;
+    internal async void OpenFolderPicker()
+    {
+        // Use WPF's OpenFolderDialog
+        var dialog = new OpenFolderDialog
+        {
+            Title = "Select a folder",
+            Multiselect = false,
+        };
+
+        // Show the dialog (synchronous in WPF)
+        bool? result = dialog.ShowDialog();
+
+        if (result == true)
+        {
+            var folderPath = dialog.FolderName;
+            Debug.WriteLine($"Selected folder: {folderPath}");
+
+            try
+            {
+                var results = ProjectScanner.Scan(folderPath);
+                StateHasChanged();
+                OutputMessages = $"Scan of {folderPath} done in {results}";
+            }
+            catch (Exception ex)
+            {
+                OutputMessages = $"Scan failed: {ex.Message}!";
+            }
+
+            // Refresh parent page UI
+            await OnComplete.InvokeAsync(null);
+        }
+        else
+        {
+            // User cancelled
+        }
+    }
+}
+
+<button @onclick="OpenFolderPicker">Scan Folder</button>
+
+<p>@OutputMessages</p>

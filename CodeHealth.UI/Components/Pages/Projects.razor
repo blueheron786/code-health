@@ -1,6 +1,8 @@
 @page "/projects"
 @inherits ProjectsPage
 
+@using CodeHealth.UI.Components.Controls
+
 <h1>Projects</h1>
 
 @if (projects == null || projects.Count == 0)
@@ -18,3 +20,5 @@ else
         }
     </ul>
 }
+
+<BrowseAndScanButton OnComplete="RefreshProjectsList" />

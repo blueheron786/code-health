@@ -16,6 +16,12 @@ public partial class ProjectsPage : ComponentBase
         projects = await LoadProjectsAsync();
     }
 
+    protected async void RefreshProjectsList()
+    {
+        projects = await LoadProjectsAsync();
+        StateHasChanged();
+    }
+
     private async Task<List<Project>> LoadProjectsAsync()
     {
         var projectsMetadataFile = Constants.FileNames.ProjectsMetadataFile;
@@ -43,7 +49,6 @@ public partial class ProjectsPage : ComponentBase
 
         return projectList ?? new List<Project>();
     }
-
 
     private string TimeAgo(DateTime runTime)
     {

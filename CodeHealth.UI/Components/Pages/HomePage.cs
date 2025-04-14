@@ -1,45 +1,24 @@
-using CodeHealth.UI.Services;
+using CodeHealth.Core.IO;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Win32; // For OpenFolderDialog
-using System.Diagnostics;
+using System.IO;
 
 namespace CodeHealth.UI;
 
 public partial class HomePage : ComponentBase
 {
-    internal string outputMessages = "No folder selected";
+    [Inject]
+    private NavigationManager _navigation { get; set; }
 
-    internal void OpenFolderPicker()
+    protected override async Task OnInitializedAsync()
     {
-        // Use WPF's OpenFolderDialog
-        var dialog = new OpenFolderDialog
+        await base.OnInitializedAsync();
+
+        var projectFilePath = Constants.FileNames.ProjectsMetadataFile;
+
+        // Only redirect if the current URL is the homepage ("/") and the project.xml file exists
+        if (File.Exists(projectFilePath))
         {
-            Title = "Select a folder",
-            Multiselect = false,
-            InitialDirectory = "C:\\" // Optional: Default starting folder
-        };
-
-        // Show the dialog (synchronous in WPF)
-        bool? result = dialog.ShowDialog();
-
-        if (result == true)
-        {
-            var folderPath = dialog.FolderName;
-            Debug.WriteLine($"Selected folder: {folderPath}");
-            StateHasChanged(); // Update UI
-
-            try
-            {
-                var results = ProjectScanner.Scan(folderPath);
-                outputMessages = $"Scan of {folderPath} done in {results}";
-            }
-            catch (Exception ex)
-            {
-                outputMessages = $"Scan failed: {ex.Message}!";
-            }
-        }
-        else {
-            // User cancelled
+            _navigation.NavigateTo("/Projects");
         }
     }
 }
