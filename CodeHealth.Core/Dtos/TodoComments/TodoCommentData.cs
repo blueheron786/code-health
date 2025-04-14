@@ -1,5 +1,6 @@
 namespace CodeHealth.Core.Dtos.TodoComments;
 
+// TODO (har har, ironic I know): delete. We use generic IssueResult now.
 public class TodoCommentData
 {
     public string File { get; set; } = string.Empty;

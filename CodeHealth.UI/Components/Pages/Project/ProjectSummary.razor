@@ -37,7 +37,7 @@ else
                 </td>
             </tr>
             <tr>
-                <td><a href="@($"/project/{ProjectId}/todos")">TODOs</a></td>
+                <td><a href="@($"/project/{ProjectId}/todos")">Todos</a></td>
                 <td>
                     <span class="badge @(totalTodos > 20 ? "bg-danger" : totalTodos > 5 ? "bg-warning" : "bg-success")">
                         @(totalTodos > 20 ? "Many" : totalTodos > 5 ? "Some" : "Few")
@@ -45,6 +45,25 @@ else
                     @totalTodos TODO items
                 </td>
             </tr>
+            <tr>
+                <td><a href="@($"/project/{ProjectId}/long-methods")">Long Methods</a></td>
+                <td>
+                    <span class="badge @(totalLongMethods > 10 ? "bg-danger" : totalLongMethods > 3 ? "bg-warning" : "bg-success")">
+                        @(totalLongMethods > 10 ? "Excessive" : totalLongMethods > 3 ? "Some" : "Few")
+                    </span>
+                    @totalLongMethods long methods, Avg Length @($"{averageLongMethodLength:F1}") lines
+                </td>
+            </tr>
+            <tr>
+                <td><a href="@($"/project/{ProjectId}/magic-numbers")">Magic Numbers</a></td>
+                <td>
+                    <span class="badge @(totalMagicNumbers > 20 ? "bg-danger" : totalMagicNumbers > 5 ? "bg-warning" : "bg-success")">
+                        @(totalMagicNumbers > 20 ? "Too Many" : totalMagicNumbers > 5 ? "Some" : "Few")
+                    </span>
+                    @totalMagicNumbers issues, Avg per method @($"{averageMagicNumberCount:F1}")
+                </td>
+            </tr>
+            
         </tbody>
     </table>
 }

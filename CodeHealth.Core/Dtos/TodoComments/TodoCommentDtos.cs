@@ -1,5 +1,6 @@
 namespace CodeHealth.Core.Dtos.TodoComments;
 
+// TODO: delete and use generic/shared IssueResult* stuff now.
 public class TodoCommentsReport
 {
     public int TotalTodos { get; set; }

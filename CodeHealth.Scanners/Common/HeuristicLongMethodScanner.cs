@@ -1,4 +1,5 @@
 using CodeHealth.Core.Dtos;
+using CodeHealth.Core.IO;
 using Microsoft.CodeAnalysis;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -35,7 +36,7 @@ public class HeuristicLongMethodScanner
             AverageMetricValue = issues.Count == 0 ? 0 : issues.Average(i => i.Metric.Value)
         };
 
-        var outPath = Path.Combine(resultsDirectory, "long_methods.json");
+        var outPath = Path.Combine(resultsDirectory, Constants.FileNames.LongMethodsFile);
         File.WriteAllText(outPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
     }
 

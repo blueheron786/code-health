@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.Json;
+using CodeHealth.Core.IO;
 using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
@@ -10,7 +11,7 @@ public class ProjectSummaryPage : ComponentBase
 {
     [Parameter]
     public string ProjectId { get; set; }
-
+    
     protected bool isAllDataLoaded = false;
     protected string lastScannedTime;
     protected string scanResultsMessage;
@@ -20,6 +21,10 @@ public class ProjectSummaryPage : ComponentBase
     protected int totalComplexity;
     protected double averageComplexity;
     protected int totalTodos;
+    protected int totalLongMethods;
+    protected double averageLongMethodLength;
+    protected int totalMagicNumbers;
+    protected double averageMagicNumberCount;
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,6 +35,7 @@ public class ProjectSummaryPage : ComponentBase
         // Load run data based on the folder name
         if (folderName != null)
         {
+            // CCD (Cyclomatic Complexity Data)
             var complexityData = await CyclomaticComplexityDataLoader.LoadCyclomaticComplexityData(folderName);            
             if (complexityData.Any())
             {
@@ -37,10 +43,27 @@ public class ProjectSummaryPage : ComponentBase
                 averageComplexity = complexityData.Average(x => x.Complexity);
             }
 
-            var todoData = await TodoCommentDataLoader.LoadTodoCommentsAsync(ProjectId, folderName);
+            // TODOs
+            var todoData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, folderName, Constants.FileNames.TodoCommentsFile);
             if (todoData.Any())
             {
                 totalTodos = todoData.Count;
+            }
+
+            // (Overly) long methods
+            var longMethodsData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, folderName, Constants.FileNames.LongMethodsFile);
+            if (longMethodsData.Any())
+            {
+                totalLongMethods = longMethodsData.Count();
+                averageLongMethodLength = longMethodsData.Average(x => x.Metric.Value);
+            }
+
+            // Magic Numbers
+            var magicNumbersData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, folderName, Constants.FileNames.MagicNumbersFile);
+            if (magicNumbersData.Any())
+            {
+                totalMagicNumbers = magicNumbersData.Count();
+                averageMagicNumberCount = magicNumbersData.Average(x => x.Metric.Value);
             }
 
             // Load language distribution from JSON file

@@ -1,5 +1,7 @@
 using System.IO;
+using CodeHealth.Core.Dtos;
 using CodeHealth.Core.Dtos.TodoComments;
+using CodeHealth.Core.IO;
 using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
@@ -17,13 +19,13 @@ public class TodosPage : ComponentBase
     [Parameter]
     public string ProjectId { get; set; }
 
-    protected List<TodoCommentData> todoData;
+    protected List<IssueResult> todoData;
 
     protected override async Task OnInitializedAsync()
     {
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
         var projectSourcePath = await SharedProjectService.GetProjectSourcePath(ProjectId);
-        todoData = await TodoCommentDataLoader.LoadTodoCommentsAsync(ProjectId, runDirectoryPath);
+        todoData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, runDirectoryPath, Constants.FileNames.TodoCommentsFile);
 
         foreach (var todo in todoData)
         {
@@ -36,12 +38,12 @@ public class TodosPage : ComponentBase
                 var start = Math.Max(0, todo.Line - LinesToShowBeforeAndAfterTodo - 1); // zero-based index
                 var end = Math.Min(lines.Length, todo.Line + LinesToShowBeforeAndAfterTodo);
 
-                todo.Context = lines.Skip(start).Take(end - start).ToList();
+                // todo.Context = lines.Skip(start).Take(end - start).ToList();
             }
             else
             {
                 // not necessarily a coding mistake; maybe they deleted the file since the analysis.
-                todo.Context = new List<string> { "// Source file not found: " + todo.File };
+                // todo.Context = new List<string> { "// Source file not found: " + todo.File };
             }
         }
     }

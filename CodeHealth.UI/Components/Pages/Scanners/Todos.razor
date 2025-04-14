@@ -20,10 +20,10 @@ else
             @foreach (var todo in fileGroup)
             {
                 <div class="mb-3">
-                    <p><strong>Line @todo.Line:</strong> @todo.Text</p>
+                    <p><strong>Line @todo.Line:</strong> @todo.Message</p>
 
                     <div class="code-container">
-                        <div class="line-numbers">
+                        @* <div class="line-numbers">
                             @{
                                 int contextStartLine = todo.Context != null && todo.Context.Any() 
                                     ? todo.Line - (Array.IndexOf(todo.Context.ToArray(), todo.Context.FirstOrDefault(l => l.Trim() == todo.Text)))
@@ -47,7 +47,7 @@ else
                                     @line<br />
                                 }
                             }
-                        </pre>
+                        </pre> *@
                     </div>
                 </div>
             }

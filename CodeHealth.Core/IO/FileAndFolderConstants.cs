@@ -16,6 +16,7 @@ public static class Constants
         public const string CyclomatiComplexityFile = "cyclomatic_complexity.json";
         public const string TodoCommentsFile = "todos.json";
         public const string LanguageDistribution = "language_distribution.json";
+        public const string LongMethodsFile = "long_methods.json";
         public const string MagicNumbersFile = "magic_numbers.json";
     }
 }
