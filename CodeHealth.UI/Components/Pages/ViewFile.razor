@@ -2,7 +2,6 @@
 @inherits ViewFilePage
 
 @using CodeHealth.UI.Components.Pages
-@using CodeHealth.Core.Parsing
 
 @if (FileContent == null)
 {
@@ -58,27 +57,16 @@ else
                         {
                             var lineNumber = index + 1;
                             var issues = GetIssuesForLine(lineNumber);
-                            var tokens = CodeTokenizer.Tokenize(line, lineNumber, issues);
-
-                            <div>
-                                @foreach (var token in tokens)
-                                {
-                                    if (token.Issues.Any())
-                                    {
-                                        var classes = string.Join(" ", token.Issues.Select(GetIssueClass));
-                                        <span class="@classes" title="@string.Join(", ", token.Issues.Select(i => i.Type))">
-                                            @token.Text
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span>@token.Text</span>
-                                    }
-                                }
-                                <br />
-                            </div>
+                            if (issues.Any())
+                            {
+                                var classes = string.Join(" ", issues.Select(GetIssueClass));
+                                <span class="@classes">@line<br /></span>
+                            }
+                            else
+                            {
+                                @line<br />
+                            }
                         }
-
                     </pre>
                 </div>
             </div>
@@ -187,17 +175,6 @@ else
     .long-line {
         outline-left: 4px solid orange; /* or whatever makes it distinct */
         background-color: #fff4e5;
-    }
-
-    /* Magic numbers and complex conditionals */
-    .magic-number {
-        text-decoration: underline dotted red;
-        cursor: help;
-    }
-
-    .complex-conditional {
-        text-decoration: underline dotted blue;
-        cursor: help;
     }
 
 
