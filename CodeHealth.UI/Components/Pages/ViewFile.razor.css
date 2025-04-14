@@ -104,6 +104,11 @@
     border-bottom: 1px dashed #ffc107;
 }
 
+.magic-number-highlight {
+    text-decoration: underline dotted red;
+    cursor: help; /* Indicate it's interactive */
+}
+
 /* Issue legend */
 .issue-legend {
     display: flex;

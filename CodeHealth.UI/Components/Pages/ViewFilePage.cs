@@ -163,14 +163,19 @@ public partial class ViewFilePage : ComponentBase
         }
     }
 
-    protected bool LineContainsMagicNumber(int lineNumber, string lineText)
+    protected bool LineContainsMagicNumber(int lineNumber)
+    {
+        return GetMagicNumbersForLine(lineNumber).Any();
+    }
+
+    protected List<IssueResult> GetMagicNumbersForLine(int lineNumber)
     {
         // Check if there are any magic number issues for this line
         var magicNumberIssues = FileIssues
             .Where(i => i.Type == "MagicNumber" && lineNumber >= i.Line && lineNumber <= i.EndLine)
             .ToList();
 
-        return magicNumberIssues.Any();
+        return magicNumberIssues;
     }
 
     protected void NavigateBack()

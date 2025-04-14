@@ -40,7 +40,7 @@ else
                             var hasMediumCC = issues.Any(issue => GetIssueClass(issue) == "medium-complexity");
                             var hasLowCC = issues.Any(issue => GetIssueClass(issue) == "low-complexity");
                             var hasLongMethod = issues.Any(issue => GetIssueClass(issue) == "long-method");
-                            var hasMagicNumberOnLine = LineContainsMagicNumber(i, Lines[i - 1]); // Assuming Lines is 0-indexed
+                            var hasMagicNumberOnLine = LineContainsMagicNumber(i);
 
                             <div class="line-container">
                                 <div class="gutter-icon" title="@string.Join("\n", issues.Select(issue => $"{issue.Type}{(issue.Metric != null ? $": {issue.Metric.Name} {issue.Metric.Value}" : "")}"))">
@@ -71,15 +71,35 @@ else
                             var lineNumber = index + 1;
                             var issues = GetIssuesForLine(lineNumber);
                             var issueClasses = issues.Select(GetIssueClass).Where(c => !string.IsNullOrEmpty(c)).Distinct();
-                            var hasMagicNumber = LineContainsMagicNumber(lineNumber, line);
-                            
+                            var magicNumbersOnLine = GetMagicNumbersForLine(lineNumber);
+
                             <div class="line-container">
-                                <span class="@(issueClasses.Any() || hasMagicNumber ? string.Join(" ", issueClasses) + (hasMagicNumber ? " magic-number" : "") : "")">
-                                    @line
+                                <span class="@string.Join(" ", issueClasses)">
+                                    @if (magicNumbersOnLine.Any())
+                                    {
+                                        var currentIndex = 0;
+                                        foreach (var magicNumber in magicNumbersOnLine)
+                                        {
+                                            @line.Substring(currentIndex, (magicNumber.Column ?? 0) - 1 - currentIndex)
+                                            <span class="magic-number-highlight" title="@magicNumber.Message">
+                                                @line.Substring((magicNumber.Column ?? 0) - 1, (magicNumber.EndColumn ?? 0) - (magicNumber.Column ?? 0) + 1)
+                                            </span>
+                                            currentIndex = magicNumber.EndColumn ?? 0;
+                                        }
+                                        @if (currentIndex < line.Length)
+                                        {
+                                            @line.Substring(currentIndex)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @line
+                                    }
                                 </span>
                             </div>
                         }
                     </pre>
+
                 </div>
             </div>
         </div>
