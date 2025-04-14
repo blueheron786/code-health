@@ -45,7 +45,6 @@ public partial class GenericScanner : ComponentBase
         if (ScannerData != null)
         {
             ScannerData = ScannerData
-                .Where(c => c.Metric.Value > 1) // ignore trivial cases
                 .OrderByDescending(c => c.Metric.Value)
                 .ToList();
         }

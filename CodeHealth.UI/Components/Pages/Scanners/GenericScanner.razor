@@ -25,7 +25,7 @@ else
             @foreach (var item in ScannerData)
             {
                 var fileName = Path.GetFileName(item.File);
-                var folder = item.File.Substring(ProjectRootDirectory.Length + 1);
+                var folder = Path.GetDirectoryName(item.File)?.Substring(ProjectRootDirectory.Length + 1);
 
                 <tr>
                     <td>@folder</td>

@@ -1,5 +1,7 @@
 /* Shared badge styles */
 .complexity-badge, .count-badge {
+    white-space: nowrap; /* Prevents line breaks */
+    display: inline-block; /* Badge stays one peice */
     padding: 3px 8px;
     border-radius: 12px;
     font-size: 0.85em;
@@ -15,3 +17,15 @@
 .high-count { background-color: #dc3545; }
 .medium-count { background-color: #fd7e14; }
 .low-count { background-color: #28a745; }
+
+.file-link {
+    cursor: pointer; /* Changes cursor to hand pointer */
+    text-decoration: underline; /* Underlines the text */
+    color: #007bff; /* Standard link blue color */
+    transition: color 0.15s ease-in-out; /* Smooth color transition */
+}
+
+.file-link:hover {
+    color: #0056b3; /* Darker blue on hover */
+    text-decoration: underline; /* Ensures underline stays on hover */
+}
