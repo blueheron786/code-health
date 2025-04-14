@@ -41,28 +41,32 @@ else
                             var hasLowCC = issues.Any(i => GetIssueClass(i) == "low-complexity");
                             var hasLongMethod = issues.Any(i => GetIssueClass(i) == "long-method");
 
-                            <div class="gutter-icon" title="@string.Join("\n", issues.Select(i => $"{i.Type}{(i.Metric != null ? $": {i.Metric.Name} {i.Metric.Value}" : "")}"))">
-                                @if (hasHighCC)
-                                {
-                                    <span class="icon high-complexity-icon" title="High Cyclomatic Complexity">🔴</span>
-                                }
-                                else if (hasMediumCC)
-                                {
-                                    <span class="icon medium-complexity-icon" title="Medium Cyclomatic Complexity">🟠</span>
-                                }
-                                else if (hasLowCC)
-                                {
-                                    <span class="icon low-complexity-icon" title="Low Cyclomatic Complexity">🟢</span>
-                                }
-                                
-                                @if (hasLongMethod)
-                                {
-                                    <span class="icon long-method-icon" title="Long Method">📏</span>
-                                }
-                                @if (issues.Any(i => i.Type == "MagicNumber"))
-                                {
-                                    <span class="icon magic-number-icon" title="Magic Number">🔢</span>
-                                }
+                            <div class="line-container">
+                                <div class="gutter-icon" title="@string.Join("\n", issues.Select(i => $"{i.Type}{(i.Metric != null ? $": {i.Metric.Name} {i.Metric.Value}" : "")}"))">
+                                    <div class="gutter-icon" title="@string.Join("\n", issues.Select(i => $"{i.Type}{(i.Metric != null ? $": {i.Metric.Name} {i.Metric.Value}" : "")}"))">
+                                        @if (hasHighCC)
+                                        {
+                                            <span class="icon high-complexity-icon" title="High Cyclomatic Complexity">🔴</span>
+                                        }
+                                        else if (hasMediumCC)
+                                        {
+                                            <span class="icon medium-complexity-icon" title="Medium Cyclomatic Complexity">🟠</span>
+                                        }
+                                        else if (hasLowCC)
+                                        {
+                                            <span class="icon low-complexity-icon" title="Low Cyclomatic Complexity">🟢</span>
+                                        }
+                                        
+                                        @if (hasLongMethod)
+                                        {
+                                            <span class="icon long-method-icon" title="Long Method">📏</span>
+                                        }
+                                        @if (issues.Any(i => i.Type == "MagicNumber"))
+                                        {
+                                            <span class="icon magic-number-icon" title="Magic Number">🔢</span>
+                                        }
+                                    </div>
+                                </div>
                             </div>
                         }
                     </div>
@@ -70,7 +74,9 @@ else
                     <div class="line-numbers">
                         @for (int i = 1; i <= Lines.Length; i++)
                         {
-                            <div class="line-number">@i</div>
+                            <div class="line-container">
+                                <div class="line-number">@i</div>
+                            </div>
                         }
                     </div>
                     <pre class="bg-white p-2 code-content">
@@ -80,20 +86,22 @@ else
                             var issues = GetIssuesForLine(lineNumber);
                             var issueClasses = issues.Select(GetIssueClass).Where(c => !string.IsNullOrEmpty(c)).Distinct();
                             var hasMagicNumber = LineContainsMagicNumber(lineNumber, line);
-                            
-                            @if (issueClasses.Any() || hasMagicNumber)
-                            {
-                                var allClasses = new List<string>(issueClasses);
-                                if (hasMagicNumber)
+
+                            <div class="line-container">
+                                @if (issueClasses.Any() || hasMagicNumber)
                                 {
-                                    allClasses.Add("magic-number");
+                                    var allClasses = new List<string>(issueClasses);
+                                    if (hasMagicNumber)
+                                    {
+                                        allClasses.Add("magic-number");
+                                    }
+                                    <span class="@string.Join(" ", allClasses)">@line<br /></span>
                                 }
-                                <span class="@string.Join(" ", allClasses)">@line<br /></span>
-                            }
-                            else
-                            {
-                                @line<br />
-                            }
+                                else
+                                {
+                                    @line<br />
+                                }
+                            </div>
                         }
                     </pre>
                 </div>
