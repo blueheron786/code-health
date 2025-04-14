@@ -77,5 +77,6 @@ public static class ProjectScanner
         
         new TodoCommentScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
         new HeuristicLongMethodScanner().AnalyzeFiles(sourceFiles, resultsDirectory);
+        new MagicNumberScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 }

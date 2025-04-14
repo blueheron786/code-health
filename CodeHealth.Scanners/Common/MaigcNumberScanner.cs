@@ -34,12 +34,16 @@ namespace CodeHealth.Scanners.Common
 
                         // Skip common logic constants
                         if (value == "0" || value == "1")
+                        {
                             continue;
+                        }
 
                         // Skip constant or variable assignment lines
                         if (ConstAssignmentRegex.IsMatch(line) || VariableAssignmentRegex.IsMatch(line))
+                        {
                             continue;
-
+                        }
+                        
                         report.Issues.Add(new IssueResult
                         {
                             Scanner = "MagicNumber",
