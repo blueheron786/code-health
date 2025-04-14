@@ -29,35 +29,39 @@
     background-color: #fefefe;
     border-right: 1px solid #ccc;
     text-align: center;
-    width: 3rem;  /* Increased from 2.5rem to 3rem */
+    width: 3rem;
     user-select: none;
     padding: 0.5rem 0;
 }
 
 .gutter-icon {
-    min-height: 1.2rem;
+    height: 1.2rem;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 2px;
-    padding: 1px 0; /* Added some vertical padding */
+    padding: 0 2px; 
+    min-width: 2rem;
+    overflow: visible; /* Allow icons to overflow if needed */
 }
 
 .icon {
     font-size: 0.7rem;
     cursor: help;
-    display: block;
+    display: inline-block;
     line-height: 1;
-    width: 1.2rem; /* Fixed width */
-    height: 1.2rem; /* Fixed height */
-    text-align: center;
-    border-radius: 2px;
+    width: auto; 
+    height: auto; 
+    padding: 0 1px; 
     flex-shrink: 0; /* Prevent icons from shrinking */
+    position: relative; /* For proper positioning */
 }
 
 .gutter-icon:hover {
     background-color: #f0f0f0;
+    transform: scale(1.1);
+    transition: transform 0.1s ease;
 }
 
 /* Code complexity */
