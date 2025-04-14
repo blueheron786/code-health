@@ -44,7 +44,6 @@ public static class SharedProjectService
         return match.Key; // This is the full source path, like "D:\projects\code-health"
     }
 
-
     private static async Task<Dictionary<string, ProjectInfo>> GetAllProjectsInfo()
     {
         var projectsMetadataFile = Constants.FileNames.ProjectsMetadataFile;

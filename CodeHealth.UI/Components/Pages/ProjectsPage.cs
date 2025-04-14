@@ -1,9 +1,9 @@
 using System.IO;
 using System.Text.Json;
-using System.Linq;
 using CodeHealth.Core.Dtos;
 using CodeHealth.Core.IO;
 using Microsoft.AspNetCore.Components;
+using CodeHealth.UI.Services;
 
 namespace CodeHealth.UI.Components.Pages;
 
@@ -90,27 +90,56 @@ public partial class ProjectsPage : ComponentBase
 
         var json = await File.ReadAllTextAsync(projectsMetadataFile);
         var projectData = JsonSerializer.Deserialize<Dictionary<string, ProjectInfo>>(json);
-
-        var projectList = projectData?.Select(kvp => new Project
+        
+        if (projectData == null)
         {
-            Id = Path.GetFileName(kvp.Key),
-            Name = Path.GetFileName(kvp.Key),
-            FolderName = kvp.Value.FolderName,
-            Timestamp = kvp.Value.Timestamp,
-            LastRunTime = TimeAgo(kvp.Value.Timestamp),
-            //PrimaryLanguage = GetPrimaryLanguage(kvp.Value.Languages) // Add primary language
-        }).ToList();
+            return new List<Project>();
+        }
 
-        return projectList ?? new List<Project>();
+        var loadTasks = projectData.Select(async kvp => 
+        {
+            var projectId = Path.GetFileName(kvp.Key);
+            Dictionary<string, decimal> languages = null;
+
+            try
+            {
+                var folderName = kvp.Value.FolderName;
+                var languageDataPath = Path.Combine(folderName, "language_distribution.json");
+                
+                if (File.Exists(languageDataPath))
+                {
+                    var languageData = await File.ReadAllTextAsync(languageDataPath);
+                    languages = JsonSerializer.Deserialize<Dictionary<string, decimal>>(languageData);
+                }
+            }
+            catch
+            {
+                // Continue with null languages
+            }
+
+            return new Project
+            {
+                Id = projectId,
+                Name = projectId,
+                FolderName = kvp.Value.FolderName,
+                Timestamp = kvp.Value.Timestamp,
+                LastRunTime = TimeAgo(kvp.Value.Timestamp),
+                PrimaryLanguage = GetPrimaryLanguage(languages)
+            };
+        });
+
+        var projects = await Task.WhenAll(loadTasks);
+        return projects.ToList();
     }
 
     private string GetPrimaryLanguage(Dictionary<string, decimal> languages)
     {
         if (languages == null || languages.Count == 0)
+        {
             return "Unknown";
+        }
             
-        return languages.OrderByDescending(x => x.Value)
-                      .FirstOrDefault().Key;
+        return languages.OrderByDescending(x => x.Value).First().Key;
     }
 
     private string TimeAgo(DateTime runTime)
