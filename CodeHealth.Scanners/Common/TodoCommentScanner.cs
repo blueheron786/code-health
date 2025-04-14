@@ -1,52 +1,59 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using CodeHealth.Core.Dtos.TodoComments;
+using CodeHealth.Core.Dtos;
 using CodeHealth.Core.IO;
 
-namespace CodeHealth.Scanners.Common
+namespace CodeHealth.Scanners.Common;
+
+public class TodoCommentScanner : IStaticCodeScanner
 {
-    public class TodoCommentScanner : IStaticCodeScanner
+    private static readonly Regex TodoRegex = new(@"//\s*TODO\b.*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
-        private static readonly Regex TodoRegex = new Regex(@"//\s*TODO", RegexOptions.Compiled);
+        var report = new Report();
 
-        public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
+        foreach (var kvp in sourceFiles)
         {
-            var report = new TodoCommentsReport();
+            var filePath = kvp.Key;
+            var code = kvp.Value;
+            var relativePath = Path.GetRelativePath(rootPath, filePath).Replace("\\", "/");
 
-            foreach (var kvp in sourceFiles)
+            var lines = code.Split('\n');
+
+            for (int i = 0; i < lines.Length; i++)
             {
-                string filePath = kvp.Key;
-                string code = kvp.Value;
+                var line = lines[i];
+                var match = TodoRegex.Match(line);
 
-                var fileResult = new FileResult
+                if (match.Success)
                 {
-                    File = Path.GetRelativePath(rootPath, filePath).Replace("\\", "/")
-                };
-
-                // Find all TODO comments using regex
-                var matches = TodoRegex.Matches(code);
-                foreach (Match match in matches)
-                {
-                    var line = code.Substring(0, match.Index).Split('\n').Length; // Calculate the line number
-
-                    fileResult.Comments.Add(new CommentResult
+                    report.Issues.Add(new IssueResult
                     {
-                        Line = line,
+                        Scanner = "TodoComments",
+                        Type = "Comment",
+                        File = relativePath,
+                        Line = i + 1,
+                        EndLine = i + 1,
+                        Column = match.Index + 1,
+                        EndColumn = match.Index + match.Length + 1,
+                        Message = "TODO comment found.",
+                        Severity = "Low",
+                        Suggestion = "Review TODO and consider resolving or removing.",
+                        Tags = new List<string> { "todo", "comment", "technical-debt" },
+                        Fixable = false,
+                        Metric = new Metric
+                        {
+                            Name = "TodoComment",
+                            Value = 1
+                        }
                     });
-
-                    report.TotalTodos++;
-                }
-
-                if (fileResult.Comments.Any())
-                {
-                    report.Files.Add(fileResult);
                 }
             }
-
-            // Finalize and output the report
-            var outputFile = Path.Combine(outputDir, Constants.FileNames.TodoCommentsFile);
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            File.WriteAllText(outputFile, JsonSerializer.Serialize(report, options));
         }
+
+        var outputFile = Path.Combine(outputDir, Constants.FileNames.TodoCommentsFile);
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        File.WriteAllText(outputFile, JsonSerializer.Serialize(report, options));
     }
 }
