@@ -1,6 +1,5 @@
 using System.IO;
 using CodeHealth.Core.Dtos;
-using CodeHealth.Core.Dtos.TodoComments;
 using CodeHealth.Core.IO;
 using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;

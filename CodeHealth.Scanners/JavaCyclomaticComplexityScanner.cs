@@ -1,7 +1,6 @@
 namespace CodeHealth.Scanners
 {
     using CodeHealth.Core.Dtos;
-    using CodeHealth.Core.Dtos.TodoComments;
     using CodeHealth.Scanners.Common;
     using System.Text.RegularExpressions;
 
@@ -35,11 +34,6 @@ namespace CodeHealth.Scanners
 
                 // Preprocess to strip comments & strings
                 string strippedCode = StripCommentsAndStrings(originalCode);
-
-                var fileResult = new FileResult
-                {
-                    File = Path.GetRelativePath(rootPath, fileName).Replace("\\", "/")
-                };
 
                 // Use regex to find method declarations
                 var methodMatches = Regex.Matches(strippedCode, MethodPattern);

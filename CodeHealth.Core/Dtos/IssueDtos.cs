@@ -7,6 +7,9 @@ public class Metric
     public int Threshold { get; set; }
 }
 
+/// <summary>
+/// Commonly used for pretty much every type of issue. Except maybe cyclomatic complexity.
+/// </summary>
 public class IssueResult
 {
     public string Scanner { get; set; } = "CyclomaticComplexity";
