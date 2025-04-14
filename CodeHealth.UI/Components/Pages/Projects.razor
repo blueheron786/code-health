@@ -5,20 +5,55 @@
 
 <h1>Projects</h1>
 
+<div class="controls">
+    <div class="search-box">
+        <input 
+            type="text" 
+            placeholder="Search projects..." 
+            @bind="searchQuery"
+            @oninput="HandleSearch" />
+    </div>
+</div>
+
 @if (projects == null || projects.Count == 0)
 {
     <p>No projects found.</p>
 }
+else if (filteredProjects.Count == 0)
+{
+    <p>No projects match your search criteria.</p>
+}
 else
 {
-    <ul>
-        @foreach (var project in projects)
-        {
-            <li>
-                <a href="@GetProjectLink(project.Id)"><strong>@project.Name</strong></a> – Last run: @project.LastRunTime
-            </li>
-        }
-    </ul>
+    <table class="projects-table">
+        <thead>
+            <tr>
+                <th class="sortable" @onclick="@(() => SortBy("Name"))">
+                    Project @GetSortIcon("Name")
+                </th>
+                <th class="sortable" @onclick="@(() => SortBy("PrimaryLanguage"))">
+                    Primary Language @GetSortIcon("PrimaryLanguage")
+                </th>
+                <th class="sortable" @onclick="@(() => SortBy("LastRunTime"))">
+                    Last Run @GetSortIcon("LastRunTime")
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in filteredProjects)
+            {
+                <tr>
+                    <td>
+                        <a href="@GetProjectLink(project.Id)">@project.Name</a>
+                    </td>
+                    <td>
+                        <span class="language-badge">@project.PrimaryLanguage</span>
+                    </td>
+                    <td>@project.LastRunTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 <BrowseAndScanButton OnComplete="RefreshProjectsList" />
