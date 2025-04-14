@@ -36,10 +36,11 @@ else
                         @for (int i = 1; i <= Lines.Length; i++)
                         {
                             var issues = GetIssuesForLine(i);
-                            var hasHighCC = issues.Any(i => GetIssueClass(i) == "high-complexity");
-                            var hasMediumCC = issues.Any(i => GetIssueClass(i) == "medium-complexity");
-                            var hasLowCC = issues.Any(i => GetIssueClass(i) == "low-complexity");
-                            var hasLongMethod = issues.Any(i => GetIssueClass(i) == "long-method");
+                            var hasHighCC = issues.Any(issue => GetIssueClass(issue) == "high-complexity");
+                            var hasMediumCC = issues.Any(issue => GetIssueClass(issue) == "medium-complexity");
+                            var hasLowCC = issues.Any(issue => GetIssueClass(issue) == "low-complexity");
+                            var hasLongMethod = issues.Any(issue => GetIssueClass(issue) == "long-method");
+                            var hasMagicNumberOnLine = LineContainsMagicNumber(i, Lines[i - 1]); // Assuming Lines is 0-indexed
 
                             <div class="line-container">
                                 <div class="gutter-icon" title="@string.Join("\n", issues.Select(issue => $"{issue.Type}{(issue.Metric != null ? $": {issue.Metric.Name} {issue.Metric.Value}" : "")}"))">
@@ -47,7 +48,7 @@ else
                                     @if (hasMediumCC) { <span class="icon medium-complexity-icon">🟠</span> }
                                     @if (hasLowCC) { <span class="icon low-complexity-icon">🟢</span> }
                                     @if (hasLongMethod) { <span class="icon long-method-icon">📏</span> }
-                                    @if (hasMagicNumber) { <span class="icon magic-number-icon">🔢</span> }
+                                    @if (hasMagicNumberOnLine) { <span class="icon magic-number-icon">🔢</span> }
                                 </div>
                             </div>
                         }
