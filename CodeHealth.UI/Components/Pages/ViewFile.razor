@@ -35,27 +35,24 @@ else
                         @for (int i = 1; i <= Lines.Length; i++)
                         {
                             var issues = GetIssuesForLine(i);
-                            var hasHighComplexity = issues.Any(issue => GetIssueClass(issue) == "high-complexity");
-                            var hasMediumComplexity = issues.Any(issue => GetIssueClass(issue) == "medium-complexity");
-                            var hasLowComplexity = issues.Any(issue => GetIssueClass(issue) == "low-complexity");
-                            var hasLongMethod = issues.Any(issue => GetIssueClass(issue) == "long-method");
-
-                            <div class="gutter-icon">
-                                @if (hasHighComplexity)
+                            var issueClasses = issues.Select(GetIssueClass).Where(c => !string.IsNullOrEmpty(c)).Distinct().ToList();
+                            
+                            <div class="gutter-icon" title="@string.Join("\n", issues.Select(i => $"{i.Type}{(i.Metric != null ? $": {i.Metric.Name} {i.Metric.Value}" : "")}"))">
+                                @if (issueClasses.Contains("high-complexity"))
                                 {
-                                    <span class="icon high-complexity-icon" title="High Cyclomatic Complexity">🔴</span>
+                                    <span class="icon high-complexity-icon">🔴</span>
                                 }
-                                else if (hasMediumComplexity)
+                                @if (issueClasses.Contains("medium-complexity"))
                                 {
-                                    <span class="icon medium-complexity-icon" title="Medium Cyclomatic Complexity">🟠</span>
+                                    <span class="icon medium-complexity-icon">🟠</span>
                                 }
-                                else if (hasLowComplexity)
+                                @if (issueClasses.Contains("low-complexity"))
                                 {
-                                    <span class="icon low-complexity-icon" title="Low Cyclomatic Complexity">🟢</span>
+                                    <span class="icon low-complexity-icon">🟢</span>
                                 }
-                                else if (hasLongMethod)
+                                @if (issueClasses.Contains("long-method"))
                                 {
-                                    <span class="icon long-method-icon" title="Long Method">📏</span>
+                                    <span class="icon long-method-icon">📏</span>
                                 }
                             </div>
                         }
@@ -72,7 +69,7 @@ else
                         {
                             var lineNumber = index + 1;
                             var issues = GetIssuesForLine(lineNumber);
-                            var issueClasses = issues.Select(GetIssueClass).Distinct();
+                            var issueClasses = issues.Select(GetIssueClass).Where(c => !string.IsNullOrEmpty(c)).Distinct();
                             
                             @if (issueClasses.Any())
                             {
@@ -122,18 +119,31 @@ else
         background-color: #fefefe;
         border-right: 1px solid #ccc;
         text-align: center;
-        width: 2rem;
+        width: 2.5rem;  /* Slightly wider to accommodate multiple icons */
         user-select: none;
         padding: 0.5rem 0;
     }
 
+    .gutter-icon:hover {
+        background-color: #f0f0f0;
+    }
+
     .gutter-icon {
-        height: 1.2rem;
+        min-height: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 2px 0;
     }
 
     .icon {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         cursor: help;
+        display: block;
+        line-height: 1;
+        width: 100%;
+        text-align: center;
     }
 
     /* Code complexity */
@@ -196,18 +206,22 @@ else
     
     .high-complexity-icon {
         color: #dc3545; /* red */
+        background-color: rgba(220, 53, 69, 0.1);
     }
 
     .medium-complexity-icon {
         color: #fd7e14; /* orange */
+        background-color: rgba(253, 126, 20, 0.1);
     }
 
     .low-complexity-icon {
         color: #28a745; /* green */
+        background-color: rgba(40, 167, 69, 0.1);
     }
 
     .long-method-icon {
         color: #6f42c1; /* purple */
+        background-color: rgba(111, 66, 193, 0.1);
     }
 
     /* Update the icon class */

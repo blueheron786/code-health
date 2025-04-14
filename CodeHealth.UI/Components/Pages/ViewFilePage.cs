@@ -126,27 +126,26 @@ public partial class ViewFilePage : ComponentBase
 
     protected string GetIssueClass(IssueResult issue)
     {
-        if (issue.Type == "Method")
+        // Handle Method type that contains CC metrics
+        if (issue.Type == "Method" && issue.Metric?.Name == "Cyclomatic Complexity")
+        {
+            if (issue.Metric.Value > 20) return "high-complexity";
+            if (issue.Metric.Value > 10) return "medium-complexity";
+            return "low-complexity";
+        }
+        // Handle Long Method detection (LineCount metric)
+        else if (issue.Type == "Method" && issue.Metric?.Name == "LineCount")
         {
             return "long-method";
         }
-
-        if (issue.Metric?.Value != 0 && issue.Metric?.Threshold != 0)
+        // Handle other Method types if needed
+        else if (issue.Type == "Method")
         {
-            var ratio = (double)issue.Metric.Value / issue.Metric.Threshold;
-            if (ratio > 2)
-            {
-                return "high-complexity";
-            }
-            if (ratio > 1)
-            {
-                return "medium-complexity";
-            }
+            return "method"; // generic method class if needed
         }
-
-        return string.Empty; // no issue
+        
+        return string.Empty;
     }
-
 
     private async Task<string> LoadFileContent(string filePath)
     {
