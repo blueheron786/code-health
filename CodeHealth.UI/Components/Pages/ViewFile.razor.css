@@ -1,10 +1,8 @@
 /* Base line container styling */
 .line-container {
     display: flex;
+    height: 20px;
     align-items: center;
-    min-height: 1.5rem;
-    height: 1.5rem;
-    line-height: 1.5rem;
     box-sizing: border-box;
 }
 
@@ -13,8 +11,8 @@
     display: flex;
     overflow-x: auto;
     font-family: monospace;
-    font-size: 0.9rem;
-    line-height: 1.5rem;
+    font-size: 14px;
+    line-height: 20px;
 }
 
 /* Gutter */
@@ -39,8 +37,8 @@
 .line-number {
     padding: 0 0.5rem;
     color: #888;
-    height: 1.5rem;
-    line-height: 1.5rem;
+    height: 20px;
+    line-height: 20px;
 }
 
 /* Code content */
@@ -50,6 +48,7 @@
     overflow-x: visible;
     flex-grow: 1;
     padding: 0;
+    line-height: 20px;
 }
 
 .code-content .line-container {
@@ -57,9 +56,16 @@
     padding: 0 0.5rem;
 }
 
+.code-content span {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    vertical-align: top;
+}
+
 /* Gutter icons */
 .gutter-icon {
-    height: 1.5rem;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -69,7 +75,7 @@
 }
 
 .icon {
-    font-size: 0.8rem;
+    font-size: 12px;
     cursor: help;
     display: inline-block;
     line-height: 1;
@@ -152,4 +158,30 @@
 
 .magic-number-icon {
     color: #ff9800;
+}
+
+/* Card styling */
+.card {
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    padding: 0.75rem 1.25rem;
+    background-color: rgba(0,0,0,0.03);
+    border-bottom: 1px solid rgba(0,0,0,0.125);
+}
+
+.card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+}
+
+/* Container fluid */
+.container-fluid {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
 }
