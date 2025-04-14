@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Components.Pages.Scanners;
 
-public partial class CyclomaticComplexityPage : ComponentBase
+public partial class CyclomaticComplexity : ComponentBase
 {
     [Parameter]
     public string ProjectId { get; set; }
