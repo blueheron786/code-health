@@ -32,19 +32,34 @@ else
                 <div class="code-container">
                     <!-- fancy symbols for line-level indicators -->
                     <div class="gutter">
-                    @for (int i = 1; i <= Lines.Length; i++)
-                    {
-                        var issues = GetIssuesForLine(i);
-                        var hasBlockIssue = issues.Any(issue => issue.Type is "CyclomaticComplexity" or "LongMethod" or "LongClass");
+                        @for (int i = 1; i <= Lines.Length; i++)
+                        {
+                            var issues = GetIssuesForLine(i);
+                            var hasHighComplexity = issues.Any(issue => GetIssueClass(issue) == "high-complexity");
+                            var hasMediumComplexity = issues.Any(issue => GetIssueClass(issue) == "medium-complexity");
+                            var hasLowComplexity = issues.Any(issue => GetIssueClass(issue) == "low-complexity");
+                            var hasLongMethod = issues.Any(issue => GetIssueClass(issue) == "long-method");
 
-                        <div class="gutter-icon">
-                            @if (hasBlockIssue)
-                            {
-                                <span class="icon" title="@string.Join(", ", issues.Select(i => i.Type))">⚠️</span>
-                            }
-                        </div>
-                    }
-                </div>
+                            <div class="gutter-icon">
+                                @if (hasHighComplexity)
+                                {
+                                    <span class="icon high-complexity-icon" title="High Cyclomatic Complexity">🔴</span>
+                                }
+                                else if (hasMediumComplexity)
+                                {
+                                    <span class="icon medium-complexity-icon" title="Medium Cyclomatic Complexity">🟠</span>
+                                }
+                                else if (hasLowComplexity)
+                                {
+                                    <span class="icon low-complexity-icon" title="Low Cyclomatic Complexity">🟢</span>
+                                }
+                                else if (hasLongMethod)
+                                {
+                                    <span class="icon long-method-icon" title="Long Method">📏</span>
+                                }
+                            </div>
+                        }
+                    </div>
 
                     <div class="line-numbers">
                         @for (int i = 1; i <= Lines.Length; i++)
@@ -57,10 +72,11 @@ else
                         {
                             var lineNumber = index + 1;
                             var issues = GetIssuesForLine(lineNumber);
-                            if (issues.Any())
+                            var issueClasses = issues.Select(GetIssueClass).Distinct();
+                            
+                            @if (issueClasses.Any())
                             {
-                                var classes = string.Join(" ", issues.Select(GetIssueClass));
-                                <span class="@classes">@line<br /></span>
+                                <span class="@string.Join(" ", issueClasses)">@line<br /></span>
                             }
                             else
                             {
@@ -169,6 +185,37 @@ else
     
     .low-complexity, .badge.low-complexity {
         background-color: #d4edda;
+    }
+
+    .long-method {
+        background-color: #fff4e5;
+        border-left: 3px solid orange;
+    }
+    
+    /* Gutter icons */
+    
+    .high-complexity-icon {
+        color: #dc3545; /* red */
+    }
+
+    .medium-complexity-icon {
+        color: #fd7e14; /* orange */
+    }
+
+    .low-complexity-icon {
+        color: #28a745; /* green */
+    }
+
+    .long-method-icon {
+        color: #6f42c1; /* purple */
+    }
+
+    /* Update the icon class */
+    .icon {
+        font-size: 0.8rem;
+        cursor: help;
+        display: block;
+        line-height: 1.2rem;
     }
 
     /* Long lines */

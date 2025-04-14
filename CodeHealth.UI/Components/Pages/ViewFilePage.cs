@@ -64,6 +64,7 @@ public partial class ViewFilePage : ComponentBase
                 }
             }
         }
+        
     }
 
     private int FindMethodInCode(string methodName)
@@ -126,17 +127,26 @@ public partial class ViewFilePage : ComponentBase
     protected string GetIssueClass(IssueResult issue)
     {
         if (issue.Type == "Method")
-            return "long-line";
+        {
+            return "long-method";
+        }
 
         if (issue.Metric?.Value != 0 && issue.Metric?.Threshold != 0)
         {
             var ratio = (double)issue.Metric.Value / issue.Metric.Threshold;
-            if (ratio > 2) return "high-complexity";
-            if (ratio > 1) return "medium-complexity";
+            if (ratio > 2)
+            {
+                return "high-complexity";
+            }
+            if (ratio > 1)
+            {
+                return "medium-complexity";
+            }
         }
 
-        return "low-complexity";
+        return string.Empty; // no issue
     }
+
 
     private async Task<string> LoadFileContent(string filePath)
     {
