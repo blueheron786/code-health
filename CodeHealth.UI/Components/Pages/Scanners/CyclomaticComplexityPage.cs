@@ -22,8 +22,12 @@ public class CyclomaticComplexityPage : ComponentBase
     {
         _projectRootDirectory = await SharedProjectService.GetProjectSourcePath(ProjectId);
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
+        
         complexityData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, runDirectoryPath, Constants.FileNames.CyclomatiComplexityFiles);
-        complexityData = complexityData.Where(c => c.Metric.Value > 1).ToList(); // Ignore trivial cases
+            complexityData = complexityData
+                .Where(c => c.Metric.Value > 1) // ignore trivial cases
+                .OrderByDescending(c => c.Metric.Value)
+                .ToList();
     }
 
     protected string GetComplexityClass(int cc)

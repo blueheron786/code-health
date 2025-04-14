@@ -34,7 +34,6 @@ else
                     <td>@folder</td>
                     <td>
                         <div style="display: inline-flex; align-items: center; gap: 5px;">
-                            @* <span style="width: 10px; height: 10px; border-radius: 50%; background-color: @LanguageColours.GetColour(item.Language);"></span> *@
                             <span class="file-link" @onclick="() => NavigateToFileView(item.File)">
                                 @fileName
                             </span>
