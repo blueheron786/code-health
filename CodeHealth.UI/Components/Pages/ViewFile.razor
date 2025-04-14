@@ -21,10 +21,11 @@ else
                 <h5>@FileName</h5>
                 @if (FileComplexities?.Any() == true)
                 {
-                    <div class="complexity-legend">
+                    <div class="issue-legend">
                         <span class="badge high-complexity">High Complexity (CC > 20)</span>
                         <span class="badge medium-complexity">Medium Complexity (CC > 10)</span>
                         <span class="badge low-complexity">Low Complexity (CC ≤ 10)</span>
+                        <span class="badge magic-number">Magic Numbers</span>
                     </div>
                 }
             </div>
@@ -58,6 +59,10 @@ else
                                 {
                                     <span class="icon long-method-icon" title="Long Method">📏</span>
                                 }
+                                @if (issues.Any(i => i.Type == "MagicNumber"))
+                                {
+                                    <span class="icon magic-number-icon" title="Magic Number">🔢</span>
+                                }
                             </div>
                         }
                     </div>
@@ -74,10 +79,16 @@ else
                             var lineNumber = index + 1;
                             var issues = GetIssuesForLine(lineNumber);
                             var issueClasses = issues.Select(GetIssueClass).Where(c => !string.IsNullOrEmpty(c)).Distinct();
+                            var hasMagicNumber = LineContainsMagicNumber(lineNumber, line);
                             
-                            @if (issueClasses.Any())
+                            @if (issueClasses.Any() || hasMagicNumber)
                             {
-                                <span class="@string.Join(" ", issueClasses)">@line<br /></span>
+                                var allClasses = new List<string>(issueClasses);
+                                if (hasMagicNumber)
+                                {
+                                    allClasses.Add("magic-number");
+                                }
+                                <span class="@string.Join(" ", allClasses)">@line<br /></span>
                             }
                             else
                             {

@@ -78,24 +78,24 @@
     background-color: #d4edda;
 }
 
-.complexity-legend {
+.issue-legend {
     display: flex;
     gap: 10px;
 }
 
-.complexity-legend .badge {
+.issue-legend .badge {
     padding: 3px 8px;
     font-size: 0.8rem;
 }
 
 /* CC headers */
-.complexity-legend {
+.issue-legend {
     display: flex;
     gap: 10px;
     margin-top: 10px;
 }
 
-.complexity-legend .badge {
+.issue-legend .badge {
     padding: 4px 10px;
     font-size: 0.8rem;
     font-weight: 500;
@@ -154,4 +154,21 @@
 .long-line {
     outline-left: 4px solid orange; /* or whatever makes it distinct */
     background-color: #fff4e5;
+}
+
+.magic-number {
+    background-color: #fff8e1; /* Light yellow background */
+    border-bottom: 1px dashed #ffc107; /* Yellow underline */
+}
+
+/* Add to your legend */
+.magic-number-legend {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.badge.magic-number {
+    background-color: #fff8e1;
+    color: #ff9800;
+    border: 1px solid #ffc107;
 }

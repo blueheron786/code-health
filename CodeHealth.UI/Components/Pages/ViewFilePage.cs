@@ -139,6 +139,11 @@ public partial class ViewFilePage : ComponentBase
         {
             return "long-method";
         }
+        // Magic Numbers
+        else if (issue.Type == "MagicNumber")
+        {
+            return "magic-number";
+        }
         return string.Empty;
     }
 
@@ -156,6 +161,16 @@ public partial class ViewFilePage : ComponentBase
             // not necessarily a coding mistake; maybe they deleted the file since the analysis.
             return $"// Source file not found: {absolutePath}";
         }
+    }
+
+    protected bool LineContainsMagicNumber(int lineNumber, string lineText)
+    {
+        // Check if there are any magic number issues for this line
+        var magicNumberIssues = FileIssues
+            .Where(i => i.Type == "MagicNumber" && lineNumber >= i.Line && lineNumber <= i.EndLine)
+            .ToList();
+
+        return magicNumberIssues.Any();
     }
 
     protected void NavigateBack()
