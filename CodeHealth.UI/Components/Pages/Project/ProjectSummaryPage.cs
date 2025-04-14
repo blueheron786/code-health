@@ -104,4 +104,19 @@ public class ProjectSummaryPage : ComponentBase
         await OnInitializedAsync();
         StateHasChanged();
     }
+
+    protected string GetCountBadgeClass(int count)
+    {
+        if (count > 10) return "high-count";
+        if (count > 5) return "medium-count";
+        return "low-count";
+    }
+
+    protected string GetCountBadgeText(int count)
+    {
+        if (count > 10) return "High";
+        if (count > 5) return "Medium";
+        return "Low";
+    }
+
 }

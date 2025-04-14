@@ -1,0 +1,56 @@
+@using System.IO
+
+<h3>@ScannerName for Project: @ProjectId</h3>
+
+@if (ScannerData == null)
+{
+    <p>Loading data...</p>
+}
+else if (!ScannerData.Any())
+{
+    <p>No @ScannerName.ToLower() data available for this project.</p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Folder</th>
+                <th>File</th>
+                <th>Method</th>
+                <th>@ScannerName</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ScannerData)
+            {
+                var fileName = Path.GetFileName(item.File);
+                var folder = item.File.Substring(ProjectRootDirectory.Length + 1);
+
+                <tr>
+                    <td>@folder</td>
+                    <td>
+                        <div style="display: inline-flex; align-items: center; gap: 5px;">
+                            <span class="file-link" @onclick="() => NavigateToFileView(item.File)">
+                                @fileName
+                            </span>
+                        </div>
+                    </td>
+                    <td>@item.Name</td>
+                    <td>
+                        @if (BadgeClass != null && BadgeText != null)
+                        {
+                            <span class="complexity-badge @BadgeClass(item.Metric.Value)">
+                                @ValueFormatter(item) @(BadgeText != null ? $"({BadgeText(item.Metric.Value)})" : "")
+                            </span>
+                        }
+                        else
+                        {
+                            @ValueFormatter(item)
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

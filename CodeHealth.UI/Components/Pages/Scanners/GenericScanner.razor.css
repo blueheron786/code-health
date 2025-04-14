@@ -1,0 +1,17 @@
+/* Shared badge styles */
+.complexity-badge, .count-badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    color: white;
+}
+
+/* Complexity specific */
+.high-complexity { background-color: #dc3545; }
+.medium-complexity { background-color: #fd7e14; }
+.low-complexity { background-color: #28a745; }
+
+/* Count specific */
+.high-count { background-color: #dc3545; }
+.medium-count { background-color: #fd7e14; }
+.low-count { background-color: #28a745; }

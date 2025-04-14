@@ -1,52 +1,11 @@
 @page "/project/{ProjectId}/cyclomatic-complexity"
 @inherits CyclomaticComplexityPage
 
-@using System.IO
-
-<h3>Cyclomatic Complexity for Project: @ProjectId</h3>
-
-@if (complexityData == null)
-{
-    <p>Loading data...</p>
-}
-else if (!complexityData.Any())
-{
-    <p>No cyclomatic complexity data available for this project.</p>
-}
-else
-{
-    <table class="table table-striped table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th>Folder</th>
-                <th>File</th>
-                <th>Method</th>
-                <th>Complexity</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in complexityData)
-            {
-                var fileName = Path.GetFileName(item.File);
-                var folder = item.File.Substring(_projectRootDirectory.Length + 1);
-
-                <tr>
-                    <td>@folder</td>
-                    <td>
-                        <div style="display: inline-flex; align-items: center; gap: 5px;">
-                            <span class="file-link" @onclick="() => NavigateToFileView(item.File)">
-                                @fileName
-                            </span>
-                        </div>
-                    </td>
-                    <td>@item.Name</td>
-                    <td>
-                        <span class="complexity-badge @GetComplexityClass(item.Metric.Value)">
-                            @(item.Metric.Value) (@GetComplexityText(item.Metric.Value))
-                        </span>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<GenericScanner 
+    ProjectId="@ProjectId"
+    ScannerName="Cyclomatic Complexity"
+    ScannerData="@ScannerData"
+    ProjectRootDirectory="@ProjectRootDirectory"
+    ValueFormatter="@(r => r.Metric.Value.ToString())"
+    BadgeClass="@GetComplexityClass"
+    BadgeText="@GetComplexityText" />
