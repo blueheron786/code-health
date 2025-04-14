@@ -2,7 +2,7 @@
 .line-container {
     display: flex;
     height: 20px;
-    align-items: center;
+    align-items: flex-start;
     box-sizing: border-box;
 }
 
@@ -47,7 +47,6 @@
     white-space: pre;
     overflow-x: visible;
     flex-grow: 1;
-    padding: 0;
     line-height: 20px;
 }
 
@@ -184,4 +183,18 @@
     padding-left: 15px;
     margin-right: auto;
     margin-left: auto;
+}
+
+/* So code lines up perfectly, instead of being too offset vertically from the first line */
+pre.code-content {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.line-numbers, .gutter {
+    padding-top: 0;
+}
+
+.line-container:first-child {
+    margin-top: 0;
 }
