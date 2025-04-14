@@ -76,20 +76,22 @@ else
             @foreach (var item in complexityData)
             {
                 var fileName = Path.GetFileName(item.File);
-                var package = Path.GetDirectoryName(item.File)?.Replace(Path.DirectorySeparatorChar, '.');
+                var package = Path.GetDirectoryName(item.File)?.Replace(Path.DirectorySeparatorChar, '.') ?? "(root)";
 
                 <tr>
                     <td>@package</td>
                     <td>
                         <div style="display: inline-flex; align-items: center; gap: 5px;">
-                            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: @LanguageColours.GetColour(item.Language);"></span>
-                            <span class="file-link" @onclick="() => NavigateToFileView(item.File)">@fileName</span>
+                            @* <span style="width: 10px; height: 10px; border-radius: 50%; background-color: @LanguageColours.GetColour(item.Language);"></span> *@
+                            <span class="file-link" @onclick="() => NavigateToFileView(item.File)">
+                                @fileName
+                            </span>
                         </div>
                     </td>
-                    <td>@item.Method</td>
+                    <td>@item.Name</td>
                     <td>
-                        <span class="complexity-badge @GetComplexityClass(item.Complexity)">
-                            @item.Complexity (@GetComplexityText(item.Complexity))
+                        <span class="complexity-badge @GetComplexityClass(item.Metric.Value)">
+                            @(item.Metric.Value) (@GetComplexityText(item.Metric.Value))
                         </span>
                     </td>
                 </tr>

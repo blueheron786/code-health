@@ -1,5 +1,4 @@
 using CodeHealth.Core.Dtos;
-using CodeHealth.Core.Dtos.CyclomaticComplexity;
 using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
@@ -22,7 +21,7 @@ public partial class ViewFilePage : ComponentBase
     
     protected string FileContent { get; set; }
     protected string[] Lines { get; set; }
-    protected List<CyclomaticComplexityData> FileComplexities { get; set; }
+    protected List<IssueResult> FileComplexities { get; set; }
     protected string FileName { get; set; }
     protected List<IssueResult> FileIssues { get; set; } = new();
 
@@ -58,10 +57,10 @@ public partial class ViewFilePage : ComponentBase
             {
                 // This is a simplified approach - you'd want to implement proper parsing
                 // for each language to find method start/end lines
-                var methodIndex = FindMethodInCode(method.Method);
+                var methodIndex = FindMethodInCode(method.Name);
                 if (methodIndex >= 0)
                 {
-                    MethodRanges[method.Method] = (methodIndex, FindMethodEnd(methodIndex));
+                    MethodRanges[method.Name] = (methodIndex, FindMethodEnd(methodIndex));
                 }
             }
         }

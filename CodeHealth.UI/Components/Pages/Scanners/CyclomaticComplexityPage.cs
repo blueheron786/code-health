@@ -1,4 +1,4 @@
-using CodeHealth.Core.Dtos.CyclomaticComplexity;
+using CodeHealth.Core.Dtos;
 using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
@@ -13,12 +13,12 @@ public class CyclomaticComplexityPage : ComponentBase
     [Inject]
     protected NavigationManager NavigationManager { get; set; }
     
-    protected List<CyclomaticComplexityData> complexityData;
+    protected List<IssueResult> complexityData;
 
     protected override async Task OnInitializedAsync()
     {
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
-        complexityData = await CyclomaticComplexityDataLoader.LoadCyclomaticComplexityData(runDirectoryPath);
+        complexityData = await IssueResultLoader.LoadIssues(runDirectoryPath);
     }
 
     protected string GetComplexityClass(int cc)
