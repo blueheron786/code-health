@@ -39,17 +39,18 @@ public partial class ViewFilePage : ComponentBase
 
         var decodedPath = HttpUtility.UrlDecode(Path);
         FileName = System.IO.Path.GetFileName(decodedPath);
-        
+       
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
+        
+        // Load ALL issue types (both cyclomatic complexity and long methods)
         var allIssues = await IssueResultLoader.LoadIssues(runDirectoryPath);
         FileIssues = allIssues
             .Where(i => i.File.Equals(decodedPath, StringComparison.OrdinalIgnoreCase))
             .ToList();
-
-            
+        
         FileContent = await LoadFileContent(decodedPath);
         Lines = FileContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-        
+
         // Simple heuristic to find method locations (this would need to be language-specific)
         if (FileComplexities?.Any() == true)
         {
@@ -126,24 +127,18 @@ public partial class ViewFilePage : ComponentBase
 
     protected string GetIssueClass(IssueResult issue)
     {
-        // Handle Method type that contains CC metrics
+        // Cyclomatic Complexity
         if (issue.Type == "Method" && issue.Metric?.Name == "Cyclomatic Complexity")
         {
             if (issue.Metric.Value > 20) return "high-complexity";
             if (issue.Metric.Value > 10) return "medium-complexity";
-            return "low-complexity";
+            if (issue.Metric.Value > 5) return "low-complexity";
         }
-        // Handle Long Method detection (LineCount metric)
+        // Long Methods
         else if (issue.Type == "Method" && issue.Metric?.Name == "LineCount")
         {
             return "long-method";
         }
-        // Handle other Method types if needed
-        else if (issue.Type == "Method")
-        {
-            return "method"; // generic method class if needed
-        }
-        
         return string.Empty;
     }
 

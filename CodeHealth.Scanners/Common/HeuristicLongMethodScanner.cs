@@ -11,18 +11,20 @@ public class HeuristicLongMethodScanner
     private const string JsLikeFunctionRegex = @"\bfunction\b|\s*=>\s*{";
     private readonly int _threshold;
 
-    public HeuristicLongMethodScanner(int threshold = 40)
+    public HeuristicLongMethodScanner(int threshold = 40) // Modified constructor
     {
         _threshold = threshold;
     }
 
-    public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string resultsDirectory)
+    public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string resultsDirectory)
     {
         var issues = new List<IssueResult>();
 
-        foreach (var (fileName, content) in sourceFiles)
+        foreach (var (fullFileName, content) in sourceFiles)
         {
-            var fileIssues = AnalyzeText(fileName, content);
+            // Create relative filename
+            var relativeFileName = Path.GetRelativePath(rootPath, fullFileName).Replace("\\", "/");
+            var fileIssues = AnalyzeText(relativeFileName, content);
             issues.AddRange(fileIssues);
         }
 

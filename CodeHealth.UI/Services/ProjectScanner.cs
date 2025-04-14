@@ -76,7 +76,7 @@ public static class ProjectScanner
         LanguageLineCounter.AnalyzeLanguageBreakdown(sourceFiles, resultsDirectory);
         
         new TodoCommentScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
-        new HeuristicLongMethodScanner().AnalyzeFiles(sourceFiles, resultsDirectory);
+        new HeuristicLongMethodScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
         new MagicNumberScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
     }
 }
