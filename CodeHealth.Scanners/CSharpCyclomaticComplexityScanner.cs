@@ -75,12 +75,12 @@ namespace CodeHealth.Scanners
                     };
 
                     report.Issues.Add(issue);
-                    report.TotalComplexity += complexity;
+                    report.TotalMetricValue += complexity;
                 }
             }
 
             // Calculate Average Complexity
-            report.AverageComplexity = report.TotalComplexity / (double)report.Issues.Count;
+            report.AverageMetricValue = report.TotalMetricValue / (double)report.Issues.Count;
 
             // Finalize the report output (e.g., saving it to a JSON file)
             CyclomaticComplexityReporter.FinalizeReport(report, outputDir, "cyclomatic_complexity.csharp.json");

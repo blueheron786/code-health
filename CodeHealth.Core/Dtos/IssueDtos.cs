@@ -33,6 +33,10 @@ public class IssueResult
 public class Report
 {
     public List<IssueResult> Issues { get; set; } = new List<IssueResult>();
-    public int TotalComplexity { get; set; }
-    public double AverageComplexity { get; set; }
+    // Total and average metric values. e.g. for long methods, these represent
+    // the total number of lines across all long methods, and the average
+    // numver of lines within those long methods. Noice.
+    // And yeah, for CC, this is the total and average CC.
+    public int TotalMetricValue { get; set; }
+    public double AverageMetricValue { get; set; }
 }

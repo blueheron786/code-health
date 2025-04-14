@@ -12,8 +12,8 @@ namespace CodeHealth.Scanners.Common
             int totalComplexity = report.Issues.Sum(issue => issue.Metric.Value);
             
             // Set average complexity if methodCount > 0
-            report.TotalComplexity = totalComplexity;
-            report.AverageComplexity = methodCount > 0 ? (double)totalComplexity / methodCount : 0;
+            report.TotalMetricValue = totalComplexity;
+            report.AverageMetricValue = methodCount > 0 ? (double)totalComplexity / methodCount : 0;
 
             // Create the output file
             var outputFile = Path.Combine(outputDir, outputFilename);

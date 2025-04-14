@@ -83,7 +83,7 @@ namespace CodeHealth.Scanners
 
                     // Add the issue result to the report
                     report.Issues.Add(issueResult);
-                    report.TotalComplexity += complexity;
+                    report.TotalMetricValue += complexity;
                 }
             }
 

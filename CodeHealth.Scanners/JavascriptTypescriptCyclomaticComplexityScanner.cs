@@ -85,12 +85,12 @@ namespace CodeHealth.Scanners
                     // Add to the appropriate report
                     if (isTypescript)
                     {
-                        typescriptReport.TotalComplexity += complexity;
+                        typescriptReport.TotalMetricValue += complexity;
                         typescriptReport.Issues.Add(issueResult);
                     }
                     else
                     {
-                        javascriptReport.TotalComplexity += complexity;
+                        javascriptReport.TotalMetricValue += complexity;
                         javascriptReport.Issues.Add(issueResult);
                     }
                 }

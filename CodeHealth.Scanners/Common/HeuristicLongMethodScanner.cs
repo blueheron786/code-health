@@ -29,8 +29,8 @@ public class HeuristicLongMethodScanner
         var report = new Report
         {
             Issues = issues,
-            TotalComplexity = issues.Sum(i => i.Metric.Value),
-            AverageComplexity = issues.Count == 0 ? 0 : issues.Average(i => i.Metric.Value)
+            TotalMetricValue = issues.Sum(i => i.Metric.Value),
+            AverageMetricValue = issues.Count == 0 ? 0 : issues.Average(i => i.Metric.Value)
         };
 
         var outPath = Path.Combine(resultsDirectory, "long_methods.json");
