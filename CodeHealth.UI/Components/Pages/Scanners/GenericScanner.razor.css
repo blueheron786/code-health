@@ -18,6 +18,7 @@
 .medium-count { background-color: #fd7e14; }
 .low-count { background-color: #28a745; }
 
+/* TODOs */
 .todo-badge {
     background-color: #ffcc00;
     color: black;
@@ -33,6 +34,8 @@
     color: white;
 }
 
+/* Navigation stuff */
+
 .file-link {
     cursor: pointer; /* Changes cursor to hand pointer */
     text-decoration: underline; /* Underlines the text */
@@ -45,7 +48,7 @@
     text-decoration: underline; /* Ensures underline stays on hover */
 }
 
-/* TODO badges */
+/* More TODO badges */
 .todo-badge {
     padding: 3px 8px;
     border-radius: 12px;
@@ -78,6 +81,7 @@
     box-shadow: 0 1px 3px rgba(255, 102, 102, 0.3);
 }
 
+/* Long methods */
 .badge-long-method {
     background-color: #fff4e5;
     color: #e67e22;
@@ -86,4 +90,16 @@
 
 .long-method-icon {
     color: #e67e22;
+}
+
+/* Magic numbers */
+.magic-number {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 3px solid #4caf50;
+}
+
+/* Gutter Icon */
+.magic-number-icon {
+    color: #ff9800; /* Orange */
 }

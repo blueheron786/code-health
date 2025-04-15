@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Components.Pages.Scanners
 {
-    public partial class LongMethodsPage : ComponentBase
+    public partial class MagicNumbersPage : ComponentBase
     {
         [Parameter]
         public string ProjectId { get; set; }
@@ -24,16 +24,8 @@ namespace CodeHealth.UI.Components.Pages.Scanners
             ScannerData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, runDirectoryPath, Constants.FileNames.LongMethodsFile);
         }
 
-        protected string GetLongMethodsBadgeClass(IssueResult r)
-        {
-            // For long methods, we'll use a single class since it's a binary condition
-            return "badge-long-method";
-        }
+        protected string GetMagicNumberBadgeClass(IssueResult r) => "magic-number";
+        protected string GetMagicNumberBadgeText(IssueResult r) => "Magic Number";
 
-        protected string GetLongMethodsBadgeText(IssueResult r)
-        {
-            // Display the line count if available
-            return r.Metric != null ? $"{r.Metric.Value} lines" : "Long Method";
-        }
     }
 }

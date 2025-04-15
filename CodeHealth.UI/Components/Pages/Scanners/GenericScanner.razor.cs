@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Components.Pages.Scanners;
 
+/// <summary>
+/// Base class for our standard-issue-type scanner.
+/// Sort of. I mean, it's not inherited or anything.
+/// </summary>
 public partial class GenericScanner : ComponentBase
 {
     [Parameter]

@@ -1,0 +1,11 @@
+@page "/project/{ProjectId}/magic-numbers"
+
+<GenericScanner 
+    ProjectId="@ProjectId"
+    ScannerName="Long Methods"
+    ScannerData="@ScannerData"
+    ProjectRootDirectory="@ProjectRootDirectory"
+    GoBackPage="magic-numbers"
+    ValueFormatter="@(r => $"{r.Name} = {r.Metric?.Value}")"
+    BadgeClass="@GetMagicNumberBadgeClass"
+    BadgeText="@GetMagicNumberBadgeText" />
