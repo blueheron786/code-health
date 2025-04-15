@@ -170,7 +170,7 @@ public partial class ViewFilePage : ComponentBase
     protected bool LineContainsTodo(int lineNumber)
     {
         return FileIssues.Any(i =>
-            i.Type == "CommentTodo" &&
+            i.Type == "TodoComment" &&
             lineNumber >= i.Line &&
             lineNumber <= i.EndLine);
     }
@@ -178,7 +178,7 @@ public partial class ViewFilePage : ComponentBase
     protected List<IssueResult> GetTodosForLine(int lineNumber)
     {
         return FileIssues
-            .Where(i => i.Type == "TODO" && lineNumber >= i.Line && lineNumber <= i.EndLine)
+            .Where(i => i.Type == "TodoComment" && lineNumber >= i.Line && lineNumber <= i.EndLine)
             .ToList();
     }
 
