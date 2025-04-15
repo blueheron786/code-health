@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace CodeHealth.Scanners.Common;
+namespace CodeHealth.Scanners.Common.Scanners;
 
 public class HeuristicLongMethodScanner
 {
@@ -62,7 +62,7 @@ public class HeuristicLongMethodScanner
                 braceDepth = line.Contains("{") ? 1 : 0;
 
                 // Extract method name
-                methodName = ExtractMethodName(line, methodLineStart, methodMatch);
+                methodName = MethodNameExtractor.ExtractMethodName(line, methodLineStart, methodMatch);
                 continue;
             }
 
@@ -106,39 +106,5 @@ public class HeuristicLongMethodScanner
         }
 
         return issues;
-    }
-
-    private static string ExtractMethodName(string line, int lineNumber, Match methodMatch)
-    {
-        try
-        {
-            // For C-style methods
-            if (methodMatch.Value.Contains("("))
-            {
-                var beforeParen = line.Substring(0, line.IndexOf('(')).Trim();
-                var lastPart = beforeParen.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).Last();
-                return lastPart;
-            }
-            // For arrow functions
-            else if (methodMatch.Value.Contains("=>"))
-            {
-                var beforeArrow = line.Substring(0, line.IndexOf("=>")).Trim();
-                return beforeArrow.Contains("(")
-                    ? $"anonymous (line {lineNumber})"
-                    : beforeArrow; // For simple arrow functions like "x =>"
-            }
-            // For function declarations
-            else if (methodMatch.Value.Contains("function"))
-            {
-                var afterFunction = line.Substring(line.IndexOf("function") + 8).Trim();
-                return afterFunction.Split(new[] { '(', ' ' }, StringSplitOptions.RemoveEmptyEntries).First();
-            }
-        }
-        catch
-        {
-            // Fall through to return "Unknown" below
-        }
-
-        return "Unknown";
     }
 }

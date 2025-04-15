@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using CodeHealth.Core.Dtos;
 using CodeHealth.Core.IO;
 
-namespace CodeHealth.Scanners.Common;
+namespace CodeHealth.Scanners.Common.Scanners;
 
 public class TodoCommentScanner : IStaticCodeScanner
 {

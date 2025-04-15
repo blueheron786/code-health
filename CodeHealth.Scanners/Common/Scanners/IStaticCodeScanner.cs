@@ -1,4 +1,4 @@
-namespace CodeHealth.Scanners.Common;
+namespace CodeHealth.Scanners.Common.Scanners;
 
 /// <summary>
 /// Runs a scan on (static) code.

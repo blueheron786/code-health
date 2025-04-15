@@ -22,6 +22,10 @@ namespace CodeHealth.UI.Components.Pages.Scanners
 
             // Load the TODO data
             ScannerData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, runDirectoryPath, Constants.FileNames.MagicNumbersFile);
+            // ScannerData = ScannerData
+            //     .OrderByDescending(x => ScannerData.Count(y => y.File == x.File))
+            //     .ThenBy(x => x.File)
+            //     .ToList();
         }
 
         protected string GetMagicNumberBadgeClass(IssueResult r) => "magic-number";
