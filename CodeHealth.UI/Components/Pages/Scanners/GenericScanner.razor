@@ -40,8 +40,8 @@ else
                     <td>
                         @if (BadgeClass != null && BadgeText != null)
                         {
-                            <span class="complexity-badge @BadgeClass(item.Metric.Value)">
-                                @ValueFormatter(item) @(BadgeText != null ? $"({BadgeText(item.Metric.Value)})" : "")
+                            <span class="complexity-badge @BadgeClass(item)">
+                                @ValueFormatter(item) @(BadgeText != null ? $"({BadgeText(item)})" : "")
                             </span>
                         }
                         else

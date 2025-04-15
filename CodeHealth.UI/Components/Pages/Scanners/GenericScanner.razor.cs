@@ -1,3 +1,4 @@
+using System.Windows.Controls.Primitives;
 using CodeHealth.Core.Dtos;
 using CodeHealth.Core.IO;
 using CodeHealth.UI.Services;
@@ -15,8 +16,11 @@ public partial class GenericScanner : ComponentBase
     public string ScannerName { get; set; } = string.Empty;
 
     [Parameter]
-    public List<IssueResult>? ScannerData { get; set; }
+    public List<IssueResult> ScannerData { get; set; }
 
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; }
+    
     [Parameter]
     public string ProjectRootDirectory { get; set; } = string.Empty;
 
@@ -24,13 +28,10 @@ public partial class GenericScanner : ComponentBase
     public Func<IssueResult, string> ValueFormatter { get; set; } = r => r.Metric.Value.ToString();
 
     [Parameter]
-    public Func<int, string> BadgeClass { get; set; } = _ => string.Empty;
+    public Func<IssueResult, string> BadgeClass { get; set; } = _ => string.Empty;
 
     [Parameter]
-    public Func<int, string> BadgeText { get; set; } = _ => string.Empty;
-
-    [Inject]
-    protected NavigationManager? NavigationManager { get; set; }
+    public Func<IssueResult, string> BadgeText { get; set; } = _ => string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,11 +51,15 @@ public partial class GenericScanner : ComponentBase
         }
     }
 
-    protected string GetComplexityClass(int value) => 
-        value > 20 ? "high-complexity" : value > 10 ? "medium-complexity" : "low-complexity";
+    protected string GetComplexityClass(IssueResult result) =>
+        result.Metric.Value > 20 ? "high-complexity" :
+        result.Metric.Value > 10 ? "medium-complexity" :
+        "low-complexity";
 
-    protected string GetComplexityText(int value) => 
-        value > 20 ? "High" : value > 10 ? "Medium" : "Low";
+    protected string GetComplexityText(IssueResult result) =>
+        result.Metric.Value > 20 ? "High" :
+        result.Metric.Value > 10 ? "Medium" :
+        "Low";
 
     protected void NavigateToFileView(string filePath)
     {

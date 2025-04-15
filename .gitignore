@@ -2,5 +2,8 @@
 [Bb]in/
 [Oo]bj/
 
+# Visual Studio
+.vs/
+
 # Data and other
 data/

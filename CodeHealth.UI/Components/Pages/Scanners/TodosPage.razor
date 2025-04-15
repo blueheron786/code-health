@@ -1,0 +1,10 @@
+@page "/project/{ProjectId}/todos"
+
+<GenericScanner 
+    ProjectId="@ProjectId"
+    ScannerName="TODO Comments"
+    ScannerData="@todoData"
+    ProjectRootDirectory="@ProjectRootDirectory"
+    ValueFormatter="@(r => r.Message)"
+    BadgeClass="@GetTodoBadgeClass"
+    BadgeText="@GetTodoBadgeText" />

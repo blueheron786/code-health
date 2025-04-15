@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Components.Pages.Scanners;
 
-public partial class CyclomaticComplexity : ComponentBase
+public partial class CyclomaticComplexityPage : ComponentBase
 {
     [Parameter]
     public string ProjectId { get; set; }
@@ -16,10 +16,10 @@ public partial class CyclomaticComplexity : ComponentBase
     
     protected List<IssueResult> ScannerData { get; set; }
     protected string ProjectRootDirectory { get; set; }
-
+    
     protected Func<IssueResult, string> ValueFormatter => r => r.Metric.Value.ToString();
-    protected Func<int, string> BadgeClassDelegate => GetComplexityClass;
-    protected Func<int, string> BadgeTextDelegate => GetComplexityText;
+    protected Func<IssueResult, string> BadgeClassDelegate => GetComplexityClass;
+    protected Func<IssueResult, string> BadgeTextDelegate => GetComplexityText;
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,6 +40,13 @@ public partial class CyclomaticComplexity : ComponentBase
         }
     }
 
-    protected string GetComplexityClass(int cc) => cc > 20 ? "high-complexity" : cc > 10 ? "medium-complexity" : "low-complexity";
-    protected string GetComplexityText(int cc) => cc > 20 ? "High" : cc > 10 ? "Medium" : "Low";
+    protected string GetComplexityClass(IssueResult result) => 
+        result.Metric.Value > 20 ? "high-complexity" : 
+        result.Metric.Value > 10 ? "medium-complexity" :
+        "low-complexity";
+
+    protected string GetComplexityText(IssueResult result) =>
+        result.Metric.Value > 20 ? "High" :
+        result.Metric.Value > 10 ? "Medium" :
+        "Low";
 }
