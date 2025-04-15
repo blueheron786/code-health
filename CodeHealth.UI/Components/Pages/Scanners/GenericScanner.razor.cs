@@ -33,34 +33,6 @@ public partial class GenericScanner : ComponentBase
     [Parameter]
     public Func<IssueResult, string> BadgeText { get; set; } = _ => string.Empty;
 
-    protected override async Task OnInitializedAsync()
-    {
-        ProjectRootDirectory = await SharedProjectService.GetProjectSourcePath(ProjectId);
-        var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
-        
-        ScannerData = await ScannerResultsDataLoader.LoadScannerResultsAsync(
-            ProjectId, 
-            runDirectoryPath, 
-            Constants.FileNames.CyclomatiComplexityFiles);
-            
-        if (ScannerData != null)
-        {
-            ScannerData = ScannerData
-                .OrderByDescending(c => c.Metric.Value)
-                .ToList();
-        }
-    }
-
-    protected string GetComplexityClass(IssueResult result) =>
-        result.Metric.Value > 20 ? "high-complexity" :
-        result.Metric.Value > 10 ? "medium-complexity" :
-        "low-complexity";
-
-    protected string GetComplexityText(IssueResult result) =>
-        result.Metric.Value > 20 ? "High" :
-        result.Metric.Value > 10 ? "Medium" :
-        "Low";
-
     protected void NavigateToFileView(string filePath)
     {
         if (NavigationManager != null)

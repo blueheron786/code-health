@@ -37,7 +37,7 @@ public class TodoCommentScanner : IStaticCodeScanner
                         EndLine = i + 1,
                         Column = match.Index + 1,
                         EndColumn = match.Index + match.Length + 1,
-                        Message = "TODO comment found.",
+                        Message = line,
                         Severity = "Low",
                         Suggestion = "Review TODO and consider resolving or removing.",
                         Tags = new List<string> { "todo", "comment", "technical-debt" },

@@ -44,11 +44,7 @@ public static class ScannerResultsDataLoader
 
                 issue.File = absolutePath; // Convert to full path
 
-                if (issue.Line > 0 && issue.Line <= sourceLines.Length)
-                {
-                    issue.Message += $" → \"{sourceLines[issue.Line - 1].Trim()}\"";
-                }
-                else
+                if (!(issue.Line > 0 && issue.Line <= sourceLines.Length))
                 {
                     issue.Message += " → [Unable to read source line]";
                 }

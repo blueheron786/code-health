@@ -18,6 +18,21 @@
 .medium-count { background-color: #fd7e14; }
 .low-count { background-color: #28a745; }
 
+.todo-badge {
+    background-color: #ffcc00;
+    color: black;
+}
+
+.fixme-badge {
+    background-color: #ff6666;
+    color: white;
+}
+
+.hack-badge {
+    background-color: #9933ff;
+    color: white;
+}
+
 .file-link {
     cursor: pointer; /* Changes cursor to hand pointer */
     text-decoration: underline; /* Underlines the text */
@@ -28,4 +43,41 @@
 .file-link:hover {
     color: #0056b3; /* Darker blue on hover */
     text-decoration: underline; /* Ensures underline stays on hover */
+}
+
+/* TODO badges */
+.todo-badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 500;
+    display: inline-block;
+    white-space: nowrap;
+    background-color: #ffcc00; /* Yellow */
+    color: black;
+    box-shadow: 0 1px 3px rgba(255, 204, 0, 0.3);
+    cursor: default; /* Not clickable by default */
+}
+
+.todo-badge.clickable {
+    cursor: pointer;
+    text-decoration: underline;
+    border 5px double blue;
+}
+
+.todo-badge.clickable:hover {
+    background-color: #e6b800; /* Darker yellow */
+}
+
+.badge-todo {
+    border 10px solid red;
+    background-color: #ddaaaa;
+    color: black;
+    box-shadow: 0 1px 3px rgba(255, 204, 0, 0.3);
+}
+
+.badge-fixme {
+    background-color: #aaaadd;
+    color: white;
+    box-shadow: 0 1px 3px rgba(255, 102, 102, 0.3);
 }
