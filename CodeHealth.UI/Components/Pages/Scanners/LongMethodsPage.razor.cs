@@ -32,8 +32,8 @@ namespace CodeHealth.UI.Components.Pages.Scanners
 
         protected string GetLongMethodsBadgeText(IssueResult r)
         {
-            // Display the line count if available
-            return r.Metric != null ? $"{r.Metric.Value} lines" : "Long Method";
+            // Already showing value like 52, show "52 lines"
+            return $"{r.Metric.Value} lines";
         }
     }
 }

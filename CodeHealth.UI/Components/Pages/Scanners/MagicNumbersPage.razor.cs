@@ -21,11 +21,11 @@ namespace CodeHealth.UI.Components.Pages.Scanners
             ProjectRootDirectory = await SharedProjectService.GetProjectSourcePath(ProjectId);
 
             // Load the TODO data
-            ScannerData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, runDirectoryPath, Constants.FileNames.LongMethodsFile);
+            ScannerData = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, runDirectoryPath, Constants.FileNames.MagicNumbersFile);
         }
 
         protected string GetMagicNumberBadgeClass(IssueResult r) => "magic-number";
-        protected string GetMagicNumberBadgeText(IssueResult r) => "Magic Number";
+        protected string GetMagicNumberBadgeText(IssueResult r) => $"{ScannerData.Count(x => x.File == r.File)} magic numbers";
 
     }
 }
