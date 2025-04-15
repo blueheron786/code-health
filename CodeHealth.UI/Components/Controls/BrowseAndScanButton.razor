@@ -28,7 +28,7 @@
             {
                 var results = ProjectScanner.Scan(folderPath);
                 StateHasChanged();
-                OutputMessages = $"Scan of {folderPath} done in {results}";
+                OutputMessages = $"Scan of {folderPath} done in {results.TotalSeconds.ToString("F2")} seconds";
             }
             catch (Exception ex)
             {

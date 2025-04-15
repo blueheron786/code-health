@@ -96,7 +96,7 @@ public partial class ProjectSummaryPage : ComponentBase
         try
         {
             var results = ProjectScanner.Scan(folderPath);
-            scanResultsMessage = $"Scan of {folderPath} done in {results}";
+            scanResultsMessage = $"Scan of {folderPath} done in {results.TotalSeconds.ToString("F2")} seconds";
         }
         catch (Exception ex)
         {
