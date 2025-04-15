@@ -33,7 +33,11 @@ public class MagicNumberScanner : IStaticCodeScanner
             {
                 var line = lines[i];
                 var trimmed = line.Trim();
-
+                if (trimmed.StartsWith("//") || trimmed.StartsWith("/*") || trimmed.StartsWith("*") || trimmed.StartsWith("#"))
+                {
+                    continue; // Skip comments
+                }
+                
                 // Method detection
                 var methodMatch = CStyleMethodRegex.Match(trimmed);
                 if (!methodMatch.Success)
