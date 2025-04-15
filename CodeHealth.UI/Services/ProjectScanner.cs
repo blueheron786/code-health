@@ -1,21 +1,21 @@
 using System.Diagnostics;
 using CodeHealth.Core.IO;
 using CodeHealth.Scanners;
-using CodeHealth.Scanners.Common;
+using CodeHealth.Scanners.Common.Scanners;
 
 namespace CodeHealth.UI.Services;
 
 public static class ProjectScanner
 {
-    private static Dictionary<string, Action<string, Dictionary<string, string>, string>> _languageSpecificScanners = new()
+    private static Dictionary<string, IStaticCodeScanner> _languageSpecificScanners = new()
     {
-        { ".cs", RunCSharpScanners },
-        { ".java", RunJavaScanners },
-        { ".kt", RunKotlinScanners },
-        { ".js", RunJavascriptScanners },
-        { ".ts", RunJavascriptScanners },
+        { ".cs", new CSharpCyclomaticComplexityScanner() },
+        { ".java", new JavaCyclomaticComplexityScanner() },
+        { ".kt", new KotlinCyclomaticComplexityScanner() },
+        { ".js", new JavascriptTypescriptCyclomaticComplexityScanner() },
+        { ".ts", new JavascriptTypescriptCyclomaticComplexityScanner() },
     };
-
+    
     public static TimeSpan Scan(string sourcePath)
     {
         var stopwatch = new Stopwatch();
@@ -39,38 +39,18 @@ public static class ProjectScanner
         foreach (var kvp in _languageSpecificScanners)
         {
             var extension = kvp.Key;
-            var scannersMethod = kvp.Value;
+            var scanner = kvp.Value;
 
             if (sourceFiles.Any(f => f.Key.EndsWith(kvp.Key, StringComparison.OrdinalIgnoreCase)))
             {
-                scannersMethod.Invoke(sourcePath, sourceFiles, resultsDirectory);
+                scanner.AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
             }
         }
 
-        RunCommonScanners(sourcePath, sourceFiles, resultsDirectory);
+        RunCommonScanners(sourceFiles, sourcePath, resultsDirectory);
     }
 
-    private static void RunCSharpScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
-    {
-        new CSharpCyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
-    }
-
-    private static void RunJavaScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
-    {
-        new JavaCyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
-    }
-
-    private static void RunKotlinScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
-    {
-        new KotlinCyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
-    }
-
-    private static void RunJavascriptScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
-    {
-        new JavascriptTypescriptCyclomaticComplexityScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
-    }
-
-    private static void RunCommonScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
+    private static void RunCommonScanners(Dictionary<string, string> sourceFiles, string sourcePath, string resultsDirectory)
     {
         Parallel.Invoke(
             () => LanguageLineCounter.AnalyzeLanguageBreakdown(sourceFiles, resultsDirectory),

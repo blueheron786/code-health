@@ -3,6 +3,7 @@ namespace CodeHealth.Scanners
     using System.Text.RegularExpressions;
     using CodeHealth.Core.Dtos;
     using CodeHealth.Scanners.Common;
+    using CodeHealth.Scanners.Common.Scanners;
 
     public class KotlinCyclomaticComplexityScanner : IStaticCodeScanner
     {

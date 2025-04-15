@@ -4,8 +4,9 @@ namespace CodeHealth.Scanners
     using System.Text.RegularExpressions;
     using System.Linq;
     using CodeHealth.Core.Dtos;
+    using CodeHealth.Scanners.Common.Scanners;
 
-    public class JavascriptTypescriptCyclomaticComplexityScanner
+    public class JavascriptTypescriptCyclomaticComplexityScanner : IStaticCodeScanner
     {
         public readonly string[] FileExtensions = { ".js", ".jsx", ".ts", ".tsx" };
 

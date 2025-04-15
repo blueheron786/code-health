@@ -2,6 +2,7 @@ namespace CodeHealth.Scanners
 {
     using CodeHealth.Core.Dtos;
     using CodeHealth.Scanners.Common;
+    using CodeHealth.Scanners.Common.Scanners;
     using System.Text.RegularExpressions;
 
     public class JavaCyclomaticComplexityScanner : IStaticCodeScanner
