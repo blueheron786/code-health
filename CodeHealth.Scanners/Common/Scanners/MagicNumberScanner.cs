@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using CodeHealth.Core.Dtos;
 using CodeHealth.Core.IO;
+using CodeHealth.Scanners.Common;
 
 namespace CodeHealth.Scanners.Common.Scanners;
 
@@ -10,9 +11,6 @@ public class MagicNumberScanner : IStaticCodeScanner
     private static readonly Regex NumberRegex = new(@"\b\d+(\.\d+)?\b", RegexOptions.Compiled);
     private static readonly Regex ConstAssignmentRegex = new(@"const\s+\w+\s+\w+\s*=\s*\d+", RegexOptions.Compiled);
     private static readonly Regex VariableAssignmentRegex = new(@"\b(?:int|float|double|var)\s+\w+\s*=\s*\d+", RegexOptions.Compiled);
-
-    private static readonly Regex CStyleMethodRegex = new(@"^\s*(public|private|protected|internal)?\s*(static\s+)?[\w<>\[\]]+\s+(\w+)\s*\([^)]*\)\s*{?\s*$", RegexOptions.Compiled);
-    private static readonly Regex JsLikeFunctionRegex = new(@"\bfunction\b|\s*=>\s*{", RegexOptions.Compiled);
 
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string outputDir)
     {
@@ -25,27 +23,25 @@ public class MagicNumberScanner : IStaticCodeScanner
             var relativePath = Path.GetRelativePath(rootPath, filePath).Replace("\\", "/");
 
             var lines = code.Split('\n');
-
+            MethodInfo? currentMethod = null;
             int braceDepth = 0;
-            string currentMethodName = "Global Scope";
 
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
                 var trimmed = line.Trim();
+
+                // Skip comments
                 if (trimmed.StartsWith("//") || trimmed.StartsWith("/*") || trimmed.StartsWith("*") || trimmed.StartsWith("#"))
                 {
-                    continue; // Skip comments
+                    continue;
                 }
-                
-                // Method detection
-                var methodMatch = CStyleMethodRegex.Match(trimmed);
-                if (!methodMatch.Success)
-                    methodMatch = JsLikeFunctionRegex.Match(trimmed);
 
-                if (methodMatch.Success)
+                // Method detection using common utility
+                var methodInfo = MethodNameExtractor.DetectMethodAtLine(trimmed, i);
+                if (methodInfo != null)
                 {
-                    currentMethodName = MethodNameExtractor.ExtractMethodName(trimmed, i, methodMatch);
+                    currentMethod = methodInfo;
                     braceDepth = line.Count(c => c == '{') - line.Count(c => c == '}');
                 }
                 else
@@ -53,7 +49,7 @@ public class MagicNumberScanner : IStaticCodeScanner
                     braceDepth += line.Count(c => c == '{') - line.Count(c => c == '}');
                     if (braceDepth <= 0)
                     {
-                        currentMethodName = "Global Scope";
+                        currentMethod = null;
                     }
                 }
 
@@ -74,7 +70,7 @@ public class MagicNumberScanner : IStaticCodeScanner
                         EndLine = i + 1,
                         Column = match.Index + 1,
                         EndColumn = match.Index + match.Length + 1,
-                        Name = currentMethodName,
+                        Name = currentMethod?.Name ?? "Global Scope",
                         Message = $"Magic number: {value}",
                         Severity = "Medium",
                         Suggestion = "Consider extracting this number into a named constant.",
@@ -84,7 +80,7 @@ public class MagicNumberScanner : IStaticCodeScanner
                         {
                             Name = "MagicNumber",
                             Value = int.TryParse(value, out var intVal) ? intVal : 0
-                        }
+                        },
                     });
                 }
             }

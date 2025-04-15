@@ -4,22 +4,56 @@ namespace CodeHealth.Scanners.Common;
 
 public static class MethodNameExtractor
 {
-    public static string ExtractMethodName(string line, int lineNumber, Match match)
+    private const string CStyleMethodRegex = @"\b(public|private|protected)?\s*(static\s+)?[\w<>\[\]]+\s+(\w+)\s*\(.*\)\s*{?\s*$";
+    private const string JsLikeFunctionRegex = @"\bfunction\b|\s*=>\s*{";
+
+    public static MethodInfo? DetectMethodAtLine(string line, int lineNumber)
     {
-        // C-style methods
+        // Check for C-style method declaration
+        var cStyleMatch = Regex.Match(line, CStyleMethodRegex);
+        if (cStyleMatch.Success)
+        {
+            var methodName = ExtractCStyleMethodName(cStyleMatch);
+            return new MethodInfo
+            {
+                Name = methodName,
+                StartLine = lineNumber,
+                IsDeclaration = true
+            };
+        }
+
+        // Check for JavaScript-like function declaration
+        var jsLikeMatch = Regex.Match(line, JsLikeFunctionRegex);
+        if (jsLikeMatch.Success)
+        {
+            var methodName = ExtractJsLikeMethodName(line, lineNumber, jsLikeMatch);
+            return new MethodInfo
+            {
+                Name = methodName,
+                StartLine = lineNumber,
+                IsDeclaration = true
+            };
+        }
+
+        return null;
+    }
+
+    private static string ExtractCStyleMethodName(Match match)
+    {
         if (match.Groups.Count >= 4 && match.Groups[3].Success)
         {
             var candidateName = match.Groups[3].Value;
-            // If it's too short, or a regex or something, then it's probably not a method name
-            // Also, if it contains a backslash, it's likely a namespace or something else
             if (candidateName.Length < 4 || candidateName.Contains("\\"))
             {
-                return "Unknown"; // Too short to be meaningful, might be a mistake, e.g. ")
+                return "Unknown";
             }
-
             return candidateName;
         }
+        return "Unknown";
+    }
 
+    private static string ExtractJsLikeMethodName(string line, int lineNumber, Match match)
+    {
         if (match.Value.Contains("=>"))
         {
             return $"anonymous (line {lineNumber + 1})";
@@ -31,8 +65,14 @@ public static class MethodNameExtractor
             return afterFunction.Split(new[] { '(', ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()
                 ?? $"anonymous (line {lineNumber + 1})";
         }
-        
 
         return "Unknown";
     }
+}
+
+public class MethodInfo
+{
+    public string Name { get; set; } = "Unknown";
+    public int StartLine { get; set; }
+    public bool IsDeclaration { get; set; }
 }

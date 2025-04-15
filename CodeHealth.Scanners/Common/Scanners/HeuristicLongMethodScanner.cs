@@ -1,18 +1,14 @@
 using CodeHealth.Core.Dtos;
 using CodeHealth.Core.IO;
-using Microsoft.CodeAnalysis;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace CodeHealth.Scanners.Common.Scanners;
 
 public class HeuristicLongMethodScanner
 {
-    private const string CStyleMethodRegex = @"\b(public|private|protected)?\s*(static\s+)?[\w<>\[\]]+\s+\w+\s*\(.*\)\s*{?\s*$";
-    private const string JsLikeFunctionRegex = @"\bfunction\b|\s*=>\s*{";
     private readonly int _threshold;
 
-    public HeuristicLongMethodScanner(int threshold = 40) // Modified constructor
+    public HeuristicLongMethodScanner(int threshold = 40)
     {
         _threshold = threshold;
     }
@@ -23,7 +19,6 @@ public class HeuristicLongMethodScanner
 
         foreach (var (fullFileName, content) in sourceFiles)
         {
-            // Create relative filename
             var relativeFileName = Path.GetRelativePath(rootPath, fullFileName).Replace("\\", "/");
             var fileIssues = AnalyzeText(relativeFileName, content);
             issues.AddRange(fileIssues);
@@ -44,29 +39,23 @@ public class HeuristicLongMethodScanner
     {
         var issues = new List<IssueResult>();
         var lines = text.Split('\n');
-        int methodStart = -1;
-        int methodLineStart = -1;
+        MethodInfo? currentMethod = null;
         int braceDepth = 0;
-        string methodName = "Unknown";
 
         for (int i = 0; i < lines.Length; i++)
         {
             var line = lines[i].Trim();
 
             // Check for method declaration
-            var methodMatch = Regex.Match(line, CStyleMethodRegex) ?? Regex.Match(line, JsLikeFunctionRegex);
-            if (methodMatch.Success)
+            var methodInfo = MethodNameExtractor.DetectMethodAtLine(line, i);
+            if (methodInfo != null)
             {
-                methodStart = i;
-                methodLineStart = i;
+                currentMethod = methodInfo;
                 braceDepth = line.Contains("{") ? 1 : 0;
-
-                // Extract method name
-                methodName = MethodNameExtractor.ExtractMethodName(line, methodLineStart, methodMatch);
                 continue;
             }
 
-            if (methodStart >= 0)
+            if (currentMethod != null)
             {
                 braceDepth += line.Count(c => c == '{');
                 braceDepth -= line.Count(c => c == '}');
@@ -74,7 +63,7 @@ public class HeuristicLongMethodScanner
                 if (braceDepth <= 0)
                 {
                     var methodEnd = i;
-                    var length = methodEnd - methodStart + 1;
+                    var length = methodEnd - currentMethod.StartLine + 1;
                     if (length > _threshold)
                     {
                         issues.Add(new IssueResult
@@ -82,16 +71,16 @@ public class HeuristicLongMethodScanner
                             Scanner = "LongMethods",
                             Type = "Method",
                             File = fileName,
-                            Line = methodLineStart + 1,
+                            Line = currentMethod.StartLine + 1,
                             EndLine = methodEnd + 1,
-                            Name = methodName, // Use extracted name
+                            Name = currentMethod.Name,
                             Metric = new Metric
                             {
                                 Name = "LineCount",
                                 Value = length,
                                 Threshold = _threshold
                             },
-                            Message = $"Method '{methodName}' is {length} lines long.",
+                            Message = $"Method '{currentMethod.Name}' is {length} lines long.",
                             Severity = "Medium",
                             Suggestion = "Consider breaking this method into smaller units.",
                             Tags = new List<string> { "long-method", "heuristic" },
@@ -99,8 +88,7 @@ public class HeuristicLongMethodScanner
                         });
                     }
 
-                    methodStart = -1;
-                    methodName = "Unknown";
+                    currentMethod = null;
                 }
             }
         }
