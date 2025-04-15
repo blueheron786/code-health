@@ -1,4 +1,4 @@
-namespace CodeHealth.UI.Components.Pages;
+namespace CodeHealth.UI.Components.Controls;
 
 public static class LanguageColours
 {

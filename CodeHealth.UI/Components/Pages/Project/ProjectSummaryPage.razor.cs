@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Components.Pages.Project;
 
-public class ProjectSummaryPage : ComponentBase
+public partial class ProjectSummaryPage : ComponentBase
 {
     [Parameter]
     public string ProjectId { get; set; }

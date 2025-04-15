@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Comopnents.Pages;
 
-public class RoutesPage : ComponentBase
+public partial class Routes : ComponentBase
 {
     [Inject]
     private BlazorDesktopWindow _window { get; set; }
