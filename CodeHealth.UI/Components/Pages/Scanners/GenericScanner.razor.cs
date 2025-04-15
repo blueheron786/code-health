@@ -1,8 +1,4 @@
-using System.Windows.Controls.Primitives;
 using CodeHealth.Core.Dtos;
-using CodeHealth.Core.IO;
-using CodeHealth.UI.Services;
-using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
 
 namespace CodeHealth.UI.Components.Pages.Scanners;
@@ -43,5 +39,10 @@ public partial class GenericScanner : ComponentBase
             var encodedFilePath = Uri.EscapeDataString(filePath);
             NavigationManager.NavigateTo($"/project/{ProjectId}/file-view?path={encodedFilePath}&goBackPage={GoBackPage}");
         }
+    }
+
+    protected void NavigateBack()
+    {
+        NavigationManager.NavigateTo($"/project/{ProjectId}");
     }
 }

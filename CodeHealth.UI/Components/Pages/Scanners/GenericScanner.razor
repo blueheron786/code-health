@@ -2,6 +2,12 @@
 
 <h3>@ScannerName for Project: @ProjectId</h3>
 
+<div class="mb-3">
+    <button class="btn btn-secondary mt-3" @onclick="NavigateBack">
+        Back
+    </button>
+</div>
+
 @if (ScannerData == null)
 {
     <p>Loading data...</p>
