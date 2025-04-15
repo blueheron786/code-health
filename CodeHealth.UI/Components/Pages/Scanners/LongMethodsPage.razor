@@ -1,0 +1,11 @@
+@page "/project/{ProjectId}/long-methods"
+
+<GenericScanner 
+    ProjectId="@ProjectId"
+    ScannerName="Long Methods"
+    ScannerData="@ScannerData"
+    ProjectRootDirectory="@ProjectRootDirectory"
+    GoBackPage="long-methods"
+    ValueFormatter="@(r => $"{r.Name} ({r.Metric?.Value} lines)")"
+    BadgeClass="@GetLongMethodsBadgeClass"
+    BadgeText="@GetLongMethodsBadgeText" />

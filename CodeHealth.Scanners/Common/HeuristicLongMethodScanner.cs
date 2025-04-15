@@ -47,16 +47,22 @@ public class HeuristicLongMethodScanner
         int methodStart = -1;
         int methodLineStart = -1;
         int braceDepth = 0;
+        string methodName = "Unknown";
 
         for (int i = 0; i < lines.Length; i++)
         {
             var line = lines[i].Trim();
 
-            if (Regex.IsMatch(line, CStyleMethodRegex) || Regex.IsMatch(line, JsLikeFunctionRegex))
+            // Check for method declaration
+            var methodMatch = Regex.Match(line, CStyleMethodRegex) ?? Regex.Match(line, JsLikeFunctionRegex);
+            if (methodMatch.Success)
             {
                 methodStart = i;
                 methodLineStart = i;
                 braceDepth = line.Contains("{") ? 1 : 0;
+
+                // Extract method name
+                methodName = ExtractMethodName(line, methodLineStart, methodMatch);
                 continue;
             }
 
@@ -78,26 +84,61 @@ public class HeuristicLongMethodScanner
                             File = fileName,
                             Line = methodLineStart + 1,
                             EndLine = methodEnd + 1,
-                            Name = "Unknown",
+                            Name = methodName, // Use extracted name
                             Metric = new Metric
                             {
                                 Name = "LineCount",
                                 Value = length,
                                 Threshold = _threshold
                             },
-                            Message = $"Possible method block is {length} lines long.",
+                            Message = $"Method '{methodName}' is {length} lines long.",
                             Severity = "Medium",
-                            Suggestion = "Consider breaking this block into smaller units.",
+                            Suggestion = "Consider breaking this method into smaller units.",
                             Tags = new List<string> { "long-method", "heuristic" },
                             Fixable = false
                         });
                     }
 
                     methodStart = -1;
+                    methodName = "Unknown";
                 }
             }
         }
 
         return issues;
+    }
+
+    private static string ExtractMethodName(string line, int lineNumber, Match methodMatch)
+    {
+        try
+        {
+            // For C-style methods
+            if (methodMatch.Value.Contains("("))
+            {
+                var beforeParen = line.Substring(0, line.IndexOf('(')).Trim();
+                var lastPart = beforeParen.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries).Last();
+                return lastPart;
+            }
+            // For arrow functions
+            else if (methodMatch.Value.Contains("=>"))
+            {
+                var beforeArrow = line.Substring(0, line.IndexOf("=>")).Trim();
+                return beforeArrow.Contains("(")
+                    ? $"anonymous (line {lineNumber})"
+                    : beforeArrow; // For simple arrow functions like "x =>"
+            }
+            // For function declarations
+            else if (methodMatch.Value.Contains("function"))
+            {
+                var afterFunction = line.Substring(line.IndexOf("function") + 8).Trim();
+                return afterFunction.Split(new[] { '(', ' ' }, StringSplitOptions.RemoveEmptyEntries).First();
+            }
+        }
+        catch
+        {
+            // Fall through to return "Unknown" below
+        }
+
+        return "Unknown";
     }
 }
