@@ -3,9 +3,8 @@ using System.Text.Json;
 using CodeHealth.Core.Dtos;
 using CodeHealth.Core.IO;
 using Microsoft.AspNetCore.Components;
-using CodeHealth.UI.Services;
 
-namespace CodeHealth.UI.Components.Pages;
+namespace CodeHealth.UI.Components.Pages.Project;
 
 public partial class ProjectsPage : ComponentBase
 {

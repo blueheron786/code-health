@@ -11,7 +11,10 @@ public class ProjectSummaryPage : ComponentBase
 {
     [Parameter]
     public string ProjectId { get; set; }
-    
+
+    [Inject]
+    protected NavigationManager NavigationManager { get; set; }
+
     protected bool isAllDataLoaded = false;
     protected string lastScannedTime;
     protected string scanResultsMessage;
@@ -119,4 +122,8 @@ public class ProjectSummaryPage : ComponentBase
         return "Low";
     }
 
+    protected void NavigateBack()
+    {
+        NavigationManager.NavigateTo($"/projects");
+    }
 }
