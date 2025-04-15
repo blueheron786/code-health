@@ -43,7 +43,8 @@ public partial class ViewFilePage : ComponentBase
         var runDirectoryPath = await SharedProjectService.GetRunDirectoryPath(ProjectId);
         
         // Load ALL issue types (both cyclomatic complexity and long methods)
-        var allIssues = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, runDirectoryPath, Constants.FileNames.CyclomatiComplexityFiles);
+        // *: view page shows everything
+        var allIssues = await ScannerResultsDataLoader.LoadScannerResultsAsync(ProjectId, runDirectoryPath, "*");
         FileIssues = allIssues
             .Where(i => i.File.Equals(decodedPath, StringComparison.OrdinalIgnoreCase))
             .ToList();
@@ -161,6 +162,21 @@ public partial class ViewFilePage : ComponentBase
             // not necessarily a coding mistake; maybe they deleted the file since the analysis.
             return $"// Source file not found: {absolutePath}";
         }
+    }
+
+    protected bool LineContainsTodo(int lineNumber)
+    {
+        return FileIssues.Any(i =>
+            i.Type == "CommentTodo" &&
+            lineNumber >= i.Line &&
+            lineNumber <= i.EndLine);
+    }
+
+    protected List<IssueResult> GetTodosForLine(int lineNumber)
+    {
+        return FileIssues
+            .Where(i => i.Type == "TODO" && lineNumber >= i.Line && lineNumber <= i.EndLine)
+            .ToList();
     }
 
     protected bool LineContainsMagicNumber(int lineNumber)

@@ -94,6 +94,10 @@
     background-color: #d4edda;
 }
 
+.todo-icon {
+    color: #ffcc00;
+}
+
 .long-method {
     background-color: #fff4e5;
     border-left: 3px solid orange;

@@ -31,7 +31,7 @@ public class TodoCommentScanner : IStaticCodeScanner
                     report.Issues.Add(new IssueResult
                     {
                         Scanner = "TodoComments",
-                        Type = "Comment",
+                        Type = "TodoComment",
                         File = relativePath,
                         Line = i + 1,
                         EndLine = i + 1,

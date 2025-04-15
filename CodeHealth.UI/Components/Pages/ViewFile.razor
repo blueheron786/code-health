@@ -41,14 +41,40 @@ else
                             var hasLowCC = issues.Any(issue => GetIssueClass(issue) == "low-complexity");
                             var hasLongMethod = issues.Any(issue => GetIssueClass(issue) == "long-method");
                             var hasMagicNumberOnLine = LineContainsMagicNumber(i);
+                            var hasTodo = LineContainsTodo(i);
+                            var todos = GetTodosForLine(i);
+
+                            var issueTooltip = string.Join("\n",
+                            issues.Select(issue => $"{issue.Type}{(issue.Metric != null ? $": {issue.Metric.Name} {issue.Metric.Value}" : "")}"));
+
+                            var todoTooltip = hasTodo ? $"\nTODOs:\n{string.Join("\n", todos.Select(t => t.Message))}" : "";
 
                             <div class="line-container">
-                                <div class="gutter-icon" title="@string.Join("\n", issues.Select(issue => $"{issue.Type}{(issue.Metric != null ? $": {issue.Metric.Name} {issue.Metric.Value}" : "")}"))">
-                                    @if (hasHighCC) { <span class="icon high-complexity-icon">🔴</span> }
-                                    @if (hasMediumCC) { <span class="icon medium-complexity-icon">🟠</span> }
-                                    @if (hasLowCC) { <span class="icon low-complexity-icon">🟢</span> }
-                                    @if (hasLongMethod) { <span class="icon long-method-icon">📏</span> }
-                                    @if (hasMagicNumberOnLine) { <span class="icon magic-number-icon">🪄</span> }
+                                <div class="gutter-icon" title="@(issueTooltip + todoTooltip)">
+                                    @if (hasHighCC)
+                                    {
+                                        <span class="icon high-complexity-icon">🔴</span>
+                                    }
+                                    @if (hasMediumCC)
+                                    {
+                                        <span class="icon medium-complexity-icon">🟠</span>
+                                    }
+                                    @if (hasLowCC)
+                                    {
+                                        <span class="icon low-complexity-icon">🟢</span>
+                                    }
+                                    @if (hasLongMethod)
+                                    {
+                                        <span class="icon long-method-icon">📏</span>
+                                    }
+                                    @if (hasMagicNumberOnLine)
+                                    {
+                                        <span class="icon magic-number-icon">🪄</span>
+                                    }
+                                    @if (hasTodo)
+                                    {
+                                        <span class="icon todo-icon">📝</span>
+                                    }
                                 </div>
                             </div>
                         }
