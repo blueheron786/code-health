@@ -1,5 +1,4 @@
 using CodeHealth.Core.Dtos;
-using CodeHealth.Core.IO;
 using CodeHealth.UI.Services;
 using CodeHealth.UI.Services.DataLoaders;
 using Microsoft.AspNetCore.Components;
@@ -16,6 +15,10 @@ public partial class ViewFilePage : ComponentBase
     [Parameter]
     [SupplyParameterFromQuery]
     public string Path { get; set; }
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string GoBackPage { get; set; }
     
     [Inject]
     protected NavigationManager NavigationManager { get; set; }
@@ -196,6 +199,6 @@ public partial class ViewFilePage : ComponentBase
 
     protected void NavigateBack()
     {
-        NavigationManager.NavigateTo($"/project/{ProjectId}/cyclomatic-complexity");
+        NavigationManager.NavigateTo($"/project/{ProjectId}/{GoBackPage}");
     }
 }

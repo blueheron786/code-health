@@ -10,7 +10,7 @@ public partial class CyclomaticComplexityPage : ComponentBase
 {
     [Parameter]
     public string ProjectId { get; set; }
-    
+
     [Inject]
     protected NavigationManager NavigationManager { get; set; }
     

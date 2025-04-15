@@ -18,6 +18,9 @@ public partial class GenericScanner : ComponentBase
     [Parameter]
     public List<IssueResult> ScannerData { get; set; }
 
+    [Parameter]
+    public string GoBackPage { get; set; }
+
     [Inject]
     protected NavigationManager NavigationManager { get; set; }
     
@@ -38,7 +41,7 @@ public partial class GenericScanner : ComponentBase
         if (NavigationManager != null)
         {
             var encodedFilePath = Uri.EscapeDataString(filePath);
-            NavigationManager.NavigateTo($"/project/{ProjectId}/file-view?path={encodedFilePath}");
+            NavigationManager.NavigateTo($"/project/{ProjectId}/file-view?path={encodedFilePath}&goBackPage={GoBackPage}");
         }
     }
 }
