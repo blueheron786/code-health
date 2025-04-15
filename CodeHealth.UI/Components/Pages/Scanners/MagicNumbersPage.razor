@@ -6,6 +6,6 @@
     ScannerData="@ScannerData"
     ProjectRootDirectory="@ProjectRootDirectory"
     GoBackPage="magic-numbers"
-    ValueFormatter="@(r => $"")"
+    ValueFormatter="@(r => $"{r.Message}")"
     BadgeClass="@GetMagicNumberBadgeClass"
     BadgeText="@GetMagicNumberBadgeText" />

@@ -25,7 +25,7 @@ namespace CodeHealth.UI.Components.Pages.Scanners
         }
 
         protected string GetMagicNumberBadgeClass(IssueResult r) => "magic-number";
-        protected string GetMagicNumberBadgeText(IssueResult r) => $"{ScannerData.Count(x => x.File == r.File)} magic numbers";
+        protected string GetMagicNumberBadgeText(IssueResult r) => $"on line {r.Line}";
 
     }
 }
