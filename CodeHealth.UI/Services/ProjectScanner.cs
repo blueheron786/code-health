@@ -16,7 +16,6 @@ public static class ProjectScanner
         { ".ts", RunJavascriptScanners },
     };
 
-
     public static TimeSpan Scan(string sourcePath)
     {
         var stopwatch = new Stopwatch();
@@ -73,10 +72,11 @@ public static class ProjectScanner
 
     private static void RunCommonScanners(string sourcePath, Dictionary<string, string> sourceFiles, string resultsDirectory)
     {
-        LanguageLineCounter.AnalyzeLanguageBreakdown(sourceFiles, resultsDirectory);
-        
-        new TodoCommentScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
-        new HeuristicLongMethodScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
-        new MagicNumberScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory);
+        Parallel.Invoke(
+            () => LanguageLineCounter.AnalyzeLanguageBreakdown(sourceFiles, resultsDirectory),
+            () => new TodoCommentScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory),
+            () => new HeuristicLongMethodScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory),
+            () => new MagicNumberScanner().AnalyzeFiles(sourceFiles, sourcePath, resultsDirectory)
+        );
     }
 }
