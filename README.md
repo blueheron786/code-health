@@ -2,6 +2,8 @@
 
 [![.NET](https://github.com/blueheron786/code-health/actions/workflows/dotnet.yml/badge.svg)](https://github.com/blueheron786/code-health/actions/workflows/dotnet.yml)
 
+![Project dashboard screenshot](https://i.imgur.com/DMpqwV0.png)
+
 **Code Health** is a fast, local-first code analysis tool that helps you understand and improve your codebase without installing giant IDE plugins, setting up servers, or wiring up a SaaS.
 
 🚀 **Scan your code. Catch issues. Stay fast.**
