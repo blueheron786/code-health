@@ -66,7 +66,7 @@ Make sure you have .NET 8 installed.
 
 Run the app:
 ```bash
-dotnet run --project CodeHealth.App
+dotnet run --project CodeHealth.UI
 ```
 
 ---
