@@ -10,11 +10,19 @@ public class HeuristicLongMethodScanner
 
     public HeuristicLongMethodScanner(int threshold = 40)
     {
+        if (threshold < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(threshold), "Threshold cannot be negative");
+        }
+           
         _threshold = threshold;
     }
 
     public void AnalyzeFiles(Dictionary<string, string> sourceFiles, string rootPath, string resultsDirectory)
     {
+        // Ensure directory exists
+        Directory.CreateDirectory(resultsDirectory);
+
         var issues = new List<IssueResult>();
 
         foreach (var (fullFileName, content) in sourceFiles)
@@ -41,6 +49,7 @@ public class HeuristicLongMethodScanner
         var lines = text.Split('\n');
         MethodInfo? currentMethod = null;
         int braceDepth = 0;
+        int methodStartLine = 0;
 
         for (int i = 0; i < lines.Length; i++)
         {
@@ -51,6 +60,7 @@ public class HeuristicLongMethodScanner
             if (methodInfo != null)
             {
                 currentMethod = methodInfo;
+                methodStartLine = i;
                 braceDepth = line.Contains("{") ? 1 : 0;
                 continue;
             }
@@ -63,7 +73,7 @@ public class HeuristicLongMethodScanner
                 if (braceDepth <= 0)
                 {
                     var methodEnd = i;
-                    var length = methodEnd - currentMethod.StartLine + 1;
+                    var length = methodEnd - methodStartLine + 1;
                     if (length > _threshold)
                     {
                         issues.Add(new IssueResult
@@ -87,7 +97,6 @@ public class HeuristicLongMethodScanner
                             Fixable = false
                         });
                     }
-
                     currentMethod = null;
                 }
             }
