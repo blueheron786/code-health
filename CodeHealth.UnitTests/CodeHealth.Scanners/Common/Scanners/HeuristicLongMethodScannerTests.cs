@@ -9,28 +9,33 @@ namespace CodeHealth.Scanners.Common.Tests.Scanners;
 [TestFixture]
 public class HeuristicLongMethodScannerTests
 {
-    private Dictionary<string, string> _sourceFiles = new();
-    private const string RootPath = "/project/root";
-    private const string ResultsDir = "/results";
+    private Dictionary<string, string> _sourceFiles;
+    private string _rootPath;
+    private string _resultsDir;
 
     [SetUp]
     public void SetUp()
     {
-        _sourceFiles = new Dictionary<string, string>();
+        // Get the current test execution directory
+        var testDirectory = TestContext.CurrentContext.TestDirectory;
         
-        if (Directory.Exists(RootPath))
+        _sourceFiles = new Dictionary<string, string>();
+        _rootPath = Path.Combine(testDirectory, "project", "root");
+        _resultsDir = Path.Combine(testDirectory, "results");
+        
+        // Ensure directories exist
+        Directory.CreateDirectory(_rootPath);
+        Directory.CreateDirectory(_resultsDir);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        // Clean up test directories
+        if (Directory.Exists(_resultsDir))
         {
-            Directory.Delete(RootPath, true);
+            Directory.Delete(_resultsDir, true);
         }
-
-        Directory.CreateDirectory(RootPath);
-
-        if (Directory.Exists(ResultsDir))
-        {
-            Directory.Delete(ResultsDir, true);
-        }
-
-        Directory.CreateDirectory(ResultsDir);
     }
 
     [Test]
@@ -40,10 +45,10 @@ public class HeuristicLongMethodScannerTests
         var scanner = new HeuristicLongMethodScanner();
 
         // Act
-        scanner.AnalyzeFiles(_sourceFiles, RootPath, ResultsDir);
+        scanner.AnalyzeFiles(_sourceFiles, _rootPath, _resultsDir);
 
         // Assert
-        var expectedPath = Path.Combine(ResultsDir, Constants.FileNames.LongMethodsFile);
+        var expectedPath = Path.Combine(_resultsDir, Constants.FileNames.LongMethodsFile);
         Assert.That(File.Exists(expectedPath), Is.True);
         
         var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(expectedPath));
@@ -60,10 +65,10 @@ public class HeuristicLongMethodScannerTests
         _sourceFiles.Add("/project/root/File.cs", "public class TestClass { }");
 
         // Act
-        scanner.AnalyzeFiles(_sourceFiles, RootPath, ResultsDir);
+        scanner.AnalyzeFiles(_sourceFiles, _rootPath, _resultsDir);
 
         // Assert
-        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(ResultsDir, Constants.FileNames.LongMethodsFile)));
+        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(_resultsDir, Constants.FileNames.LongMethodsFile)));
         Assert.That(report.Issues.Count, Is.EqualTo(0));
     }
 
@@ -87,10 +92,10 @@ public class HeuristicLongMethodScannerTests
         _sourceFiles.Add("/project/root/File.cs", fileContent);
 
         // Act
-        scanner.AnalyzeFiles(_sourceFiles, RootPath, ResultsDir);
+        scanner.AnalyzeFiles(_sourceFiles, _rootPath, _resultsDir);
 
         // Assert
-        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(ResultsDir, Constants.FileNames.LongMethodsFile)));
+        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(_resultsDir, Constants.FileNames.LongMethodsFile)));
         Assert.That(report.Issues.Count, Is.EqualTo(0));
     }
 
@@ -114,10 +119,10 @@ public class HeuristicLongMethodScannerTests
         _sourceFiles.Add("/project/root/File.cs", fileContent);
 
         // Act
-        scanner.AnalyzeFiles(_sourceFiles, RootPath, ResultsDir);
+        scanner.AnalyzeFiles(_sourceFiles, _rootPath, _resultsDir);
 
         // Assert
-        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(ResultsDir, Constants.FileNames.LongMethodsFile)));
+        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(_resultsDir, Constants.FileNames.LongMethodsFile)));
         Assert.That(report.Issues.Count, Is.EqualTo(1));
         Assert.That(report.Issues[0].Metric.Value, Is.EqualTo(threshold + 1));
         Assert.That(report.Issues[0].Name, Is.EqualTo("TestMethod"));
@@ -149,10 +154,10 @@ public class HeuristicLongMethodScannerTests
             "}");
 
         // Act
-        scanner.AnalyzeFiles(_sourceFiles, RootPath, ResultsDir);
+        scanner.AnalyzeFiles(_sourceFiles, _rootPath, _resultsDir);
 
         // Assert
-        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(ResultsDir, Constants.FileNames.LongMethodsFile)));
+        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(_resultsDir, Constants.FileNames.LongMethodsFile)));
         Assert.That(report.Issues.Count, Is.EqualTo(2));
         Assert.That(report.TotalMetricValue, Is.GreaterThanOrEqualTo(3 + 4));
         Assert.That(report.AverageMetricValue, Is.GreaterThan(0));
@@ -175,10 +180,10 @@ public class HeuristicLongMethodScannerTests
             "}");
 
         // Act
-        scanner.AnalyzeFiles(_sourceFiles, RootPath, ResultsDir);
+        scanner.AnalyzeFiles(_sourceFiles, _rootPath, _resultsDir);
 
         // Assert
-        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(ResultsDir, Constants.FileNames.LongMethodsFile)));
+        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(_resultsDir, Constants.FileNames.LongMethodsFile)));
         Assert.That(report.Issues.Count, Is.EqualTo(1));
         Assert.That(report.Issues[0].Metric.Value, Is.GreaterThanOrEqualTo(4)); // 4 lines from opening brace to closing brace
     }
@@ -203,10 +208,10 @@ public class HeuristicLongMethodScannerTests
             "}");
 
         // Act
-        scanner.AnalyzeFiles(_sourceFiles, RootPath, ResultsDir);
+        scanner.AnalyzeFiles(_sourceFiles, _rootPath, _resultsDir);
 
         // Assert
-        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(ResultsDir, Constants.FileNames.LongMethodsFile)));
+        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(_resultsDir, Constants.FileNames.LongMethodsFile)));
         Assert.That(report.Issues.Count, Is.EqualTo(1)); // Only outer method should be reported
         Assert.That(report.Issues[0].Metric.Value, Is.GreaterThanOrEqualTo(4)); // Outer method length
         // Assert.That(report.Issues[0].Name, Is.EqualTo("OuterMethod"));
@@ -232,10 +237,10 @@ public class HeuristicLongMethodScannerTests
             "}");
 
         // Act
-        scanner.AnalyzeFiles(_sourceFiles, RootPath, ResultsDir);
+        scanner.AnalyzeFiles(_sourceFiles, _rootPath, _resultsDir);
 
         // Assert
-        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(ResultsDir, Constants.FileNames.LongMethodsFile)));
+        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(_resultsDir, Constants.FileNames.LongMethodsFile)));
         Assert.That(report.Issues.Count, Is.EqualTo(1)); // Only Method1 should be reported
         Assert.That(report.Issues[0].Name, Is.EqualTo("Method1"));
     }
@@ -263,10 +268,10 @@ public class HeuristicLongMethodScannerTests
             "}");
 
         // Act
-        scanner.AnalyzeFiles(_sourceFiles, RootPath, ResultsDir);
+        scanner.AnalyzeFiles(_sourceFiles, _rootPath, _resultsDir);
 
         // Assert
-        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(ResultsDir, Constants.FileNames.LongMethodsFile)));
+        var report = JsonSerializer.Deserialize<Report>(File.ReadAllText(Path.Combine(_resultsDir, Constants.FileNames.LongMethodsFile)));
         var issue = report.Issues[0];
         Assert.That(issue.Metric.Value, Is.GreaterThanOrEqualTo(3)); // 3 lines from opening to closing brace
         Assert.That(issue.Line, Is.GreaterThanOrEqualTo(8)); // 1-based line number (9 is 0-based in code)
@@ -282,11 +287,11 @@ public class HeuristicLongMethodScannerTests
     }
 
     [Test]
-    public void AnalyzeFiles_WhenResultsDirectoryDoesNotExist_ShouldCreateIt()
+    public void AnalyzeFiles_When_resultsDirectoryDoesNotExist_ShouldCreateIt()
     {
         // Arrange
         var scanner = new HeuristicLongMethodScanner();
-        var nonExistentDir = Path.Combine(ResultsDir, "nonexistent");
+        var nonExistentDir = Path.Combine(_resultsDir, "nonexistent");
         
         if (Directory.Exists(nonExistentDir))
         {
@@ -294,7 +299,7 @@ public class HeuristicLongMethodScannerTests
         }
 
         // Act
-        scanner.AnalyzeFiles(_sourceFiles, RootPath, nonExistentDir);
+        scanner.AnalyzeFiles(_sourceFiles, _rootPath, nonExistentDir);
 
         // Assert
         Assert.That(Directory.Exists(nonExistentDir), Is.True);
